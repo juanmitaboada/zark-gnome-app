@@ -1,0 +1,17 @@
+{
+  "what": "zpool list and zfs fail: the file's figures, dated",
+  "now": "2026-10-24T09:25:00Z",
+  "alive": true,
+  "by_id": [],
+  "timer": true,
+  "zark": "ok",
+  "live": {
+    "zpool": null,
+    "used": null,
+    "get": null,
+    "dpkg": {
+      "status": 0,
+      "stdout": "2.3.0-1"
+    }
+  }
+}
