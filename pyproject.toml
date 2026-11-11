@@ -1,0 +1,77 @@
+# zark-gnome-app - tool configuration. The app is not a Python
+# distribution: debian/ installs it as zark is installed, in its own
+# directory. This file only configures the tools, as zark's does.
+
+[project]
+name = "zark-gnome-app"
+version = "1.0"
+requires-python = ">=3.12"
+description = "GNOME app for zark: the state of ZFS backups and backup drives"
+license = "Apache-2.0"
+
+[dependency-groups]
+dev = [
+    "mypy==2.3.1",
+    "pylint==4.0.8",
+    {include-group = "ruff"},
+]
+ruff = [
+    "ruff==0.16.8",
+]
+# The GObject stubs need no PyGObject build: tox installs them with
+# --no-deps (they ask for a PyGObject newer than noble's, which the tests
+# use from the system instead).
+stubs = [
+    "pygobject-stubs==2.20.0",
+]
+cov = [
+    "pytest-cov==7.1.0",
+    "coverage==7.17.2",
+]
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+preview = true
+select  = ["E", "F", "W", "B", "I", "UP", "COM", "RUF027"]
+ignore  = ["COM812"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party  = ["zark_app", "tests"]
+
+[tool.ruff.format]
+quote-style  = "double"
+indent-style = "space"
+
+[tool.mypy]
+# mypy does not read requires-python: keep in sync with it.
+python_version     = "3.12"
+files              = ["zark_app", "tests"]
+check_untyped_defs = true
+# zark's reader is imported at run time from /usr/share/zark.
+[[tool.mypy.overrides]]
+module = ["lib", "lib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+jobs       = 1
+py-version = "3.12"
+# gi's modules are generated at run time.
+extension-pkg-allow-list = ["gi"]
+ignored-modules = ["gi.repository"]
+
+[tool.pylint.format]
+max-line-length = 110
+
+[tool.pylint."messages control"]
+disable = ["too-few-public-methods", "duplicate-code"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch         = true
+relative_files = true
+source_dirs    = ["zark_app"]
