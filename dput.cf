@@ -1,0 +1,6 @@
+[zark-ppa]
+fqdn = ppa.launchpad.net
+method = sftp
+login = juanmitaboada
+incoming = ~juanmitaboada/ubuntu/zark/
+allow_unsigned_uploads = 0

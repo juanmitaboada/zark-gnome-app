@@ -1,0 +1,14 @@
+# dpkg-source compares the working tree with the .orig tarball (tracked
+# files only, see make dist); what a developer's tree holds untracked is
+# listed here so it neither aborts the build nor reaches the package.
+# .github/ is tracked but, like debian/, left out of the .orig (make dist).
+tar-ignore = build
+tar-ignore = __pycache__
+tar-ignore = .mypy_cache
+tar-ignore = .ruff_cache
+tar-ignore = .pytest_cache
+tar-ignore = .github
+
+extend-diff-ignore = "^(build|\.mypy_cache|\.ruff_cache|\.pytest_cache)(/|$)"
+extend-diff-ignore = "(^|/)__pycache__(/|$)"
+extend-diff-ignore = "^\.github(/|$)"

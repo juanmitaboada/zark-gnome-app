@@ -1,0 +1,3 @@
+# The package is published in a PPA, not in Debian: its first upload has
+# no ITP bug to close.
+zark-gnome-app: initial-upload-closes-no-bugs

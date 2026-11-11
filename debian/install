@@ -1,0 +1,6 @@
+zark-gnome-app                            usr/share/zark-gnome-app/
+zark_app                                  usr/share/zark-gnome-app/
+data/images                               usr/share/zark-gnome-app/data/
+data/com.juanmitaboada.Zark.desktop       usr/share/applications/
+data/com.juanmitaboada.Zark.metainfo.xml  usr/share/metainfo/
+data/icons/hicolor                        usr/share/icons/

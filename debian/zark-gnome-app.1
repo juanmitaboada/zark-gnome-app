@@ -1,0 +1,40 @@
+.TH ZARK-GNOME-APP 1 "" "zark-gnome-app 1.0" "User Commands"
+.SH NAME
+zark-gnome-app \- GNOME app showing the state of zark backups
+.SH SYNOPSIS
+.B zark-gnome-app
+.SH DESCRIPTION
+.B zark-gnome-app
+opens a window with the state of the backups zark makes: how full the
+system pools are, each backup drive with its last backup, its space and its
+backup points by month, the datasets left out of backups, and a backup
+running in a terminal, with its progress.
+.PP
+It reads zark's status files,
+.I /run/zark/progress.json
+and
+.IR /var/lib/zark/status.json ,
+through the reader of the installed zark in
+.IR /usr/share/zark ,
+and the output of
+.BR zpool (8)
+.BR list ,
+.BR zfs (8)
+.B list
+and
+.BR "zfs get" ,
+without privileges. It never writes zark's files, takes zark's lock or
+imports a pool. Where an action belongs, its button copies the zark command
+to run in a terminal.
+.SH KEYS
+.TP
+.B Ctrl+R
+Read the files and the live figures again.
+.TP
+.B Ctrl+1 ... Ctrl+9
+The Overview, then the backup drives in order.
+.TP
+.B Ctrl+?
+The keyboard shortcuts.
+.SH SEE ALSO
+.BR zark (1)

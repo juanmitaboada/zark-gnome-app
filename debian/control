@@ -1,0 +1,35 @@
+Source: zark-gnome-app
+Section: admin
+Priority: optional
+Maintainer: Juanmi Taboada <juanmi@juanmitaboada.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3:any,
+               desktop-file-utils,
+               appstream
+Standards-Version: 4.6.2
+Homepage: https://github.com/juanmitaboada/zark-gnome-app
+Vcs-Git: https://github.com/juanmitaboada/zark-gnome-app.git
+Vcs-Browser: https://github.com/juanmitaboada/zark-gnome-app
+Rules-Requires-Root: no
+
+Package: zark-gnome-app
+Architecture: all
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         python3 (>= 3.12),
+         zark (>= 2.3.0),
+         python3-gi,
+         gir1.2-glib-2.0,
+         gir1.2-gtk-4.0,
+         gir1.2-adw-1 (>= 1.5),
+         librsvg2-common
+Description: GNOME app showing the state of zark backups
+ Shows how zark's backups stand: how full the system pools are, each
+ backup drive with its last backup, its space and its backup points by
+ month, the datasets left out of backups, and a backup running in a
+ terminal, with its progress.
+ .
+ It reads the status files the installed zark writes and needs no
+ administrator password. This version changes nothing: where an action
+ belongs, its button copies the zark command to run in a terminal.

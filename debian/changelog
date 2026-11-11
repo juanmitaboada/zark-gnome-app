@@ -1,0 +1,6 @@
+zark-gnome-app (1.0-1) stable; urgency=medium
+
+  * First version (A1): the state of zark's backups, read-only, from the
+    status files of the installed zark 2.3.0 or later.
+
+ -- Juanmi Taboada <juanmi@juanmitaboada.com>  Thu, 12 Nov 2026 09:00:00 +0100

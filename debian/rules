@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+#
+# zark-gnome-app - Debian build rules.
+#
+# The app is Python run from its own directory, as zark is: nothing to
+# build. dh_python3 byte-compiles that directory and fills
+# ${python3:Depends}.
+
+%:
+	dh $@ --with python3 --buildsystem=none
+
+override_dh_auto_test:
+	desktop-file-validate data/com.juanmitaboada.Zark.desktop
+	appstreamcli validate --no-net data/com.juanmitaboada.Zark.metainfo.xml
+
+override_dh_python3:
+	dh_python3 /usr/share/zark-gnome-app
+
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGELOG.md

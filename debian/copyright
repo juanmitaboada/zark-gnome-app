@@ -1,0 +1,41 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: zark-gnome-app
+Upstream-Contact: Juanmi Taboada <juanmi@juanmitaboada.com>
+Source: https://github.com/juanmitaboada/zark-gnome-app
+
+Files: *
+Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
+License: Apache-2.0
+
+Files: tests/fixtures/zark-2.3.0/*
+Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
+License: Apache-2.0
+Comment: copied unchanged from zark 2.3.0's tests/fixtures/status/
+
+Files: data/com.juanmitaboada.Zark.metainfo.xml
+Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
+License: CC0-1.0
+
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ .
+     http://www.apache.org/licenses/LICENSE-2.0
+ .
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ .
+ On Debian systems, the full text of the Apache License, Version 2.0
+ can be found in "/usr/share/common-licenses/Apache-2.0".
+
+License: CC0-1.0
+ To the extent possible under law, the author has dedicated all copyright
+ and related and neighboring rights to this file to the public domain
+ worldwide. This file is distributed without any warranty.
+ .
+ On Debian systems, the full text of the CC0 1.0 Universal license can be
+ found in "/usr/share/common-licenses/CC0-1.0".
