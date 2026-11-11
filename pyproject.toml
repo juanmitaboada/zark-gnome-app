@@ -13,6 +13,9 @@ license = "Apache-2.0"
 dev = [
     "mypy==2.3.1",
     "pylint==4.0.8",
+    # The tests import pytest: mypy and pylint need it in the lint venv,
+    # which has no distribution pytest on CI's runner.
+    "pytest==9.2.0",
     {include-group = "ruff"},
 ]
 ruff = [
