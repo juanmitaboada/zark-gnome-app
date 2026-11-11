@@ -1,0 +1,158 @@
+# zark-gnome-app - Continuous Integration.
+#
+# Runs on every push and pull request, and by hand (workflow_dispatch):
+#
+#   test     - the suite under Xvfb in a container of each series the app
+#              targets (noble, resolute, stonking) and in Debian trixie for
+#              Python 3.13 (test only, not a target): the distribution's
+#              Python, PyGObject, GTK and libadwaita, as the package runs
+#              on them. zark's reader and fixtures come from zark's tag.
+#   lint     - ruff (check and format), mypy and pylint at the versions
+#              pyproject.toml pins.
+#   deb      - the source package and the .deb built in a container of
+#              each series, with lintian on both.
+#   analysis - SonarQube Cloud with the coverage of the 26.04 test job. It
+#              does not wait for the quality gate, so a red gate fails
+#              nothing; with no SONAR_TOKEN (a fork's pull request) it skips
+#              the scan. Not on tags: a tag's commit was analysed on its
+#              branch.
+#
+# Nothing here signs, tags or uploads: the PPA upload runs on the
+# maintainer's machine (make deb-ppa).
+
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The zark whose reader and fixtures the tests use: the app's floor.
+  ZARK_REF: v2.3.0
+
+jobs:
+
+  test:
+    name: test (${{ matrix.image }})
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ['ubuntu:24.04', 'debian:trixie', 'ubuntu:26.04', 'ubuntu:26.10']
+    container: ${{ matrix.image }}
+    steps:
+      - name: Install the distribution's stack
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+              git ca-certificates make python3 python3-gi python3-pytest python3-pytest-cov \
+              gir1.2-glib-2.0 gir1.2-gtk-4.0 gir1.2-adw-1 librsvg2-common \
+              xvfb xauth fonts-cantarell adwaita-icon-theme
+          python3 --version
+          python3 -c "import gi; gi.require_version('Adw', '1'); from gi.repository import Adw; print('libadwaita', Adw.get_major_version(), Adw.get_minor_version())"
+
+      - uses: actions/checkout@v6
+
+      - name: zark's reader and fixtures at ${{ env.ZARK_REF }}
+        run: git clone --depth 1 --branch "$ZARK_REF" https://github.com/juanmitaboada/zark.git ../zark
+
+      - name: Run the tests
+        run: |
+          ZARK_SRC=../zark TZ=Europe/Madrid xvfb-run -a env GSK_RENDERER=cairo \
+              python3 -m pytest -q -p no:cacheprovider --cov=zark_app --cov-report=xml
+
+      - name: Keep the coverage for the analysis job
+        if: matrix.image == 'ubuntu:26.04'
+        uses: actions/upload-artifact@v6
+        with:
+          name: zark-app-coverage
+          path: coverage.xml
+          if-no-files-found: error
+
+  lint:
+    name: lint (ruff, mypy, pylint)
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install PyGObject from the distribution
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-gi python3-venv \
+              gir1.2-gtk-4.0 gir1.2-adw-1
+
+      - name: The pinned tools
+        run: make venv PYTHON=/usr/bin/python3
+
+      - name: Lint
+        run: make lint
+
+  deb:
+    name: deb (${{ matrix.image }})
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ['ubuntu:24.04', 'ubuntu:26.04', 'ubuntu:26.10']
+    container: ${{ matrix.image }}
+    steps:
+      - name: Install the build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+              git ca-certificates make python3 debhelper dh-python devscripts lintian \
+              desktop-file-utils appstream
+
+      - uses: actions/checkout@v6
+
+      - name: Build and check
+        run: |
+          git config --global --add safe.directory "$PWD"
+          make deb
+
+  analysis:
+    name: analysis (SonarQube Cloud)
+    runs-on: ubuntu-26.04
+    needs: [test]
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fetch the coverage from the test job
+        uses: actions/download-artifact@v8
+        with:
+          name: zark-app-coverage
+
+      - name: Is SONAR_TOKEN available?
+        # A fork's pull request gets no secrets: skip the scan, do not fail.
+        id: token
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+              echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+              echo "::notice::SONAR_TOKEN is not available to this run: no analysis"
+              echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: SonarQube Cloud scan
+        if: steps.token.outputs.present == 'true'
+        # Pinned by commit, as the extension's: a third-party action that is handed a secret.
+        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
