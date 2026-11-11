@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=zark
+GenericName=Backups
+Comment=See the state of your zark backups and backup drives
+Exec=zark-gnome-app
+Icon=com.juanmitaboada.Zark
+Terminal=false
+StartupNotify=true
+Categories=GTK;GNOME;Utility;Archiving;
+Keywords=backup;restore;zfs;drive;snapshot;

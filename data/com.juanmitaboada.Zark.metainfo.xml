@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.juanmitaboada.Zark</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <name>zark</name>
+  <summary>See the state of your zark backups and backup drives</summary>
+  <developer id="com.juanmitaboada">
+    <name>Juanmi Taboada</name>
+  </developer>
+  <description>
+    <p>
+      zark backs up and recovers Ubuntu systems installed on encrypted ZFS.
+      This app shows how its backups stand: how full the system pools are,
+      each backup drive with its last backup, its space and its backup
+      points by month, the datasets left out of backups, and a backup
+      running in a terminal, with its progress.
+    </p>
+    <p>
+      It reads the status files the installed zark writes and needs no
+      administrator password. This version changes nothing: where an action
+      belongs, its button copies the zark command to run in a terminal.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.juanmitaboada.Zark.desktop</launchable>
+  <url type="homepage">https://github.com/juanmitaboada/zark-gnome-app</url>
+  <url type="bugtracker">https://github.com/juanmitaboada/zark-gnome-app/issues</url>
+  <url type="vcs-browser">https://github.com/juanmitaboada/zark-gnome-app</url>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0" date="2026-11-12">
+      <description>
+        <p>
+          The first version: the state of zark's backups, read-only, for
+          zark 2.3.0 and later.
+        </p>
+      </description>
+    </release>
+  </releases>
+</component>
