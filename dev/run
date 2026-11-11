@@ -1,0 +1,45 @@
+#!/usr/bin/python3 -I
+# Copyright 2026 Juanmi Taboada
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Runs the app from this tree on a fixture case, live: the window reads the
+case's files as the installed app reads the real ones.
+
+    ZARK_SRC=../zark dev/run app:connected
+    ZARK_SRC=../zark dev/run zark:running
+
+Without a case it runs on the real files, with the reader of ZARK_SRC.
+"""
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+# pylint: disable=wrong-import-position
+from dataclasses import replace  # noqa: E402
+
+from tests.harness import any_case, zark_src  # noqa: E402
+from zark_app.gio_runner import GioRunner  # noqa: E402
+from zark_app.main import ZarkApp  # noqa: E402
+from zark_app.reader import load  # noqa: E402
+from zark_app.sources import Sources  # noqa: E402
+
+if len(sys.argv) > 1:
+    case = any_case(sys.argv[1])
+    app = ZarkApp(case.sources, case.loaded)
+else:
+    sources = replace(Sources(runner=GioRunner()), zark_dir=zark_src())
+    app = ZarkApp(sources, load(sources.zark_dir))
+sys.exit(app.run([sys.argv[0]]))

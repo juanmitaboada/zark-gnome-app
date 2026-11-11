@@ -1,0 +1,113 @@
+# Copyright 2026 Juanmi Taboada
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Small widgets the pages share."""
+
+from pathlib import Path
+
+from gi.repository import Adw, Gdk, GLib, Gtk
+
+from zark_app.i18n import _
+from zark_app.model import Action
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+ICON_FOR_LEVEL = {
+    "info": "dialog-information-symbolic",
+    "warning": "dialog-warning-symbolic",
+    "critical": "dialog-error-symbolic",
+}
+
+
+def copy_tooltip(action: Action) -> str:
+    """The tooltip of a button that copies its command (A1-2)."""
+    return _("Copies the command to run in a terminal: {command}").format(command=action.command)
+
+
+def copy_button(action: Action, suggested: bool = False) -> Gtk.Button:
+    """A button with the design's label that copies its zark command."""
+    button = Gtk.Button(label=action.label, valign=Gtk.Align.CENTER)
+    # The target first: an action name without its target warns.
+    button.set_action_target_value(GLib.Variant("s", action.command))
+    button.set_action_name("app.copy")
+    button.set_tooltip_text(copy_tooltip(action))
+    if suggested:
+        button.add_css_class("suggested-action")
+    return button
+
+
+def property_row(title: str, value: str, subtitle_selectable: bool = False) -> Adw.ActionRow:
+    """A read-only fact: the title dimmed, the value emphasised (``.property``,
+    libadwaita 1.4)."""
+    row = Adw.ActionRow(title=title, subtitle=value, subtitle_selectable=subtitle_selectable)
+    row.add_css_class("property")
+    return row
+
+
+def level_bar(fraction: float, level: str = "ok") -> Gtk.LevelBar:
+    """A fill meter; libadwaita colours its ``high`` and ``full`` offsets."""
+    meter = Gtk.LevelBar(min_value=0.0, max_value=1.0, value=min(max(fraction, 0.0), 1.0))
+    meter.set_size_request(96, -1)
+    meter.set_valign(Gtk.Align.CENTER)
+    meter.remove_offset_value(Gtk.LEVEL_BAR_OFFSET_LOW)
+    meter.remove_offset_value(Gtk.LEVEL_BAR_OFFSET_HIGH)
+    meter.remove_offset_value(Gtk.LEVEL_BAR_OFFSET_FULL)
+    if level == "critical":
+        meter.add_css_class("error")
+    elif level == "warning":
+        meter.add_css_class("warning")
+    return meter
+
+
+def level_icon(level: str) -> Gtk.Image:
+    """A notice's icon, with its level as the accessible name: no state is
+    told by colour alone."""
+    image = Gtk.Image.new_from_icon_name(ICON_FOR_LEVEL.get(level, "dialog-information-symbolic"))
+    if level == "critical":
+        image.add_css_class("error")
+    elif level == "warning":
+        image.add_css_class("warning")
+    return image
+
+
+def mark_paintable(dark: bool) -> Gdk.Paintable | None:
+    """zark's mark for status pages, its white-sector variant in dark style."""
+    path = DATA_DIR / "images" / ("zark-mark-dark.svg" if dark else "zark-mark.svg")
+    try:
+        return Gdk.Texture.new_from_filename(str(path))
+    except GLib.Error:
+        return None
+
+
+def status_page(title: str, description: str, action: Action | None = None) -> Adw.StatusPage:
+    """A whole-page state with zark's mark (design section 5)."""
+    dark = Adw.StyleManager.get_default().get_dark()
+    page = Adw.StatusPage(title=title, description=description, vexpand=True)
+    paintable = mark_paintable(dark)
+    if paintable is not None:
+        page.set_paintable(paintable)
+    else:
+        page.set_icon_name("com.juanmitaboada.Zark-symbolic")
+    if action is not None:
+        button = copy_button(action, suggested=True)
+        button.set_halign(Gtk.Align.CENTER)
+        button.add_css_class("pill")
+        page.set_child(button)
+    return page
+
+
+def command_label(command: str) -> Gtk.Label:
+    """A command in monospace, selectable."""
+    label = Gtk.Label(label=command, selectable=True, xalign=0.0, wrap=True)
+    label.add_css_class("monospace")
+    label.add_css_class("dim-label")
+    return label
