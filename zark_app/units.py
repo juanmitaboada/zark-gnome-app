@@ -13,6 +13,7 @@
 # limitations under the License.
 """Sizes, ages and times as the app shows them. No GTK here."""
 
+import re
 from datetime import UTC, datetime
 
 from zark_app.i18n import _, ngettext
@@ -91,6 +92,34 @@ def fmt_date_time(when: datetime) -> str:
     """``7 Nov 2026, 09:31`` in local time."""
     t = local(when)
     return f"{t.day} {t.strftime('%b %Y, %H:%M')}"
+
+
+def fmt_date_time_s(when: datetime) -> str:
+    """``13 Nov 2026, 06:15:10`` in local time: a backup point's time."""
+    t = local(when)
+    return f"{t.day} {t.strftime('%b %Y, %H:%M:%S')}"
+
+
+# A point's name holds its time in UTC: zark_2026-11-13_05:15:10Z.
+_POINT_NAME = re.compile(r"zark_(\d{4}-\d{2}-\d{2})_(\d{2}:\d{2}:\d{2})Z")
+
+
+def parse_utc(text: object) -> datetime | None:
+    """zark's ``2026-11-13T05:15:34Z``, or None."""
+    if not isinstance(text, str):
+        return None
+    try:
+        return datetime.strptime(text, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    except ValueError:
+        return None
+
+
+def point_time(name: object) -> datetime | None:
+    """The UTC time in a point's name, or None for a name not in zark's form."""
+    match = _POINT_NAME.fullmatch(name) if isinstance(name, str) else None
+    if match is None:
+        return None
+    return parse_utc(f"{match.group(1)}T{match.group(2)}Z")
 
 
 def fmt_time(when: datetime) -> str:

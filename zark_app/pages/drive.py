@@ -23,6 +23,7 @@ from gi.repository import Adw, Gtk
 from zark_app.i18n import _, ngettext
 from zark_app.model import (
     CHECK_WORDS,
+    Doc,
     DriveDetails,
     DriveView,
     MonthView,
@@ -32,8 +33,28 @@ from zark_app.model import (
     obj,
     result_words,
 )
-from zark_app.units import fmt_bytes, fmt_date_time, fmt_month, fmt_since
+from zark_app.units import (
+    fmt_bytes,
+    fmt_date_time,
+    fmt_date_time_s,
+    fmt_month,
+    fmt_since,
+    parse_utc,
+    point_time,
+)
 from zark_app.widgets import property_row
+
+
+def _point_words(name: str, doc: Doc) -> str:
+    """A point as local time with its name (A1E-5): its ``created_at`` when
+    the drive lists it, else the time in its name; the name alone if neither."""
+    listed = next(
+        (p for p in doc.get("points") or () if isinstance(p, dict) and p.get("name") == name),
+        None,
+    )
+    when = parse_utc(listed.get("created_at")) if listed is not None else None
+    when = when or point_time(name)
+    return f"{fmt_date_time_s(when)} ({name})" if when is not None else name
 
 
 def _status(snapshot: Snapshot, drive: DriveView) -> Adw.PreferencesGroup:
@@ -50,7 +71,7 @@ def _status(snapshot: Snapshot, drive: DriveView) -> Adw.PreferencesGroup:
     if isinstance(run, dict):
         parts = [result_words(run.get("result"))]
         if isinstance(run.get("point"), str):
-            parts.append(run["point"])
+            parts.append(_point_words(run["point"], doc))
         missing = run.get("datasets_missing")
         if isinstance(missing, int) and missing > 0:
             parts.append(ngettext("{n} dataset missing", "{n} datasets missing", missing).format(n=missing))
@@ -170,7 +191,13 @@ def _month_row(month: MonthView) -> Adw.ExpanderRow:
         used = point.get("used_bytes")
         if isinstance(used, int):
             marks.append(_("holds {size} alone").format(size=fmt_bytes(used)))
-        child = Adw.ActionRow(title=str(point.get("name", "?")), subtitle=", ".join(marks))
+        # Local time first (A1E-5): the name carries UTC.
+        name = str(point.get("name", "?"))
+        when = parse_utc(point.get("created_at")) or point_time(name)
+        if when is not None:
+            child = Adw.ActionRow(title=fmt_date_time_s(when), subtitle=", ".join([name, *marks]))
+        else:
+            child = Adw.ActionRow(title=name, subtitle=", ".join(marks))
         child.add_css_class("property")
         row.add_row(child)
     return row

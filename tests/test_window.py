@@ -347,3 +347,15 @@ def test_after_transfer_unseen_shows_step_only(app: ZarkApp, windows: list[ZarkW
     progress = _bar(_shown(window))
     assert not progress.get_show_text()
     assert "Step 8 of 8" in _sidebar_texts(window)
+
+
+def test_points_in_local_time(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-5: each point's title is its local time, its name below; the last
+    run's point too (TZ=Europe/Madrid in the suite)."""
+    window = open_window(app, "zark:drive-contents", "drive:black")
+    windows.append(window)
+    page = _shown(window)
+    rows = [w for w in _all(page) if isinstance(w, Adw.ActionRow) and not isinstance(w, Adw.ExpanderRow)]
+    first = next(r for r in rows if (r.get_subtitle() or "").startswith("zark_2025-11-30_21:24:14Z"))
+    assert first.get_title() == "30 Nov 2025, 22:24:38"
+    assert any("22 Oct 2026, 23:32:42 (zark_2026-10-22_21:32:18Z)" in t for t in texts(page))

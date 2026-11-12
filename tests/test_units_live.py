@@ -100,3 +100,16 @@ def test_fetcher_failures() -> None:
     got: list[Live] = []
     Fetcher(runner, lambda: datetime(2026, 1, 1, tzinfo=UTC)).fetch(["rpool"], got.append)
     assert got[0].pools is None and got[0].used is None and got[0].zark_version is None
+
+
+def test_point_time() -> None:
+    """A1E-5: a point's name holds UTC; shown in local time (TZ=Europe/Madrid
+    in the suite); a name not in zark's form has no time."""
+    when = units.point_time("zark_2026-11-13_05:15:10Z")
+    assert when == datetime(2026, 11, 13, 5, 15, 10, tzinfo=UTC)
+    assert units.fmt_date_time_s(when) == "13 Nov 2026, 06:15:10"
+    assert units.point_time("zark_2026-11-13_05:15:10") is None
+    assert units.point_time("manual-snapshot") is None
+    assert units.point_time(None) is None
+    assert units.parse_utc("2026-10-22T21:32:42Z") == datetime(2026, 10, 22, 21, 32, 42, tzinfo=UTC)
+    assert units.parse_utc("yesterday") is None
