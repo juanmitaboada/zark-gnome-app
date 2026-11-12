@@ -129,6 +129,8 @@ class RunView:
     check: Doc | None
     drive_space: Doc | None
     pid: int | None = None
+    # This run had a transfer block and no longer has one: its data is sent.
+    sent: bool = False
 
 
 @dataclass(frozen=True)
@@ -539,6 +541,36 @@ def _banner(  # pylint: disable=too-many-return-statements
     if ctx.status is not None:
         return _foreign_banner(ctx.status, ctx.live.zark_version)
     return None
+
+
+RunKey = tuple[int | None, datetime | None]
+
+
+def with_sent(snapshot: Snapshot, seen: set[RunKey]) -> Snapshot:
+    """Mark the run whose data is sent (A1E-3). zark drops ``transfer`` from
+    ``progress.json`` once the data is sent; only a reader that saw it can
+    tell that from a run that has not started sending, so ``seen`` keeps the
+    runs (pid, start) seen with a transfer, as the extension does."""
+    run = snapshot.run
+    if run is None:
+        return snapshot
+    key = (run.pid, run.started_at)
+    if run.transfer is not None:
+        seen.add(key)
+        return snapshot
+    if key in seen:
+        return replace(snapshot, run=replace(run, sent=True))
+    return snapshot
+
+
+def progress_figure(run: RunView) -> tuple[float | None, str]:
+    """The bar's fraction and text: bytes only, full once the data is sent,
+    nothing (a pulsing bar) before data moves; never the step as a percent."""
+    if run.fraction is not None:
+        return run.fraction, f"{int(run.fraction * 100)} %"
+    if run.sent:
+        return 1.0, "100 %"
+    return None, ""
 
 
 def build(  # pylint: disable=too-many-locals

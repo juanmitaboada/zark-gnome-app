@@ -299,3 +299,51 @@ def _all(widget: Gtk.Widget) -> list[Gtk.Widget]:
         out.extend(_all(child))
         child = child.get_next_sibling()
     return out
+
+
+def _bar(widget: Gtk.Widget) -> Gtk.ProgressBar:
+    return next(w for w in _all(widget) if isinstance(w, Gtk.ProgressBar))
+
+
+def _sidebar_texts(window: ZarkWindow) -> list[str]:
+    return texts(window.list)
+
+
+def test_step_is_not_a_percentage(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-3: at step 5 of 8 before data moves, no percentage anywhere."""
+    window = open_window(app, "app:running-step5", "run")
+    windows.append(window)
+    page = _shown(window)
+    progress = _bar(page)
+    assert not progress.get_show_text() and "%" not in (progress.get_text() or "")
+    assert "Step 5 of 8" in _sidebar_texts(window)
+    assert not any("%" in t for t in _sidebar_texts(window))
+    assert "No data is moving yet" in texts(page)
+
+
+def test_sent_shows_complete(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-3: the transfer seen, then gone: the bar full, "data sent"."""
+    window = open_window(app, "app:running-connected", "run")
+    windows.append(window)
+    progress = _bar(_shown(window))
+    assert progress.get_show_text() and (progress.get_text() or "").endswith(" %")
+    assert progress.get_fraction() < 1
+    after = any_case("app:running-after-transfer")
+    window.keep2 = after  # type: ignore[attr-defined]
+    object.__setattr__(window.sources, "root", after.sources.root)
+    window.refresh()
+    settle()
+    page = _shown(window)
+    progress = _bar(page)
+    assert progress.get_fraction() == 1.0 and progress.get_text() == "100 %"
+    assert "All data sent" in texts(page)
+    assert "Step 8 of 8, data sent" in _sidebar_texts(window)
+
+
+def test_after_transfer_unseen_shows_step_only(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-3: a window opened after the transfer shows the step only."""
+    window = open_window(app, "app:running-after-transfer", "run")
+    windows.append(window)
+    progress = _bar(_shown(window))
+    assert not progress.get_show_text()
+    assert "Step 8 of 8" in _sidebar_texts(window)

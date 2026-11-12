@@ -14,11 +14,11 @@
 """A run the app did not start (design 2.3, last line): read from
 ``progress.json`` only, no Stop and no answers."""
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, GLib, Gtk
 
 from zark_app import compat
 from zark_app.i18n import _, ngettext
-from zark_app.model import RunView, Snapshot
+from zark_app.model import RunView, Snapshot, progress_figure
 from zark_app.units import fmt_bytes, fmt_duration, fmt_rate, fmt_time
 from zark_app.widgets import property_row
 
@@ -26,7 +26,7 @@ from zark_app.widgets import property_row
 def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
     t = run.transfer
     if t is None:
-        group.add(property_row(_("Data"), _("No data is moving yet")))
+        group.add(property_row(_("Data"), _("All data sent") if run.sent else _("No data is moving yet")))
         return
     done, total, rate = t.get("bytes_done"), t.get("bytes_total"), t.get("rate_bytes_per_s")
     if isinstance(done, int) and isinstance(total, int):
@@ -54,6 +54,22 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
         group.add(property_row(_("Time left"), fmt_duration(run.eta_s)))
 
 
+# The bar's pulse while no figure is known.
+PULSE_MS = 250
+
+
+def _pulse(progress: Gtk.ProgressBar) -> None:
+    """Pulse ``progress`` while it is on screen."""
+
+    def beat() -> bool:
+        if not progress.get_mapped():
+            return False
+        progress.pulse()
+        return True
+
+    progress.connect("map", lambda _b: GLib.timeout_add(PULSE_MS, beat))
+
+
 def card(snapshot: Snapshot, run: RunView) -> Adw.PreferencesGroup:
     """The progress card: step, bar, bytes, datasets, time left, waiting."""
     group = Adw.PreferencesGroup(title=run.title)
@@ -68,20 +84,22 @@ def card(snapshot: Snapshot, run: RunView) -> Adw.PreferencesGroup:
         group.add(
             property_row(_("Step {i} of {n}").format(i=run.step_index, n=run.step_total), run.label or "-")
         )
-    fraction = run.fraction
-    if fraction is None and run.step_index is not None and run.step_total:
-        fraction = run.step_index / run.step_total
+    fraction, text = progress_figure(run)
+    progress = Gtk.ProgressBar(show_text=fraction is not None, text=text)
     if fraction is not None:
-        progress = Gtk.ProgressBar(fraction=fraction, show_text=True, text=f"{int(fraction * 100)} %")
-        progress.set_margin_top(12)
-        progress.set_margin_bottom(12)
-        progress.set_margin_start(12)
-        progress.set_margin_end(12)
-        if run.stalled_s is not None:
-            progress.add_css_class("dim-label")
-        holder = Adw.PreferencesRow(activatable=False)
-        holder.set_child(progress)
-        group.add(holder)
+        progress.set_fraction(fraction)
+    elif run.stalled_s is None and not run.waiting:
+        # No figure before data moves (A1E-3): a step is not a share of the work.
+        _pulse(progress)
+    progress.set_margin_top(12)
+    progress.set_margin_bottom(12)
+    progress.set_margin_start(12)
+    progress.set_margin_end(12)
+    if run.stalled_s is not None:
+        progress.add_css_class("dim-label")
+    holder = Adw.PreferencesRow(activatable=False)
+    holder.set_child(progress)
+    group.add(holder)
     _transfer_rows(run, group)
     if run.waiting:
         group.add(property_row(_("zark is waiting for you"), run.waiting_for or _("Answer in the terminal")))

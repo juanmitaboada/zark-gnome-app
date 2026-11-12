@@ -1,0 +1,28 @@
+{
+  "what": "a backup to black at step 8 of 8, after its transfer",
+  "now": "2026-10-24T09:25:00Z",
+  "alive": true,
+  "by_id": [
+    "usb-JMicron_Generic_DISK00_0123456789ABCDEF-0:0"
+  ],
+  "timer": true,
+  "zark": "ok",
+  "live": {
+    "zpool": {
+      "status": 0,
+      "stdout": "rpool\t1005022347264\t902414041088\t102608306176\t89\nbpool\t2013265920\t288358400\t1724907520\t14\n"
+    },
+    "used": {
+      "status": 0,
+      "stdout": "rpool\t917611225088\nrpool/USERDATA\t500000000000\nrpool/USERDATA/home_bf193q\t480000000000\nrpool/var\t40000000000\nrpool/var/cache\t12000000000\nrpool/scratch\t90000000000\nbpool\t288358400\n"
+    },
+    "get": {
+      "status": 0,
+      "stdout": "rpool/var/cache\torg.zark:replicate\tno\tlocal\nrpool/scratch\torg.zark:replicate\tno\tlocal\nrpool/scratch\torg.zark:snapshot\tno\tlocal\n"
+    },
+    "dpkg": {
+      "status": 0,
+      "stdout": "2.3.0-1"
+    }
+  }
+}

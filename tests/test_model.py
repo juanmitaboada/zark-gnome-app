@@ -237,3 +237,28 @@ def test_drive_menu_operations() -> None:
     assert ("retention", "black") in ops and ("forget", "black") in ops and ("mount", "black") in ops
     assert ("umount", "black") in [(a.op, a.arg) for part in model.drive_actions("black", True) for a in part]
     assert all(op in OPS for op, _arg in ops)
+
+
+def test_progress_figure_is_bytes_only() -> None:
+    """A1E-3: a percentage from bytes; a step alone gives none."""
+    s = snap(app_case("running-connected"))
+    assert s.run is not None
+    fraction, text = model.progress_figure(s.run)
+    assert fraction is not None and text == f"{int(fraction * 100)} %"
+    s = snap(app_case("running-step5"))
+    assert s.run is not None and s.run.step_index == 5 and s.run.transfer is None
+    assert model.progress_figure(s.run) == (None, "")
+
+
+def test_sent_after_this_runs_transfer() -> None:
+    """A1E-3: once a run seen with a transfer has none, its data is sent;
+    a reader that never saw the transfer cannot tell (the step only)."""
+    seen: set[model.RunKey] = set()
+    during = model.with_sent(snap(app_case("running-connected")), seen)
+    assert during.run is not None and not during.run.sent and len(seen) == 1
+    after = model.with_sent(snap(app_case("running-after-transfer")), seen)
+    assert after.run is not None and after.run.sent
+    assert model.progress_figure(after.run) == (1.0, "100 %")
+    fresh = model.with_sent(snap(app_case("running-after-transfer")), set())
+    assert fresh.run is not None and not fresh.run.sent
+    assert model.progress_figure(fresh.run) == (None, "")
