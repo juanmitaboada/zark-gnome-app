@@ -13,6 +13,8 @@
 # limitations under the License.
 """Small widgets the pages share."""
 
+from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 from gi.repository import Adw, Gdk, GLib, Gtk
@@ -105,3 +107,72 @@ def status_page(title: str, description: str, action: Action | None = None) -> A
         button.add_css_class("pill")
         page.set_child(button)
     return page
+
+
+@dataclass(frozen=True)
+class ViewState:
+    """Where a page was scrolled to and which of its expander rows were
+    open, to carry over to the page that replaces it."""
+
+    scroll: float
+    expanded: frozenset[str]
+
+
+def _descendants(widget: Gtk.Widget) -> Iterator[Gtk.Widget]:
+    child = widget.get_first_child()
+    while child is not None:
+        yield child
+        yield from _descendants(child)
+        child = child.get_next_sibling()
+
+
+def _scrolled(widget: Gtk.Widget) -> Gtk.ScrolledWindow | None:
+    if isinstance(widget, Gtk.ScrolledWindow):
+        return widget
+    return next((w for w in _descendants(widget) if isinstance(w, Gtk.ScrolledWindow)), None)
+
+
+def view_state(widget: Gtk.Widget) -> ViewState:
+    """The scroll position of ``widget``'s first scrolled window and the
+    titles of its expanded expander rows."""
+    scrolled = _scrolled(widget)
+    scroll = scrolled.get_vadjustment().get_value() if scrolled is not None else 0.0
+    expanded = frozenset(
+        w.get_title() for w in _descendants(widget) if isinstance(w, Adw.ExpanderRow) and w.get_expanded()
+    )
+    return ViewState(scroll, expanded)
+
+
+# How long a restored position waits for the new page's rows to be laid
+# out; past it the user's own scrolling wins.
+RESTORE_S = 2
+
+
+def restore_view_state(widget: Gtk.Widget, state: ViewState) -> None:
+    """Open the same expander rows in ``widget`` and scroll it to the same
+    place once its content is tall enough to get there."""
+    for row in _descendants(widget):
+        if isinstance(row, Adw.ExpanderRow) and row.get_title() in state.expanded:
+            row.set_expanded(True)
+    scrolled = _scrolled(widget)
+    if scrolled is None or state.scroll <= 0:
+        return
+    adjustment = scrolled.get_vadjustment()
+
+    def apply(adj: Gtk.Adjustment) -> None:
+        adj.set_value(state.scroll)
+        # Reached once the page is laid out tall enough: stop following it.
+        if adj.get_upper() - adj.get_page_size() >= state.scroll and handler[0]:
+            adj.disconnect(handler[0])
+            handler[0] = 0
+
+    def give_up() -> bool:
+        if handler[0]:
+            adjustment.disconnect(handler[0])
+            handler[0] = 0
+        return False
+
+    handler = [adjustment.connect("changed", apply)]
+    apply(adjustment)
+    if handler[0]:
+        GLib.timeout_add_seconds(RESTORE_S, give_up)

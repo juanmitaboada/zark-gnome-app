@@ -18,6 +18,7 @@ Assertions are on the widget tree, not on pixels."""
 # pylint: disable=redefined-outer-name
 
 from collections.abc import Iterator
+from datetime import timedelta
 
 import gi
 import pytest
@@ -229,3 +230,72 @@ def test_narrow(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     window.select("drive:black")
     settle()
     assert window.split.get_show_content()
+
+
+def _shown(window: ZarkWindow) -> Gtk.Widget:
+    """The content page on show."""
+    page = window.content_view.get_content()
+    assert page is not None
+    return page
+
+
+def _scrolled(widget: Gtk.Widget) -> Gtk.ScrolledWindow:
+    stack = [widget]
+    while stack:
+        w = stack.pop()
+        if isinstance(w, Gtk.ScrolledWindow):
+            return w
+        child = w.get_last_child()
+        while child is not None:
+            stack.append(child)
+            child = child.get_prev_sibling()
+    raise AssertionError("no scrolled window")
+
+
+def _move_clock(window: ZarkWindow, seconds: int) -> None:
+    """The fixture's clock, ``seconds`` later (Sources is frozen: tests only)."""
+    later = window.sources.now() + timedelta(seconds=seconds)
+    object.__setattr__(window.sources, "now", lambda: later)
+
+
+def test_redraw_keeps_scroll_and_months(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-2: the minute's redraw keeps the drive page's scroll position and
+    its open month; another page and back starts at the top."""
+    window = open_window(app, "app:connected", "drive:black")
+    windows.append(window)
+    window.set_default_size(1000, 420)
+    settle(80)
+    page = _shown(window)
+    month = next(w for w in _all(page) if isinstance(w, Adw.ExpanderRow))
+    month.set_expanded(True)
+    settle(80)
+    adj = _scrolled(page).get_vadjustment()
+    target = (adj.get_upper() - adj.get_page_size()) / 2
+    assert target > 50, "the page must scroll for this test"
+    adj.set_value(target)
+    settle()
+    _move_clock(window, 61)
+    window.refresh()
+    settle(80)
+    new = _shown(window)
+    assert new is not page
+    assert abs(_scrolled(new).get_vadjustment().get_value() - target) < 1
+    again = next(
+        w for w in _all(new) if isinstance(w, Adw.ExpanderRow) and w.get_title() == month.get_title()
+    )
+    assert again.get_expanded()
+    window.select("overview")
+    settle()
+    window.select("drive:black")
+    settle(80)
+    assert _scrolled(_shown(window)).get_vadjustment().get_value() == 0
+
+
+def _all(widget: Gtk.Widget) -> list[Gtk.Widget]:
+    out: list[Gtk.Widget] = []
+    child = widget.get_first_child()
+    while child is not None:
+        out.append(child)
+        out.extend(_all(child))
+        child = child.get_next_sibling()
+    return out

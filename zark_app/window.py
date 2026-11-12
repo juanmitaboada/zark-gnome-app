@@ -45,7 +45,7 @@ from zark_app.pages import (
 from zark_app.reader import Loaded
 from zark_app.sources import Sources
 from zark_app.units import fmt_since
-from zark_app.widgets import RUN_ACTION, action_button, run_target
+from zark_app.widgets import RUN_ACTION, action_button, restore_view_state, run_target, view_state
 
 TICK_S = 5
 NARROW = "max-width: 600sp"
@@ -92,6 +92,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         self._header_widgets: list[Gtk.Widget] = []
         self._before_run = "overview"
         self.run_page: terminal_page.RunPage | None = None
+        self._shown_key: str | None = None
         self.gone = False
         self.ops = Operations(self)
         self._build_ui()
@@ -337,8 +338,15 @@ class ZarkWindow(Adw.ApplicationWindow):
         self.title.set_subtitle(subtitle)
         self.content_page.set_title(title)
         self._set_header(header)
-        if self.content_view.get_content() is not body:
+        old = self.content_view.get_content()
+        if old is not body:
+            # A redraw of the same page (the clock moves every minute) keeps
+            # its scroll position and open months; another page starts at the top.
+            keep = view_state(old) if old is not None and self._shown_key == self.selected else None
             self.content_view.set_content(body)
+            if keep is not None:
+                restore_view_state(body, keep)
+        self._shown_key = self.selected
 
     # One return per page of the sidebar.
     def _page(  # pylint: disable=too-many-return-statements
