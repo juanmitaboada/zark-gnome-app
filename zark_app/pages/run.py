@@ -54,21 +54,8 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
         group.add(property_row(_("Time left"), fmt_duration(run.eta_s)))
 
 
-def build(snapshot: Snapshot) -> Gtk.Widget:
-    """The run page."""
-    run = snapshot.run
-    page = Adw.PreferencesPage()
-    if run is None:
-        return page
-    head = Adw.PreferencesGroup()
-    status = Adw.StatusPage(
-        title=_("Running in a Terminal"),
-        description=_("Answer its questions there") if run.waiting else _("zark runs in another window"),
-    )
-    status.set_child(compat.spinner())
-    status.add_css_class("compact")
-    head.add(status)
-    page.add(head)
+def card(snapshot: Snapshot, run: RunView) -> Adw.PreferencesGroup:
+    """The progress card: step, bar, bytes, datasets, time left, waiting."""
     group = Adw.PreferencesGroup(title=run.title)
     if run.started_at is not None:
         elapsed = int((snapshot.now - run.started_at).total_seconds())
@@ -100,5 +87,24 @@ def build(snapshot: Snapshot) -> Gtk.Widget:
         group.add(property_row(_("zark is waiting for you"), run.waiting_for or _("Answer in the terminal")))
     if run.stalled_s is not None:
         group.add(property_row(_("Heartbeat"), _("No update for {n} s").format(n=run.stalled_s)))
+    return group
+
+
+def build(snapshot: Snapshot) -> Gtk.Widget:
+    """The run page."""
+    run = snapshot.run
+    page = Adw.PreferencesPage()
+    if run is None:
+        return page
+    head = Adw.PreferencesGroup()
+    status = Adw.StatusPage(
+        title=_("Running in a Terminal"),
+        description=_("Answer its questions there") if run.waiting else _("zark runs in another window"),
+    )
+    status.set_child(compat.spinner())
+    status.add_css_class("compact")
+    head.add(status)
+    page.add(head)
+    group = card(snapshot, run)
     page.add(group)
     return page

@@ -17,7 +17,6 @@ from pathlib import Path
 
 from gi.repository import Adw, Gdk, GLib, Gtk
 
-from zark_app.i18n import _
 from zark_app.model import Action
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -28,18 +27,21 @@ ICON_FOR_LEVEL = {
 }
 
 
-def copy_tooltip(action: Action) -> str:
-    """The tooltip of a button that copies its command (A1-2)."""
-    return _("Copies the command to run in a terminal: {command}").format(command=action.command)
+RUN_ACTION = "win.run"
 
 
-def copy_button(action: Action, suggested: bool = False) -> Gtk.Button:
-    """A button with the design's label that copies its zark command."""
+def run_target(action: Action) -> GLib.Variant:
+    """The ``win.run`` target of an action: its operation and argument."""
+    return GLib.Variant("(ss)", (action.op, action.arg))
+
+
+def action_button(action: Action, suggested: bool = False) -> Gtk.Button:
+    """A button that runs its operation (A2-5: no copy items). While zark is
+    busy the window disables ``win.run``, and every such button with it."""
     button = Gtk.Button(label=action.label, valign=Gtk.Align.CENTER)
     # The target first: an action name without its target warns.
-    button.set_action_target_value(GLib.Variant("s", action.command))
-    button.set_action_name("app.copy")
-    button.set_tooltip_text(copy_tooltip(action))
+    button.set_action_target_value(run_target(action))
+    button.set_action_name(RUN_ACTION)
     if suggested:
         button.add_css_class("suggested-action")
     return button
@@ -98,16 +100,8 @@ def status_page(title: str, description: str, action: Action | None = None) -> A
     else:
         page.set_icon_name("com.juanmitaboada.Zark-symbolic")
     if action is not None:
-        button = copy_button(action, suggested=True)
+        button = action_button(action, suggested=True)
         button.set_halign(Gtk.Align.CENTER)
         button.add_css_class("pill")
         page.set_child(button)
     return page
-
-
-def command_label(command: str) -> Gtk.Label:
-    """A command in monospace, selectable."""
-    label = Gtk.Label(label=command, selectable=True, xalign=0.0, wrap=True)
-    label.add_css_class("monospace")
-    label.add_css_class("dim-label")
-    return label

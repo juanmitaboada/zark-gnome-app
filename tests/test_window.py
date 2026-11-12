@@ -102,7 +102,7 @@ def windows() -> Iterator[list[ZarkWindow]]:
             ["Status", "Space", "Backup Points", "Retention", "Largest Datasets"],
         ),
         ("app:pending", "overview", ["spare", "Finish Registration..."]),
-        ("app:pending", "pending:spare", ["sudo zark registry verify spare"]),
+        ("app:pending", "pending:spare", ["Finish Registration..."]),
         ("app:foreign-writer", "overview", ["from /media/usb/zark, not the installed 2.3.0"]),
         ("app:mounted", "overview", ["black is mounted for browsing", "Unmount"]),
         ("app:running-connected", "run", ["Running in a Terminal", "Step 7 of 8", "9 of 21 datasets"]),
@@ -138,26 +138,14 @@ def test_page_texts(
         assert item in shown_text, (name, page, item)
 
 
-def test_banner_copies(app: ZarkApp, windows: list[ZarkWindow]) -> None:
-    """The banner's button copies the command the design's action runs."""
+def test_banner_runs(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """The banner's button runs the design's action through win.run."""
     window = open_window(app, "zark:orphan")
     windows.append(window)
     assert window.banner.get_revealed()
-    assert window.banner.get_action_name() == "app.copy"
+    assert window.banner.get_action_name() == "win.run"
     target = window.banner.get_action_target_value()
-    assert target is not None and target.get_string() == "sudo zark clean"
-
-
-def test_copy_toast(app: ZarkApp, windows: list[ZarkWindow]) -> None:
-    """Copying puts the command on the clipboard and says so."""
-    window = open_window(app, "app:connected")
-    windows.append(window)
-    app.window = window
-    app.copy("sudo zark backup --drive black")
-    settle()
-    assert any("Copied: sudo zark backup --drive black" in t for t in texts(window.toasts))
-    clipboard = window.get_display().get_clipboard()
-    assert clipboard.get_formats().contain_mime_type("text/plain;charset=utf-8")
+    assert target is not None and target.unpack() == ("clean", "")
 
 
 def test_sidebar_rows(app: ZarkApp, windows: list[ZarkWindow]) -> None:

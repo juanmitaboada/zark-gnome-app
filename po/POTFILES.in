@@ -1,14 +1,17 @@
 # Sources with translatable strings, for make pot.
 zark_app/about.py
-zark_app/main.py
+zark_app/commands.py
+zark_app/dialogs.py
 zark_app/model.py
+zark_app/operations.py
 zark_app/pages/drive.py
 zark_app/pages/exclusions.py
 zark_app/pages/overview.py
 zark_app/pages/pending.py
 zark_app/pages/run.py
 zark_app/pages/states.py
+zark_app/pages/terminal.py
+zark_app/runner.py
 zark_app/shortcuts.py
 zark_app/units.py
-zark_app/widgets.py
 zark_app/window.py

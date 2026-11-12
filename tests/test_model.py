@@ -63,21 +63,21 @@ def test_stale_without_timer() -> None:
     """Stale with the timer missing: Turn On... copies alerts install."""
     s = snap(zark_case("stale"))
     assert s.banner is not None and "hourly checks are off" in s.banner.text
-    assert s.banner.action is not None and s.banner.action.command == "sudo zark alerts install"
+    assert s.banner.action is not None and s.banner.action.op == "alerts-install"
 
 
 def test_stale_with_timer() -> None:
     """Stale with the timer installed: Refresh."""
     s = snap(app_case("stale-timer-on"))
     assert s.banner is not None and s.banner.action is not None
-    assert s.banner.action.command == "sudo zark status --refresh"
+    assert s.banner.action.op == "refresh"
 
 
 def test_orphan() -> None:
     """An orphan run: Clean Up... copies zark clean."""
     s = snap(zark_case("orphan"))
     assert s.banner is not None and "without cleaning up (backup to black)" in s.banner.text
-    assert s.banner.action is not None and s.banner.action.command == "sudo zark clean"
+    assert s.banner.action is not None and s.banner.action.op == "clean"
     assert s.run is None
 
 
@@ -128,7 +128,7 @@ def test_connected() -> None:
     s = snap(app_case("connected"))
     black = next(d for d in s.drives if d.name == "black")
     assert black.connected and black.backup is not None
-    assert black.backup.command == "sudo zark backup --drive black"
+    assert (black.backup.op, black.backup.arg) == ("backup", "black")
     assert s.pools_live and s.pools[0].pct == 89 and s.pools[0].level == "warning"
     assert s.installed_zark == "2.3.0-1"
     assert s.banner is None
@@ -138,7 +138,7 @@ def test_pending() -> None:
     """drive_pending becomes a pending drive, not a notice."""
     s = snap(app_case("pending"))
     assert [p.name for p in s.pending] == ["spare"]
-    assert s.pending[0].action.command == "sudo zark registry verify spare"
+    assert (s.pending[0].action.op, s.pending[0].action.arg) == ("verify", "spare")
     assert all(n.code != "drive_pending" for n in s.notices)
 
 
@@ -161,7 +161,7 @@ def test_mounted() -> None:
     """black imported with no run: mounted for browsing."""
     s = snap(app_case("mounted"))
     assert s.banner is not None and s.banner.text.startswith("black is mounted for browsing")
-    assert s.banner.action is not None and s.banner.action.command == "sudo zark umount"
+    assert s.banner.action is not None and (s.banner.action.op, s.banner.action.arg) == ("umount", "black")
     assert next(d for d in s.drives if d.name == "black").mounted
 
 
@@ -228,11 +228,12 @@ def test_snapshot_equal_within_a_minute() -> None:
     assert a == b
 
 
-def test_drive_menu_commands() -> None:
-    """The drive menu copies commands with the drive's own values."""
-    s = snap(app_case("connected"))
-    black = next(d for d in s.drives if d.name == "black")
-    commands = [a.command for part in model.drive_actions("black", black.doc, False) for a in part]
-    assert "sudo zark registry retention black window=30 max_age=off margin=10" in commands
-    assert "sudo zark registry forget black" in commands
-    assert all(c.startswith("sudo zark ") for c in commands)
+def test_drive_menu_operations() -> None:
+    """The drive menu names every operation the design lists, each known to
+    the command builder."""
+    from zark_app.commands import OPS  # pylint: disable=import-outside-toplevel
+
+    ops = [(a.op, a.arg) for part in model.drive_actions("black", False) for a in part]
+    assert ("retention", "black") in ops and ("forget", "black") in ops and ("mount", "black") in ops
+    assert ("umount", "black") in [(a.op, a.arg) for part in model.drive_actions("black", True) for a in part]
+    assert all(op in OPS for op, _arg in ops)

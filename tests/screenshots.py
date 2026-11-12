@@ -21,6 +21,9 @@ Each PNG is named ``<kind>-<case>[-<page>]-<width>-<style>.png``.
 """
 
 import sys
+import time
+from collections.abc import Callable
+from dataclasses import replace
 from pathlib import Path
 
 import gi
@@ -28,11 +31,14 @@ import gi
 gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
+gi.require_version("Vte", "3.91")
 
 # pylint: disable=wrong-import-position
 from gi.repository import Adw, GLib, Gtk  # noqa: E402
 
 from tests.harness import Case, any_case  # noqa: E402
+
+FAKE = str(Path(__file__).resolve().parent / "fake_pkexec.py")
 from zark_app.main import ZarkApp  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
 
@@ -112,6 +118,62 @@ def window_for(app: ZarkApp, case: Case, width: int, height: int) -> ZarkWindow:
     return window
 
 
+def wait(until: Callable[[], bool], seconds: float = 15) -> None:
+    """Run the main loop until ``until()`` or fail. A real loop: stepping
+    the context by hand starves VTE's low-priority input source while a
+    spinner animates."""
+    loop = GLib.MainLoop()
+    end = time.monotonic() + seconds
+
+    def check() -> bool:
+        if until() or time.monotonic() > end:
+            loop.quit()
+            return False
+        return True
+
+    GLib.timeout_add(20, check)
+    loop.run()
+    if not until():
+        raise AssertionError("timed out")
+
+
+def _run_shot(app: ZarkApp, out: Path, style: str, mode: str, name: str) -> int:
+    case = any_case("app:connected")
+    sources = replace(case.sources, pkexec_prefix=(sys.executable, "-I", FAKE, mode))
+    window = ZarkWindow(app, sources, case.loaded, watch=False)
+    app.window = window
+    window.set_default_size(1000, 760)
+    window.present()
+    settle()
+    window.ops.dispatch("backup", "black")
+    run = window.ops.run
+    if run is None:
+        raise RuntimeError("the run did not start")
+    if mode == "ask":
+        wait(lambda: "Continue?" in run.terminal.get_text_format(1))
+    else:
+        wait(lambda: not run.alive)
+    settle()
+    render(window, out / f"run-terminal-{name}-1000-{style}.png")
+    count = 1
+    if run.alive:
+        run.terminal.feed_child(list(b"no\n"))
+        wait(lambda: not run.alive)
+        settle()
+        render(window, out / f"run-terminal-{name}-ended-1000-{style}.png")
+        count += 1
+    window.destroy()
+    return count
+
+
+def run_shots(app: ZarkApp, out: Path, style: str) -> int:
+    """The run page with zark's terminal (A2), from tests/fake_pkexec.py:
+    a run that asks and ends refused; one that fails."""
+    return sum(
+        _run_shot(app, out, style, mode, name) for mode, name in (("ask", "asking"), ("exit:1", "failed"))
+    )
+
+
 def main(out: Path) -> int:
     """Render every shot."""
     out.mkdir(parents=True, exist_ok=True)
@@ -136,6 +198,7 @@ def main(out: Path) -> int:
                 render(window, out / f"{name.replace(':', '-')}{tail}-{width}-{style}.png")
                 window.destroy()
                 count += 1
+        count += run_shots(app, out, "dark" if dark else "light")
     print(f"{count} screenshots in {out}")
     return 0
 

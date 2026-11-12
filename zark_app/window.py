@@ -26,17 +26,26 @@ changes or a run ends. It writes nothing and takes no lock.
 
 from typing import Any
 
-from gi.repository import Adw, Gio, GLib, Gtk, Pango
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
 from zark_app import about, compat, model, shortcuts
 from zark_app.i18n import _
 from zark_app.live import Fetcher, Live
 from zark_app.model import Action, DriveView, Snapshot
-from zark_app.pages import drive as drive_page, exclusions, overview, pending, run, states
+from zark_app.operations import Operations
+from zark_app.pages import (
+    drive as drive_page,
+    exclusions,
+    overview,
+    pending,
+    run,
+    states,
+    terminal as terminal_page,
+)
 from zark_app.reader import Loaded
 from zark_app.sources import Sources
 from zark_app.units import fmt_since
-from zark_app.widgets import copy_button, copy_tooltip
+from zark_app.widgets import RUN_ACTION, action_button, run_target
 
 TICK_S = 5
 NARROW = "max-width: 600sp"
@@ -81,6 +90,10 @@ class ZarkWindow(Adw.ApplicationWindow):
         self._monitors: list[Gio.FileMonitor] = []
         self._rebuilding = False
         self._header_widgets: list[Gtk.Widget] = []
+        self._before_run = "overview"
+        self.run_page: terminal_page.RunPage | None = None
+        self.gone = False
+        self.ops = Operations(self)
         self._build_ui()
         self._add_actions()
         self.refresh(live=True)
@@ -125,6 +138,9 @@ class ZarkWindow(Adw.ApplicationWindow):
         breakpoint_ = Adw.Breakpoint.new(Adw.BreakpointCondition.parse(NARROW))
         breakpoint_.add_setter(self.split, "collapsed", True)
         self.add_breakpoint(breakpoint_)
+        self.connect("close-request", self._close_request)
+        self.connect("destroy", self._destroyed)
+        Adw.StyleManager.get_default().connect("notify::dark", lambda *_a: self.style_terminal())
 
     def _header(self, row: Gtk.ListBoxRow, before: Gtk.ListBoxRow | None) -> None:
         section = getattr(row, "section", "")
@@ -152,6 +168,19 @@ class ZarkWindow(Adw.ApplicationWindow):
         files = Gio.SimpleAction.new("open-files", GLib.VariantType.new("s"))
         files.connect("activate", lambda _a, v: self._open_files(v.get_string()))
         self.add_action(files)
+        # Every operation's button and menu item: (operation, argument).
+        self.run_action = Gio.SimpleAction.new("run", GLib.VariantType.new("(ss)"))
+        self.run_action.connect("activate", lambda _a, v: self.ops.dispatch(*v.unpack()))
+        self.add_action(self.run_action)
+        for name, callback in (
+            ("backup-selected", lambda *_a: self._selected_drive_op("backup")),
+            ("mount-selected", lambda *_a: self._selected_drive_op("mount")),
+            ("stop", lambda *_a: self.ops.ask_stop(closing=False)),
+            ("done", lambda *_a: self.ops.done()),
+        ):
+            action = Gio.SimpleAction.new(name, None)
+            action.connect("activate", callback)
+            self.add_action(action)
 
     # --- reading ---
 
@@ -175,6 +204,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         """Read both files and redraw what changed; ``live`` refetches the
         live figures first."""
         snap, self.last_good = model.build(self.loaded, self.sources, self.live, self.last_good)
+        self.ops.observe(snap)
         key = (snap.generated_at, snap.status_class)
         running = snap.run is not None
         changed = key != self._status_key or (self._was_running and not running)
@@ -195,6 +225,7 @@ class ZarkWindow(Adw.ApplicationWindow):
             self.snapshot = snap
             return
         self.snapshot = snap
+        self.run_action.set_enabled(not self.ops.busy())
         self._menu(snap)
         self._sidebar(snap)
         self._banner(snap.banner)
@@ -205,7 +236,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         for section in model.primary_actions(snap.timer_installed):
             part = Gio.Menu()
             for action in section:
-                part.append_item(_copy_item(action))
+                part.append_item(_run_item(action))
             menu.append_section(None, part)
         last = Gio.Menu()
         last.append(_("Keyboard Shortcuts"), "app.shortcuts")
@@ -218,7 +249,12 @@ class ZarkWindow(Adw.ApplicationWindow):
         while (row := self.list.get_row_at_index(0)) is not None:
             self.list.remove(row)
         rows: list[SidebarRow] = []
-        if snap.run is not None:
+        own = self.ops.run
+        if own is not None and (snap.run is None or snap.run.pid != own.pid):
+            sub = _("Stopping") if own.stopping else (_("Ended") if not own.alive else _("Running"))
+            icon = _spinner() if own.alive else _icon("utilities-terminal-symbolic")
+            rows.append(SidebarRow("run", "run", own.command.title, sub, icon))
+        elif snap.run is not None:
             sub = _("Waiting for your answer") if snap.run.waiting else _step(snap)
             rows.append(SidebarRow("run", "run", snap.run.title, sub, _spinner()))
         rows.append(SidebarRow("overview", "top", _("Overview"), "", _icon("view-grid-symbolic")))
@@ -252,13 +288,11 @@ class ZarkWindow(Adw.ApplicationWindow):
         self.banner.set_title(banner.text)
         if banner.action is not None:
             self.banner.set_button_label(banner.action.label)
-            self.banner.set_action_target_value(GLib.Variant("s", banner.action.command))
-            self.banner.set_action_name("app.copy")
-            self.banner.set_tooltip_text(copy_tooltip(banner.action))
+            self.banner.set_action_target_value(run_target(banner.action))
+            self.banner.set_action_name(RUN_ACTION)
         else:
             self.banner.set_action_name(None)
             self.banner.set_button_label(None)
-            self.banner.set_tooltip_text(None)
         self.banner.set_revealed(True)
 
     def _row_selected(self, _list: Gtk.ListBox, row: Gtk.ListBoxRow | None) -> None:
@@ -297,11 +331,14 @@ class ZarkWindow(Adw.ApplicationWindow):
         if snap is None:
             return
         title, subtitle, body, header = self._page(snap)
+        if self.ops.busy():
+            _busy_tooltips(body)
         self.title.set_title(title)
         self.title.set_subtitle(subtitle)
         self.content_page.set_title(title)
         self._set_header(header)
-        self.content_view.set_content(body)
+        if self.content_view.get_content() is not body:
+            self.content_view.set_content(body)
 
     # One return per page of the sidebar.
     def _page(  # pylint: disable=too-many-return-statements
@@ -317,24 +354,38 @@ class ZarkWindow(Adw.ApplicationWindow):
             else ""
         )
         key = self.selected
+        own = self.ops.run
+        if key == "run" and own is not None:
+            # The same page object for the whole run: the terminal stays in it.
+            if self.run_page is None or self.run_page.run is not own:
+                self.run_page = terminal_page.RunPage(own)
+            self.run_page.update(snap)
+            body = self.run_page.widget
+            mine = snap.run is not None and snap.run.pid == own.pid
+            return own.command.title, _step(snap) if mine else "", body, self._run_header()
         if key == "run" and snap.run is not None:
             return snap.run.title, _step(snap), run.build(snap), []
         if key.startswith("drive:"):
             d = next((x for x in snap.drives if x.name == key[6:]), None)
             if d is not None:
-                return d.name, d.line, drive_page.build(snap, d), self._drive_header(snap, d)
+                return d.name, d.line, drive_page.build(snap, d), self._drive_header(d)
         if key.startswith("pending:"):
             p = next((x for x in snap.pending if x.name == key[8:]), None)
             if p is not None:
                 return p.name, _("Not read back yet"), pending.build(p), []
         if key == "exclusions":
-            return _("Exclusions"), updated, exclusions.build(snap), [copy_button(exclusions.header_action())]
+            return (
+                _("Exclusions"),
+                updated,
+                exclusions.build(snap),
+                [action_button(exclusions.header_action())],
+            )
         return _("Overview"), updated, overview.build(snap, self.select), []
 
-    def _drive_header(self, snap: Snapshot, drive: DriveView) -> list[Gtk.Widget]:
-        busy = snap.run is not None
+    def _drive_header(self, drive: DriveView) -> list[Gtk.Widget]:
+        busy = self.ops.busy()
         if drive.backup is not None and not busy:
-            back = copy_button(drive.backup, suggested=True)
+            back = action_button(drive.backup, suggested=True)
         else:
             back = Gtk.Button(label=_("Back Up"), sensitive=False)
             back.set_tooltip_text(
@@ -345,10 +396,10 @@ class ZarkWindow(Adw.ApplicationWindow):
             part = Gio.Menu()
             part.append(_("Open in Files"), f"win.open-files('{drive.name}')")
             menu.append_section(None, part)
-        for section in model.drive_actions(drive.name, drive.doc, drive.mounted):
+        for section in model.drive_actions(drive.name, drive.mounted):
             part = Gio.Menu()
             for action in section:
-                part.append_item(_copy_item(action))
+                part.append_item(_run_item(action))
             menu.append_section(None, part)
         more = Gtk.MenuButton(icon_name="view-more-symbolic", menu_model=menu)
         more.set_tooltip_text(_("Drive Menu"))
@@ -358,6 +409,87 @@ class ZarkWindow(Adw.ApplicationWindow):
     def _open_files(self, pool: str) -> None:
         launcher = Gtk.FileLauncher.new(Gio.File.new_for_path(str(model.mount_dir(pool))))
         launcher.launch(self, None, None)
+
+    def _run_header(self) -> list[Gtk.Widget]:
+        own = self.ops.run
+        if own is None:
+            return []
+        if not own.alive:
+            done = Gtk.Button(label=_("Done"), action_name="win.done")
+            done.add_css_class("suggested-action")
+            return [done]
+        # Fable 7: once stopped, zark ignores further signals while it cleans up.
+        stop = Gtk.Button(label=_("Stopping...") if own.stopping else _("Stop..."), action_name="win.stop")
+        stop.set_sensitive(not own.stopping)
+        stop.add_css_class("destructive-action")
+        return [stop]
+
+    def _selected_drive_op(self, op: str) -> None:
+        """Ctrl+B and Ctrl+M on the selected drive's page."""
+        snap = self.snapshot
+        if snap is None or not self.selected.startswith("drive:"):
+            return
+        drive = next((d for d in snap.drives if d.name == self.selected[6:]), None)
+        if drive is None:
+            return
+        if op == "mount" and drive.mounted:
+            op = "umount"
+        self.ops.dispatch(op, drive.name)
+
+    def select_run(self) -> None:
+        """The run page, after a spawn."""
+        if self.selected != "run":
+            self._before_run = self.selected
+        self.selected = "run"
+        self.redraw()
+        self.split.set_show_content(True)
+
+    def leave_run(self) -> None:
+        """Back to the page before the run (Done, or a cancel)."""
+        self.run_page = None
+        self.selected = self._before_run
+        self.redraw()
+
+    def redraw(self) -> None:
+        """Rebuild the sidebar and the page now (the run changed state)."""
+        snap = self.snapshot
+        if snap is None:
+            return
+        self.run_action.set_enabled(not self.ops.busy())
+        self._sidebar(snap)
+        self._content()
+
+    def style_terminal(self) -> None:
+        """The terminal in the style's colours (design 6.2)."""
+        own = self.ops.run
+        if own is None:
+            return
+        dark = Adw.StyleManager.get_default().get_dark()
+        fg, bg = Gdk.RGBA(), Gdk.RGBA()
+        fg.parse("#ffffff" if dark else "#1e1e1e")
+        bg.parse("#1e1e1e" if dark else "#ffffff")
+        own.set_colors(fg, bg)
+
+    def _destroyed(self, _window: Gtk.Window) -> None:
+        self.gone = True
+
+    def say(self, text: str) -> None:
+        """Speak ``text`` to a screen reader (GTK 4.14's announce)."""
+        if text and not self.gone and hasattr(Gtk, "AccessibleAnnouncementPriority"):
+            # From a child: GTK 4.14's announce on the toplevel itself crashes
+            # (seen under Xvfb with no accessibility bus).
+            self.toasts.announce(text, Gtk.AccessibleAnnouncementPriority.MEDIUM)
+
+    def _close_request(self, _window: Gtk.Window) -> bool:
+        if self.ops.alive():
+            self.ops.ask_stop(closing=True)
+            return True
+        return False
+
+    def close_now(self) -> None:
+        """Close after a run stopped by "Stop and Close"."""
+        self.ops.run = None
+        self.destroy()
 
     def toast(self, text: str) -> None:
         """A short message over the content."""
@@ -373,10 +505,21 @@ class ZarkWindow(Adw.ApplicationWindow):
         shortcuts.show(self)
 
 
-def _copy_item(action: Action) -> Gio.MenuItem:
+def _run_item(action: Action) -> Gio.MenuItem:
     item = Gio.MenuItem.new(action.label, None)
-    item.set_action_and_target_value("app.copy", GLib.Variant("s", action.command))
+    item.set_action_and_target_value(RUN_ACTION, run_target(action))
     return item
+
+
+def _busy_tooltips(widget: Gtk.Widget) -> None:
+    """Design 3.1: while zark is busy, its actions are disabled, not hidden,
+    with "zark is busy"."""
+    if getattr(widget, "get_action_name", lambda: None)() == RUN_ACTION:
+        widget.set_tooltip_text(_("zark is busy"))
+    child = widget.get_first_child()
+    while child is not None:
+        _busy_tooltips(child)
+        child = child.get_next_sibling()
 
 
 def _icon(name: str) -> Gtk.Image:

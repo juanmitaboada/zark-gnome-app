@@ -21,13 +21,13 @@ import gi
 gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
+gi.require_version("Vte", "3.91")
 
 # pylint: disable=wrong-import-position
-from gi.repository import Adw, Gdk, Gio, GLib  # noqa: E402
+from gi.repository import Adw, Gio  # noqa: E402
 
 from zark_app import APP_ID, reader  # noqa: E402
 from zark_app.gio_runner import GioRunner  # noqa: E402
-from zark_app.i18n import _  # noqa: E402
 from zark_app.reader import Loaded  # noqa: E402
 from zark_app.sources import Sources  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
@@ -38,6 +38,8 @@ ACCELS = {
     "window.close": ["<Control>w"],
     "win.reload": ["<Control>r"],
     "win.back": ["<Alt>Left"],
+    "win.backup-selected": ["<Control>b"],
+    "win.mount-selected": ["<Control>m"],
 }
 
 
@@ -57,16 +59,14 @@ class ZarkApp(Adw.Application):
 
     def _startup(self, _app: Adw.Application) -> None:
         for name, callback in (
-            ("quit", lambda *_a: self.quit()),
+            ("quit", lambda *_a: self._quit()),
+            ("present", lambda *_a: self.window.present() if self.window else None),
             ("about", lambda *_a: self.window.show_about() if self.window else None),
             ("shortcuts", lambda *_a: self.window.show_shortcuts() if self.window else None),
         ):
             action = Gio.SimpleAction.new(name, None)
             action.connect("activate", callback)
             self.add_action(action)
-        copy = Gio.SimpleAction.new("copy", GLib.VariantType.new("s"))
-        copy.connect("activate", lambda _a, v: self.copy(v.get_string()))
-        self.add_action(copy)
         for action_name, accels in ACCELS.items():
             self.set_accels_for_action(action_name, accels)
         for n in range(1, 10):
@@ -78,15 +78,12 @@ class ZarkApp(Adw.Application):
             self.window = ZarkWindow(self, self.sources, loaded, watch=self.watch)
         self.window.present()
 
-    def copy(self, command: str) -> None:
-        """A1-2: a button copies its zark command; the toast says so."""
-        display = Gdk.Display.get_default()
-        if display is not None:
-            data = GLib.Bytes.new(command.encode("utf-8"))
-            provider = Gdk.ContentProvider.new_for_bytes("text/plain;charset=utf-8", data)
-            display.get_clipboard().set_content(provider)
-        if self.window is not None:
-            self.window.toast(_("Copied: {command} - run it in a terminal").format(command=command))
+    def _quit(self) -> None:
+        """Ctrl+Q: while the app's run lasts, the window asks first (design 3.3)."""
+        if self.window is not None and self.window.ops.alive():
+            self.window.close()
+            return
+        self.quit()
 
 
 def main(argv: Sequence[str] | None = None) -> int:

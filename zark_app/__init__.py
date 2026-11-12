@@ -11,14 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""zark's GNOME app: the state of zark's backups, read from its status files.
-
-A1 is read-only: it runs no zark command and needs no privilege. Where the
-design puts an action, its button copies the zark command to run in a
-terminal.
+"""zark's GNOME app: the state of zark's backups, read from its status
+files, and zark's operations, each one zark command run through pkexec in
+an embedded terminal (A2).
 """
 
 APP_ID = "com.juanmitaboada.Zark"
-VERSION = "1.0"
+VERSION = "1.1"
 WEBSITE = "https://github.com/juanmitaboada/zark-gnome-app"
 ISSUES = "https://github.com/juanmitaboada/zark-gnome-app/issues"

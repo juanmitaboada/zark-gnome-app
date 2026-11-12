@@ -45,10 +45,13 @@ DriveState = Literal["running", "waiting", "attention", "connected", "disconnect
 
 @dataclass(frozen=True)
 class Action:
-    """A button or menu item: in A1 it copies ``command``."""
+    """A button or menu item: it runs operation ``op`` (one of
+    :data:`zark_app.commands.OPS`) with ``arg``, a drive name, a dataset or
+    nothing. The argv is built and checked only when it runs."""
 
     label: str
-    command: str
+    op: str
+    arg: str = ""
 
 
 @dataclass(frozen=True)
@@ -125,6 +128,7 @@ class RunView:
     waiting_for: str
     check: Doc | None
     drive_space: Doc | None
+    pid: int | None = None
 
 
 @dataclass(frozen=True)
@@ -148,6 +152,7 @@ class Snapshot:
     banner: BannerView | None
     run: RunView | None
     exclusions: tuple[Exclusion, ...] | None
+    datasets: tuple[str, ...]
     installed_zark: str | None
     timer_installed: bool
     writer_version: str | None
@@ -222,40 +227,24 @@ def result_words(result: object) -> str:
     return _(RESULT_WORDS[result]) if isinstance(result, str) and result in RESULT_WORDS else str(result)
 
 
-# --- commands the buttons copy (A1-2) ---
+# --- the operations behind the buttons (design 3.1) ---
 
 
-def cmd(*words: str) -> str:
-    """A zark command line as a person types it."""
-    return " ".join(("sudo", "zark", *words))
-
-
-def drive_actions(name: str, doc: Doc, mounted: bool) -> list[list[Action]]:
-    """The drive menu's sections (design 3.2), each item with its command."""
-    retention = obj(doc.get("retention"))
-    window = retention.get("window_days")
-    max_age = retention.get("max_age_days")
-    margin = retention.get("margin_pct")
-    words = []
-    if isinstance(window, int):
-        words.append(f"window={window}")
-    if isinstance(max_age, int):
-        words.append(f"max_age={max_age if max_age > 0 else 'off'}")
-    if isinstance(margin, int):
-        words.append(f"margin={margin}")
-    browse = [Action(_("Unmount"), cmd("umount"))] if mounted else [Action(_("Browse Files"), cmd("mount"))]
+def drive_actions(name: str, mounted: bool) -> list[list[Action]]:
+    """The drive menu's sections (design 3.2)."""
+    browse = [Action(_("Unmount"), "umount", name)] if mounted else [Action(_("Browse Files"), "mount", name)]
     return [
         [
             *browse,
-            Action(_("Reclaim Space..."), cmd("prune")),
-            Action(_("Check Health..."), cmd("health")),
-            Action(_("Verify Drive..."), cmd("fullcheck")),
-            Action(_("Retention..."), cmd("registry", "retention", name, *words)),
+            Action(_("Reclaim Space..."), "prune", name),
+            Action(_("Check Health..."), "health", name),
+            Action(_("Verify Drive..."), "fullcheck", name),
+            Action(_("Retention..."), "retention", name),
         ],
         [
-            Action(_("Repair Entry"), cmd("registry", "fix", name)),
-            Action(_("Forget Drive..."), cmd("registry", "forget", name)),
-            Action(_("Erase Drive..."), cmd("purge")),
+            Action(_("Repair Entry"), "fix", name),
+            Action(_("Forget Drive..."), "forget", name),
+            Action(_("Erase Drive..."), "purge", name),
         ],
     ]
 
@@ -263,17 +252,17 @@ def drive_actions(name: str, doc: Doc, mounted: bool) -> list[list[Action]]:
 def primary_actions(timer_installed: bool) -> list[list[Action]]:
     """The primary menu's zark items (design 3.2)."""
     hourly = (
-        Action(_("Turn Off Hourly Checks"), cmd("alerts", "remove"))
+        Action(_("Turn Off Hourly Checks"), "alerts-remove")
         if timer_installed
-        else Action(_("Turn On Hourly Checks"), cmd("alerts", "install"))
+        else Action(_("Turn On Hourly Checks"), "alerts-install")
     )
     return [
         [
-            Action(_("Refresh Status"), cmd("status", "--refresh")),
-            Action(_("Look for Drives..."), cmd("explore")),
-            Action(_("Prepare a New Drive..."), cmd("prepare")),
+            Action(_("Refresh Status"), "refresh"),
+            Action(_("Look for Drives..."), "explore"),
+            Action(_("Prepare a New Drive..."), "prepare"),
         ],
-        [hourly, Action(_("Clean Up After a Stopped Run..."), cmd("clean"))],
+        [hourly, Action(_("Clean Up After a Stopped Run..."), "clean")],
     ]
 
 
@@ -384,7 +373,7 @@ def _drive_view(  # pylint: disable=too-many-locals
     age = fmt_since(last, ctx.now) if last is not None else None
     run = opt_obj(doc.get("last_run"))
     result = run.get("result") if run is not None else None
-    backup = Action(_("Back Up"), cmd("backup", "--drive", name))
+    backup = Action(_("Back Up"), "backup", name)
     if _running_drive(ctx) == name and ctx.progress is not None:
         waiting = ctx.progress.get("waiting_for_input") is True
         busy = _("Backing up now") if ctx.progress.get("command") == "backup" else _("In use by zark now")
@@ -437,6 +426,7 @@ def _run_view(ctx: _Ctx) -> RunView | None:
         waiting_for=str(p.get("waiting_for") or ""),
         check=opt_obj(p.get("check")),
         drive_space=_drive_space(p),
+        pid=_int(p.get("pid")),
     )
 
 
@@ -452,7 +442,7 @@ def _notices(status: Doc) -> tuple[NoticeView, ...]:
         code = str(n.get("code") or "")
         if code in NOTICES_ELSEWHERE:
             continue
-        action = Action(_("Reclaim Space..."), cmd("prune")) if code == "origin_residues" else None
+        action = Action(_("Reclaim Space..."), "prune") if code == "origin_residues" else None
         title = _(NOTICE_TITLES[code]) if code in NOTICE_TITLES else _("Notice")
         out.append(NoticeView(code, str(n.get("level") or "info"), title, str(n.get("text") or ""), action))
     return tuple(out)
@@ -467,7 +457,7 @@ def _pending(status: Doc) -> tuple[PendingView, ...]:
                 PendingView(
                     name,
                     str(n.get("text") or ""),
-                    Action(_("Finish Registration..."), cmd("registry", "verify", name)),
+                    Action(_("Finish Registration..."), "verify", name),
                 )
             )
     return tuple(out)
@@ -506,7 +496,7 @@ def _banner(  # pylint: disable=too-many-return-statements
     if status_class == "unreadable":
         return BannerView(
             _("The status file could not be read ({error})").format(error=status_error),
-            Action(_("Refresh"), cmd("status", "--refresh")),
+            Action(_("Refresh"), "refresh"),
         )
     if ctx.progress_class == "unknown":
         return BannerView(_("zark's progress file could not be read"))
@@ -517,7 +507,7 @@ def _banner(  # pylint: disable=too-many-return-statements
         what = _("{command} to {drive}").format(command=command, drive=name) if name else command
         return BannerView(
             _("A zark run ended without cleaning up ({what})").format(what=what),
-            Action(_("Clean Up..."), cmd("clean")),
+            Action(_("Clean Up..."), "clean"),
         )
     if _running(ctx) and ctx.progress is not None:
         drive = ctx.progress.get("drive")
@@ -535,7 +525,7 @@ def _banner(  # pylint: disable=too-many-return-statements
                     "{drive} is mounted for browsing: "
                     "kernel, GRUB and ZFS updates are blocked until it is unmounted"
                 ).format(drive=d.name),
-                Action(_("Unmount"), cmd("umount")),
+                Action(_("Unmount"), "umount", d.name),
             )
     if status_class == "stale" and ctx.status is not None:
         generated = ctx.mod.parse_timestamp(ctx.status.get("generated_at"))
@@ -543,11 +533,9 @@ def _banner(  # pylint: disable=too-many-return-statements
         if not ctx.sources.timer_path.exists():
             return BannerView(
                 _("Status from {age}: the hourly checks are off").format(age=age),
-                Action(_("Turn On..."), cmd("alerts", "install")),
+                Action(_("Turn On..."), "alerts-install"),
             )
-        return BannerView(
-            _("Status from {age}").format(age=age), Action(_("Refresh"), cmd("status", "--refresh"))
-        )
+        return BannerView(_("Status from {age}").format(age=age), Action(_("Refresh"), "refresh"))
     if ctx.status is not None:
         return _foreign_banner(ctx.status, ctx.live.zark_version)
     return None
@@ -622,6 +610,7 @@ def build(  # pylint: disable=too-many-locals
             banner=_banner(ctx, sc, status.error, drives),
             run=_run_view(ctx),
             exclusions=live.exclusions,
+            datasets=tuple(sorted(live.used)) if live.used is not None else (),
             installed_zark=installed,
             timer_installed=timer,
             writer_version=doc.get("zark_version") if isinstance(doc.get("zark_version"), str) else None,
@@ -651,6 +640,7 @@ def _empty(page: PageState, detail: str, now: datetime, installed: str | None, t
         banner=None,
         run=None,
         exclusions=None,
+        datasets=(),
         installed_zark=installed,
         timer_installed=timer,
         writer_version=None,

@@ -98,8 +98,11 @@ def _at(text: str) -> datetime:
 def _by_id(tmp: Path, names: Sequence[str]) -> Path:
     by_id = tmp / "by-id"
     by_id.mkdir()
+    disk = tmp / "disk"
+    disk.touch()
     for name in names:
-        (by_id / name).touch()
+        # Links, as udev makes them; the commands' checks want a link.
+        (by_id / name).symlink_to(disk)
     return by_id
 
 

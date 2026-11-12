@@ -22,7 +22,7 @@ from zark_app.i18n import _
 from zark_app.model import DriveView, PendingView, PoolView, Snapshot, size_line
 from zark_app.pages import states
 from zark_app.units import fmt_since
-from zark_app.widgets import copy_button, level_bar, level_icon
+from zark_app.widgets import action_button, level_bar, level_icon
 
 Select = Callable[[str], None]
 
@@ -85,7 +85,7 @@ def drive_row(drive: DriveView, select: Select, busy: bool) -> Adw.ActionRow:
     row = Adw.ActionRow(title=drive.name, subtitle=drive.line, activatable=True)
     row.add_prefix(drive_icon(drive))
     if drive.backup is not None and not busy:
-        row.add_suffix(copy_button(drive.backup, suggested=True))
+        row.add_suffix(action_button(drive.backup, suggested=True))
     row.add_suffix(Gtk.Image.new_from_icon_name("go-next-symbolic"))
     row.connect("activated", lambda _r: select(f"drive:{drive.name}"))
     return row
@@ -97,7 +97,7 @@ def pending_row(pending: PendingView, select: Select) -> Adw.ActionRow:
         title=pending.name, subtitle=_("Prepared, not read back yet (apt was running)"), activatable=True
     )
     row.add_prefix(Gtk.Image.new_from_icon_name("document-open-recent-symbolic"))
-    row.add_suffix(copy_button(pending.action))
+    row.add_suffix(action_button(pending.action))
     row.connect("activated", lambda _r: select(f"pending:{pending.name}"))
     return row
 
@@ -122,7 +122,7 @@ def _notices(snapshot: Snapshot) -> Adw.PreferencesGroup | None:
         row = Adw.ActionRow(title=notice.title, subtitle=notice.text, subtitle_selectable=True)
         row.add_prefix(level_icon(notice.level))
         if notice.action is not None:
-            row.add_suffix(copy_button(notice.action))
+            row.add_suffix(action_button(notice.action))
         group.add(row)
     return group
 

@@ -39,6 +39,21 @@ SECTIONS: list[tuple[str, list[tuple[str, str]]]] = [
             ("<Alt>Left", N_("Back, in the Narrow Layout")),
         ],
     ),
+    (
+        N_("Backup Drives"),
+        [
+            ("<Control>b", N_("Back Up the Selected Drive")),
+            ("<Control>m", N_("Browse Files or Unmount the Selected Drive")),
+        ],
+    ),
+    (
+        N_("Terminal"),
+        [
+            ("<Control>c", N_("Stop zark, after a question")),
+            ("<Control><Shift>c", N_("Copy")),
+            ("<Control><Shift>v", N_("Paste")),
+        ],
+    ),
 ]
 
 

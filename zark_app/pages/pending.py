@@ -18,7 +18,7 @@ from gi.repository import Adw, Gtk
 
 from zark_app.i18n import _
 from zark_app.model import PendingView
-from zark_app.widgets import command_label, copy_button, property_row
+from zark_app.widgets import action_button, property_row
 
 
 def build(pending: PendingView) -> Gtk.Widget:
@@ -29,15 +29,8 @@ def build(pending: PendingView) -> Gtk.Widget:
         description=_("zark prepared this drive while apt was running, so it could not read it back"),
     )
     group.add(property_row(_("zark says"), pending.text, subtitle_selectable=True))
-    row = Adw.ActionRow(title=_("Finish the registration in a terminal"))
-    row.add_suffix(copy_button(pending.action, suggested=True))
+    row = Adw.ActionRow(title=_("Read it back and register it"))
+    row.add_suffix(action_button(pending.action, suggested=True))
     group.add(row)
-    command = Adw.PreferencesRow(activatable=False)
-    label = command_label(pending.action.command)
-    label.set_margin_top(12)
-    label.set_margin_bottom(12)
-    label.set_margin_start(12)
-    command.set_child(label)
-    group.add(command)
     page.add(group)
     return page
