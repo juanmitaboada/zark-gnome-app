@@ -17,9 +17,9 @@
       running in a terminal, with its progress.
     </p>
     <p>
-      It reads the status files the installed zark writes and needs no
-      administrator password. This version changes nothing: where an action
-      belongs, its button copies the zark command to run in a terminal.
+      It runs zark's operations: each is one zark command, run with the
+      administrator's password through pkexec, in a terminal inside the
+      window where zark asks its questions as it always does.
     </p>
   </description>
   <launchable type="desktop-id">com.juanmitaboada.Zark.desktop</launchable>
@@ -36,6 +36,15 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.1" date="2026-11-12">
+      <description>
+        <p>
+          Operations: back up, reclaim space, prepare, check, erase and
+          register drives, exclusions and retention, each run by zark in a
+          terminal inside the window.
+        </p>
+      </description>
+    </release>
     <release version="1.0" date="2026-11-12">
       <description>
         <p>

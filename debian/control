@@ -23,13 +23,17 @@ Depends: ${misc:Depends},
          gir1.2-glib-2.0,
          gir1.2-gtk-4.0,
          gir1.2-adw-1 (>= 1.5),
+         gir1.2-vte-3.91,
+         pkexec,
          librsvg2-common
-Description: GNOME app showing the state of zark backups
+Description: GNOME app for zark backups
  Shows how zark's backups stand: how full the system pools are, each
  backup drive with its last backup, its space and its backup points by
- month, the datasets left out of backups, and a backup running in a
- terminal, with its progress.
+ month, the datasets left out of backups, and a running backup with its
+ progress.
  .
- It reads the status files the installed zark writes and needs no
- administrator password. This version changes nothing: where an action
- belongs, its button copies the zark command to run in a terminal.
+ It runs zark's operations (back up, reclaim space, prepare, check, erase
+ and register drives, exclusions, retention): each is one zark command
+ run through pkexec, with the administrator's password, in a terminal
+ inside the window where zark asks its questions as it always does. The
+ polkit policy gives each command its own action.

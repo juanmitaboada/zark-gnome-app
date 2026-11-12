@@ -1,4 +1,4 @@
-.TH ZARK-GNOME-APP 1 "" "zark-gnome-app 1.0" "User Commands"
+.TH ZARK-GNOME-APP 1 "" "zark-gnome-app 1.1" "User Commands"
 .SH NAME
 zark-gnome-app \- GNOME app showing the state of zark backups
 .SH SYNOPSIS
@@ -24,12 +24,24 @@ and the output of
 and
 .BR "zfs get" ,
 without privileges. It never writes zark's files, takes zark's lock or
-imports a pool. Where an action belongs, its button copies the zark command
-to run in a terminal.
+imports a pool itself.
+.PP
+Each operation runs one zark command as
+.B pkexec /usr/share/zark/zark
+.IR "command ..." ,
+under the polkit action of that command
+.RI ( /usr/share/polkit-1/actions/com.juanmitaboada.Zark.policy ),
+in a terminal inside the window where zark asks its questions.
 .SH KEYS
 .TP
 .B Ctrl+R
 Read the files and the live figures again.
+.TP
+.B Ctrl+B
+Back up the selected drive.
+.TP
+.B Ctrl+M
+Browse the selected drive's files, or unmount it.
 .TP
 .B Ctrl+1 ... Ctrl+9
 The Overview, then the backup drives in order.

@@ -12,15 +12,23 @@ system pools are, each backup drive with its last backup, its space and its
 backup points by month, the datasets left out of backups, and a backup
 running in a terminal, with its progress.
 
-This version is read-only. It reads the two status files the installed
+It reads the two status files the installed
 zark writes (`/run/zark/progress.json` and `/var/lib/zark/status.json`,
 described in zark's
 [`docs/STATUS-FILES.md`](https://github.com/juanmitaboada/zark/blob/main/docs/STATUS-FILES.md))
 through zark's own reader, and the live figures of `zpool list`, `zfs list`
 and `zfs get`, all without privileges. It never writes zark's files, never
-takes its lock and never imports a pool. Where an action belongs, its
-button copies the zark command to run in a terminal (`sudo zark backup
---drive black`, say); running zark from the app comes in a later version.
+takes its lock and never imports a pool itself.
+
+Each operation (back up, reclaim space, prepare, check, erase or register a
+drive, exclusions, retention) runs one zark command,
+`pkexec /usr/share/zark/zark <command> ...`, under its own polkit action
+(`com.juanmitaboada.Zark.<command>`), with the administrator's password:
+kept five minutes per command, asked every time for prepare, purge and
+health. zark runs in a terminal inside the window and asks its questions
+there as it always does. On Ubuntu 24.04 the terminal is not read by screen
+readers (VTE 0.76 has no GTK 4 accessibility); the app's own announcements
+still are.
 
 What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 
@@ -48,8 +56,8 @@ are welcome as pull requests.
 ## Development
 
 ```bash
-sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 xvfb xauth \
-    librsvg2-common python3-pytest
+sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 \
+    xvfb xauth librsvg2-common python3-pytest
 git clone https://github.com/juanmitaboada/zark ../zark
 make test               # the suite under Xvfb, from the fixtures
 make screenshots        # one PNG per state, in build/screenshots
@@ -61,7 +69,8 @@ sudo make deb-all       # the .deb in a clean chroot of each series
 
 The tests read zark's status file fixtures (`tests/fixtures/zark-2.3.0/`,
 copied unchanged from zark's tag with a sha256 manifest) and the app's own
-(`tests/fixtures/app/`); no test runs `zfs`, `zpool` or a command of zark's.
+(`tests/fixtures/app/`); no test runs `zfs`, `zpool`, pkexec or a command of
+zark's: `tests/fake_pkexec.py` stands in for pkexec in the terminal tests.
 
 ## License
 

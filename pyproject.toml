@@ -4,7 +4,7 @@
 
 [project]
 name = "zark-gnome-app"
-version = "1.0"
+version = "1.1"
 requires-python = ">=3.12"
 description = "GNOME app for zark: the state of ZFS backups and backup drives"
 license = "Apache-2.0"

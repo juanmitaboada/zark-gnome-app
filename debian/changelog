@@ -1,3 +1,13 @@
+zark-gnome-app (1.1-1) stable; urgency=medium
+
+  * Operations (A2): every action of the design runs one zark command
+    through pkexec under its own polkit action, in an embedded terminal;
+    Stop, Close and Quit during a run ask first; logout and suspend are
+    inhibited while the app's run lasts. Depends on pkexec and
+    gir1.2-vte-3.91.
+
+ -- Juanmi Taboada <juanmi@juanmitaboada.com>  Thu, 12 Nov 2026 17:00:00 +0100
+
 zark-gnome-app (1.0-1) stable; urgency=medium
 
   * First version (A1): the state of zark's backups, read-only, from the
