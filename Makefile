@@ -13,7 +13,7 @@ SERIES ?= noble resolute stonking
 MIRROR ?= http://archive.ubuntu.com/ubuntu
 POT := po/$(PKG).pot
 
-.PHONY: test screenshots lint venv pot run dist deb deb-series deb-all release-guard deb-ppa clean
+.PHONY: test screenshots lint venv pot run dist deb deb-check deb-series deb-all release-guard deb-ppa clean
 
 ## test: the suite under Xvfb, on the system's Python and PyGObject
 test:
@@ -78,6 +78,13 @@ deb: dist
 	lintian --suppress-tags $(LINTIAN_SUPPRESS_TAGS) "$$tmp"/$(PKG)_$(VERSION)-*.dsc; \
 	cp "$$tmp"/$(PKG)_$(VERSION)-*_all.deb ..
 	@echo "  Built: $$(ls -1t ../$(PKG)_$(VERSION)-*_all.deb | head -1)"
+	@$(MAKE) --no-print-directory deb-check DEB="$$(ls -1t ../$(PKG)_$(VERSION)-*_all.deb | head -1)"
+
+## deb-check: the launcher in a built .deb (DEB=...) kept its isolated-mode shebang
+deb-check:
+	@line=$$(dpkg-deb --fsys-tarfile "$(DEB)" | tar -xOf - ./usr/share/$(PKG)/$(PKG) | head -n 1); \
+	test "$$line" = '#!/usr/bin/python3 -I' || { echo "  $(DEB): the launcher's shebang is '$$line'"; exit 1; }; \
+	echo "  Shebang: $$line"
 
 ## deb-all: the .deb built in a clean chroot of each series (mmdebstrap, as root), into build/deb/<series>
 deb-all: dist
@@ -94,7 +101,8 @@ deb-series:
 	git ls-files -z debian | tar --null -T - -cf - | tar -xf - -C $$root/build/src; \
 	chroot $$root sh -c 'cd /build/src && dpkg-source -b . >/dev/null && cd /build && dpkg-source -x $(PKG)_$(VERSION)-*.dsc pkg >/dev/null && cd pkg && dpkg-buildpackage -us -uc -b >/build/build.log 2>&1 || { tail -40 /build/build.log; exit 1; }; cd /build && lintian --suppress-tags $(LINTIAN_SUPPRESS_TAGS) $(PKG)_$(VERSION)-*_all.deb $(PKG)_$(VERSION)-*.dsc'; \
 	cp $$root/build/$(PKG)_$(VERSION)-*_all.deb $$out/; \
-	echo "  $(S): $$(ls $$out)"
+	echo "  $(S): $$(ls $$out)"; \
+	$(MAKE) --no-print-directory deb-check DEB="$$(ls -1t $$out/$(PKG)_$(VERSION)-*_all.deb | head -1)"
 
 ## release-guard: refuse a tree that is dirty, not at a signed tag v$(VERSION), or whose changelog is not this version's
 release-guard:

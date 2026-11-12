@@ -13,8 +13,11 @@ override_dh_auto_test:
 	desktop-file-validate data/com.juanmitaboada.Zark.desktop
 	appstreamcli validate --no-net data/com.juanmitaboada.Zark.metainfo.xml
 
+# The launcher runs Python in isolated mode (-I); dh_python3 would rewrite
+# its shebang to a bare /usr/bin/python3, so the rewrite is off. The
+# shebang still fills ${python3:Depends}.
 override_dh_python3:
-	dh_python3 /usr/share/zark-gnome-app
+	dh_python3 --no-shebang-rewrite /usr/share/zark-gnome-app
 
 override_dh_installchangelogs:
 	dh_installchangelogs CHANGELOG.md
