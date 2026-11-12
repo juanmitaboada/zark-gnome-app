@@ -19,6 +19,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
+from zark_app.commands import PKEXEC_PREFIX, ZARK
 from zark_app.reader import ZARK_DIR
 
 TIMER_PATH = Path("/etc/systemd/system/zark-status.timer")
@@ -61,3 +62,6 @@ class Sources:  # pylint: disable=too-many-instance-attributes
     zark_dir: Path = ZARK_DIR
     now: Callable[[], datetime] = _now
     alive: Callable[[Mapping[str, Any]], bool] | None = field(default=None)
+    # The privileged launch; tests put a fake program here.
+    pkexec_prefix: tuple[str, ...] = PKEXEC_PREFIX
+    zark_path: str = ZARK

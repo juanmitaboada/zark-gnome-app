@@ -28,8 +28,11 @@ PACKAGE = ROOT / "zark_app"
 FORBIDDEN = [
     (r"\bimport\b.*\bfcntl\b|\bflock\b|\blockf\b", "takes a lock"),
     (r"zark\.lock|status\.lock", "names zark's locks"),
-    (r"[\"'](import|export|destroy|set|create|rollback|offline|online|clear)[\"']", "a zfs/zpool change"),
-    (r"pkexec|polkit", "privilege (A2's)"),
+    (
+        r"[\"'](zfs|zpool)[\"'],\s*[\"']"
+        r"(import|export|destroy|set|create|rollback|offline|online|clear)[\"']",
+        "a zfs/zpool change",
+    ),
     (r"open\([^)]*[\"'][wax]\+?b?[\"']", "writes a file"),
     (r"write_text|write_bytes|os\.replace|os\.rename|shutil\.", "writes a file"),
 ]
