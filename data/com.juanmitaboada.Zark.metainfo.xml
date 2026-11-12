@@ -36,6 +36,16 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.1.1" date="2026-11-12">
+      <description>
+        <p>
+          Fixes: the page keeps its place when the window redraws, the
+          progress shows a percentage of the data only, backup points show
+          local time, and a drive mounted for browsing offers Open and
+          Unmount.
+        </p>
+      </description>
+    </release>
     <release version="1.1" date="2026-11-12">
       <description>
         <p>

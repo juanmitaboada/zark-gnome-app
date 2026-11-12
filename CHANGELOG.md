@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.1] - unreleased
+
+Fixes from the first eli checklist.
+
+- The launcher runs Python in isolated mode (`-I`) as installed too:
+  dh-python 7 (resolute, stonking) no longer rewrites its shebang, and
+  `make deb` checks it in each built package.
+- A page keeps its scroll position and its open months when the window
+  redraws it (at least once a minute), instead of jumping to its top.
+- The run's percentage comes from the bytes sent only. Before data moves
+  the bar pulses and the step shows as "Step N of 8"; once the data is
+  sent the bar is full ("data sent"), as in the extension.
+- Backup points show their local time, with their name (which holds UTC)
+  beside it, on the drive page and in "Last run".
+- A drive mounted for browsing has Open in Files and Unmount on its row
+  and page, no Back Up, and only those two in its menu. A run's title
+  names its drive ("Mounting backup2").
+
 ## [1.1] - unreleased
 
 Operations, for zark 2.3.0 and later.

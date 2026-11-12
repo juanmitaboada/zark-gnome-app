@@ -1,3 +1,13 @@
+zark-gnome-app (1.1.1-1) stable; urgency=medium
+
+  * Fixes from the first eli checklist: the launcher keeps python3 -I in
+    the package; a redraw keeps the page's scroll and open months; the
+    run's percentage comes from bytes only and is complete once the data
+    is sent; backup points in local time; a drive mounted for browsing
+    offers Open and Unmount and no Back Up.
+
+ -- Juanmi Taboada <juanmi@juanmitaboada.com>  Thu, 12 Nov 2026 18:41:13 +0100
+
 zark-gnome-app (1.1-1) stable; urgency=medium
 
   * Operations (A2): every action of the design runs one zark command
