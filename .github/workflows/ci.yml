@@ -111,9 +111,11 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           apt-get update
+          # build-essential: dpkg-checkbuilddeps requires it for any binary
+          # build, and the distribution images do not carry it.
           apt-get install -y --no-install-recommends \
-              git ca-certificates make python3 debhelper dh-python devscripts lintian \
-              desktop-file-utils appstream
+              git ca-certificates make python3 build-essential fakeroot \
+              debhelper dh-python devscripts lintian desktop-file-utils appstream
 
       - uses: actions/checkout@v6
 
