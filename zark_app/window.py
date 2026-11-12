@@ -45,9 +45,17 @@ from zark_app.pages import (
 from zark_app.reader import Loaded
 from zark_app.sources import Sources
 from zark_app.units import fmt_since
-from zark_app.widgets import RUN_ACTION, action_button, restore_view_state, run_target, view_state
+from zark_app.widgets import (
+    RUN_ACTION,
+    action_button,
+    mounted_buttons,
+    restore_view_state,
+    run_target,
+    view_state,
+)
 
 TICK_S = 5
+UNAVAILABLE_ACTION = "win.unavailable"
 NARROW = "max-width: 600sp"
 
 
@@ -171,6 +179,10 @@ class ZarkWindow(Adw.ApplicationWindow):
         files.connect("activate", lambda _a, v: self._open_files(v.get_string()))
         self.add_action(files)
         # Every operation's button and menu item: (operation, argument).
+        # Menu items shown but not offered (a drive being browsed): always off.
+        unavailable = Gio.SimpleAction.new(UNAVAILABLE_ACTION[4:], GLib.VariantType.new("(ss)"))
+        unavailable.set_enabled(False)
+        self.add_action(unavailable)
         self.run_action = Gio.SimpleAction.new("run", GLib.VariantType.new("(ss)"))
         self.run_action.connect("activate", lambda _a, v: self.ops.dispatch(*v.unpack()))
         self.add_action(self.run_action)
@@ -372,7 +384,9 @@ class ZarkWindow(Adw.ApplicationWindow):
             self.run_page.update(snap)
             body = self.run_page.widget
             mine = snap.run is not None and snap.run.pid == own.pid
-            return own.command.title, _step(snap) if mine else "", body, self._run_header()
+            # zark names the drive in progress.json, which may not be the one clicked.
+            title = snap.run.title if mine and snap.run is not None and snap.run.drive else own.command.title
+            return title, _step(snap) if mine else "", body, self._run_header()
         if key == "run" and snap.run is not None:
             return snap.run.title, _step(snap), run.build(snap), []
         if key.startswith("drive:"):
@@ -398,9 +412,13 @@ class ZarkWindow(Adw.ApplicationWindow):
             back = action_button(drive.backup, suggested=True)
         else:
             back = Gtk.Button(label=_("Back Up"), sensitive=False)
-            back.set_tooltip_text(
-                _("zark is busy") if busy else _("Connect {drive} to back up").format(drive=drive.name)
-            )
+            if busy:
+                reason = _("zark is busy")
+            elif drive.mounted:
+                reason = _("Unmount {drive} first").format(drive=drive.name)
+            else:
+                reason = _("Connect {drive} to back up").format(drive=drive.name)
+            back.set_tooltip_text(reason)
         menu = Gio.Menu()
         if drive.mounted:
             part = Gio.Menu()
@@ -409,12 +427,17 @@ class ZarkWindow(Adw.ApplicationWindow):
         for section in model.drive_actions(drive.name, drive.mounted):
             part = Gio.Menu()
             for action in section:
-                part.append_item(_run_item(action))
+                item = _run_item(action)
+                if drive.mounted and action.op != "umount":
+                    # A1E-6 (D3-5): only Open and Unmount while it is browsed.
+                    item.set_action_and_target_value(UNAVAILABLE_ACTION, run_target(action))
+                part.append_item(item)
             menu.append_section(None, part)
         more = Gtk.MenuButton(icon_name="view-more-symbolic", menu_model=menu)
         more.set_tooltip_text(_("Drive Menu"))
         more.update_property([Gtk.AccessibleProperty.LABEL], [_("Drive Menu")])
-        return [back, more]
+        extra: list[Gtk.Widget] = list(mounted_buttons(drive.name)) if drive.mounted else []
+        return [back, *extra, more]
 
     def _open_files(self, pool: str) -> None:
         launcher = Gtk.FileLauncher.new(Gio.File.new_for_path(str(model.mount_dir(pool))))
@@ -444,6 +467,9 @@ class ZarkWindow(Adw.ApplicationWindow):
             return
         if op == "mount" and drive.mounted:
             op = "umount"
+        if op == "backup" and drive.mounted:
+            self.toast(_("Unmount {drive} first").format(drive=drive.name))
+            return
         self.ops.dispatch(op, drive.name)
 
     def select_run(self) -> None:

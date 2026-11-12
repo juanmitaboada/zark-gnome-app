@@ -262,3 +262,22 @@ def test_sent_after_this_runs_transfer() -> None:
     fresh = model.with_sent(snap(app_case("running-after-transfer")), set())
     assert fresh.run is not None and not fresh.run.sent
     assert model.progress_figure(fresh.run) == (None, "")
+
+
+def test_mounted_drive_offers_no_backup() -> None:
+    """A1E-6: a drive mounted for browsing has no Back Up and says why."""
+    s = snap(app_case("mounted"))
+    black = next(d for d in s.drives if d.name == "black")
+    assert black.mounted and black.backup is None
+    assert black.line == "Mounted for browsing" and black.short == "Mounted"
+
+
+def test_run_titles_name_the_drive() -> None:
+    """A1E-6: a drive command's title names its drive once zark does."""
+    assert model.run_title("mount", "backup2") == "Mounting backup2"
+    assert model.run_title("umount", "backup2") == "Unmounting backup2"
+    assert model.run_title("health", "backup2") == "Checking the Health of backup2"
+    assert model.run_title("backup", "black") == "Backing Up to black"
+    assert model.run_title("mount", None) == "Mounting a Drive"
+    assert model.run_title("explore", "black") == "Looking for Drives"
+    assert model.run_title("something-new", "black") == "zark Is Busy"

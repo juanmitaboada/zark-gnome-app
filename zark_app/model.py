@@ -183,6 +183,19 @@ COMMAND_TITLES = {
     "selftest": N_("Testing zark"),
 }
 
+# A run on one drive, once progress.json names it (A1E-6): one string per
+# command, for translation.
+DRIVE_TITLES = {
+    "backup": N_("Backing Up to {drive}"),
+    "prune": N_("Reclaiming Space on {drive}"),
+    "prepare": N_("Preparing {drive}"),
+    "purge": N_("Erasing {drive}"),
+    "health": N_("Checking the Health of {drive}"),
+    "fullcheck": N_("Verifying {drive}"),
+    "mount": N_("Mounting {drive}"),
+    "umount": N_("Unmounting {drive}"),
+}
+
 RESULT_WORDS = {
     "completed": N_("Completed"),
     "incomplete": N_("Incomplete"),
@@ -214,14 +227,13 @@ NOTICES_ELSEWHERE = ("capacity", "drive_pending")
 
 
 def run_title(command: str, drive: str | None) -> str:
-    """``Backing Up to black``; a command the app does not know is the
-    contract's generic case."""
+    """``Backing Up to black``, ``Mounting black``; a command the app does
+    not know is the contract's generic case."""
     if command not in COMMAND_TITLES:
         return _("zark Is Busy")
-    title = _(COMMAND_TITLES[command])
-    return (
-        _("{title} to {drive}").format(title=title, drive=drive) if drive and command == "backup" else title
-    )
+    if drive and command in DRIVE_TITLES:
+        return _(DRIVE_TITLES[command]).format(drive=drive)
+    return _(COMMAND_TITLES[command])
 
 
 def result_words(result: object) -> str:
@@ -382,6 +394,10 @@ def _drive_view(  # pylint: disable=too-many-locals
         line = _("Waiting for your answer") if waiting else busy
         state: DriveState = "waiting" if waiting else "running"
         return DriveView(name, connected, state, line, line, name in mounted, doc)
+    if name in mounted:
+        # Browsed: zark refuses or would run on the pool being browsed (A1E-6).
+        line = _("Mounted for browsing")
+        return DriveView(name, connected, "connected", line, _("Mounted"), True, doc)
     if result in ctx.mod.ATTENTION_RESULTS and run is not None:
         ended = ctx.mod.parse_timestamp(run.get("ended_at"))
         words = {

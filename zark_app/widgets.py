@@ -19,6 +19,7 @@ from pathlib import Path
 
 from gi.repository import Adw, Gdk, GLib, Gtk
 
+from zark_app.i18n import _
 from zark_app.model import Action
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -47,6 +48,22 @@ def action_button(action: Action, suggested: bool = False) -> Gtk.Button:
     if suggested:
         button.add_css_class("suggested-action")
     return button
+
+
+def mounted_buttons(drive: str) -> list[Gtk.Button]:
+    """A drive mounted for browsing (A1E-6): Open in Files and Unmount, as
+    icon buttons with their names as tooltip and accessible label."""
+    open_ = Gtk.Button(icon_name="folder-open-symbolic", valign=Gtk.Align.CENTER)
+    open_.set_action_target_value(GLib.Variant("s", drive))
+    open_.set_action_name("win.open-files")
+    unmount = Gtk.Button(icon_name="media-eject-symbolic", valign=Gtk.Align.CENTER)
+    unmount.set_action_target_value(run_target(Action(_("Unmount"), "umount", drive)))
+    unmount.set_action_name(RUN_ACTION)
+    for button, label in ((open_, _("Open in Files")), (unmount, _("Unmount"))):
+        button.add_css_class("flat")
+        button.set_tooltip_text(label)
+        button.update_property([Gtk.AccessibleProperty.LABEL], [label])
+    return [open_, unmount]
 
 
 def property_row(title: str, value: str, subtitle_selectable: bool = False) -> Adw.ActionRow:

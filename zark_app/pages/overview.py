@@ -22,7 +22,7 @@ from zark_app.i18n import _
 from zark_app.model import DriveView, PendingView, PoolView, Snapshot, size_line
 from zark_app.pages import states
 from zark_app.units import fmt_since
-from zark_app.widgets import action_button, level_bar, level_icon
+from zark_app.widgets import action_button, level_bar, level_icon, mounted_buttons
 
 Select = Callable[[str], None]
 
@@ -84,7 +84,10 @@ def drive_row(drive: DriveView, select: Select, busy: bool) -> Adw.ActionRow:
     """A drive's row: icon, name, state line, Back Up or a chevron."""
     row = Adw.ActionRow(title=drive.name, subtitle=drive.line, activatable=True)
     row.add_prefix(drive_icon(drive))
-    if drive.backup is not None and not busy:
+    if drive.mounted:
+        for button in mounted_buttons(drive.name):
+            row.add_suffix(button)
+    elif drive.backup is not None and not busy:
         row.add_suffix(action_button(drive.backup, suggested=True))
     row.add_suffix(Gtk.Image.new_from_icon_name("go-next-symbolic"))
     row.connect("activated", lambda _r: select(f"drive:{drive.name}"))

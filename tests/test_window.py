@@ -359,3 +359,51 @@ def test_points_in_local_time(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     first = next(r for r in rows if (r.get_subtitle() or "").startswith("zark_2025-11-30_21:24:14Z"))
     assert first.get_title() == "30 Nov 2025, 22:24:38"
     assert any("22 Oct 2026, 23:32:42 (zark_2026-10-22_21:32:18Z)" in t for t in texts(page))
+
+
+def _tooltips(widget: Gtk.Widget) -> list[str]:
+    return [t for w in _all(widget) if isinstance(w, Gtk.Button) and (t := w.get_tooltip_text())]
+
+
+def _menu_actions(menu: Gtk.MenuButton) -> dict[str, str]:
+    """Each item's label and action name, across the menu's sections."""
+    model_ = menu.get_menu_model()
+    assert model_ is not None
+    offered: dict[str, str] = {}
+    for i in range(model_.get_n_items()):
+        section = model_.get_item_link(i, "section")
+        assert section is not None
+        for j in range(section.get_n_items()):
+            label = section.get_item_attribute_value(j, "label", None)
+            action = section.get_item_attribute_value(j, "action", None)
+            assert label is not None and action is not None
+            offered[label.get_string()] = action.get_string()
+    return offered
+
+
+def test_mounted_drive_buttons(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A1E-6: a drive being browsed: Open and Unmount on its row and page,
+    no Back Up, and only Open and Unmount offered in its menu."""
+    window = open_window(app, "app:mounted")
+    windows.append(window)
+    page = _shown(window)
+    row = next(w for w in _all(page) if isinstance(w, Adw.ActionRow) and w.get_title() == "black")
+    assert {"Open in Files", "Unmount"} <= set(_tooltips(row))
+    assert "Back Up" not in texts(row)
+    window.select("drive:black")
+    settle()
+    header = window._header_widgets  # pylint: disable=protected-access
+    back = header[0]
+    assert isinstance(back, Gtk.Button) and not back.get_sensitive()
+    assert back.get_tooltip_text() == "Unmount black first"
+    assert [b.get_tooltip_text() for b in header[1:3]] == ["Open in Files", "Unmount"]
+    menu = header[-1]
+    assert isinstance(menu, Gtk.MenuButton)
+    offered = _menu_actions(menu)
+    assert offered["Open in Files"] == "win.open-files" and offered["Unmount"] == "win.run"
+    assert offered["Reclaim Space..."] == "win.unavailable" and offered["Erase Drive..."] == "win.unavailable"
+    unavailable = window.lookup_action("unavailable")
+    assert unavailable is not None and not unavailable.get_enabled()
+    window.activate_action("win.backup-selected", None)
+    settle()
+    assert window.ops.run is None
