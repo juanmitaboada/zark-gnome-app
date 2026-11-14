@@ -19,7 +19,7 @@ response; a destructive one has no default."""
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, Pango
 
 from zark_app.commands import MARGIN, MAX_AGE, WINDOW, CommandError, Retention, retention_words
 from zark_app.i18n import _
@@ -116,6 +116,26 @@ def retention(
     return dialog
 
 
+def _label_factory(ellipsize: Pango.EllipsizeMode) -> Gtk.SignalListItemFactory:
+    """A list item factory of labels for a ``Gtk.StringList``, cut as
+    ``ellipsize`` says, the whole string as tooltip."""
+    factory = Gtk.SignalListItemFactory()
+
+    def setup(_f: Gtk.SignalListItemFactory, item: Gtk.ListItem) -> None:
+        item.set_child(Gtk.Label(xalign=0.0, ellipsize=ellipsize))
+
+    def bind(_f: Gtk.SignalListItemFactory, item: Gtk.ListItem) -> None:
+        label = item.get_child()
+        string = item.get_item()
+        if isinstance(label, Gtk.Label) and isinstance(string, Gtk.StringObject):
+            label.set_label(string.get_string())
+            label.set_tooltip_text(string.get_string())
+
+    factory.connect("setup", setup)
+    factory.connect("bind", bind)
+    return factory
+
+
 def exclude(
     parent: Gtk.Widget, datasets: Sequence[str], on_apply: Callable[[str, str], None]
 ) -> Adw.AlertDialog:
@@ -124,6 +144,9 @@ def exclude(
     dialog = _alert(_("Exclude a Dataset"), "", "exclude", _("Exclude"), False)
     names = Gtk.StringList.new(list(datasets))
     which = Adw.ComboRow(title=_("Dataset"), model=names)
+    # A2E-8: the names share a long start; cut it, keep the end, the whole in the list.
+    which.set_factory(_label_factory(Pango.EllipsizeMode.START))
+    which.set_list_factory(_label_factory(Pango.EllipsizeMode.NONE))
     words = ("backups", "snapshots", "both")
     labels = Gtk.StringList.new([_("Backups"), _("Local snapshots"), _("Both")])
     what = Adw.ComboRow(title=_("Leave out of"), model=labels)

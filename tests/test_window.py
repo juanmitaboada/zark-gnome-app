@@ -28,11 +28,11 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 # pylint: disable=wrong-import-position
-from gi.repository import Adw, Gdk, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, Gtk, Pango  # noqa: E402
 
 from tests.harness import any_case  # noqa: E402
 from tests.screenshots import settle  # noqa: E402
-from zark_app import compat, shortcuts  # noqa: E402
+from zark_app import compat, dialogs, shortcuts  # noqa: E402
 from zark_app.main import ZarkApp  # noqa: E402
 from zark_app.pages import overview  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
@@ -380,6 +380,21 @@ def test_attention_icon_colours(
     black = next(d for d in s.drives if d.name == "black")
     image = overview.drive_icon(black)
     assert isinstance(image, Gtk.Image) and image.has_css_class(css) and image.get_icon_name() == icon
+
+
+def test_exclude_dataset_names_keep_their_end(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A2E-8: the dataset chooser cuts the shared start and keeps the end."""
+    window = open_window(app, "app:exclusions", "exclusions")
+    windows.append(window)
+    names = [f"rpool/ROOT/ubuntu_jseb3c/var/lib/{n}" for n in ("AccountsService", "NetworkManager", "apt")]
+    dialog = dialogs.exclude(window, names, lambda _d, _w: None)
+    settle()
+    labels = [w for w in _all(dialog) if isinstance(w, Gtk.Label) and w.get_label() in names]
+    shown = [lb for lb in labels if lb.get_ellipsize() == Pango.EllipsizeMode.START]
+    assert [lb.get_label() for lb in shown] == [names[0]]
+    assert all(lb.get_tooltip_text() == lb.get_label() for lb in labels)
+    dialog.close()
+    settle()
 
 
 def _tooltips(widget: Gtk.Widget) -> list[str]:
