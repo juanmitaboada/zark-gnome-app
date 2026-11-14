@@ -232,6 +232,72 @@ def test_sleep_inhibitor_follows_the_run(window: ZarkWindow) -> None:
     settle()
 
 
+def _mounted_window(app: ZarkApp) -> ZarkWindow:
+    """The mounted case (black browsed), its pkexec a fake that ends 0."""
+    case = app_case("mounted")
+    sources = replace(case.sources, pkexec_prefix=(sys.executable, "-I", FAKE, "exit:0"))
+    win = ZarkWindow(app, sources, case.loaded, watch=False)
+    win.keep = case  # type: ignore[attr-defined]
+    app.window = win
+    win.present()
+    settle()
+    return win
+
+
+def _tooltips(widget: Gtk.Widget) -> list[str]:
+    found: list[str] = []
+    child = widget.get_first_child()
+    while child is not None:
+        if isinstance(child, Gtk.Button) and (tip := child.get_tooltip_text()):
+            found.append(tip)
+        found.extend(_tooltips(child))
+        child = child.get_next_sibling()
+    return found
+
+
+def _run_to_end(win: ZarkWindow, op: str, arg: str) -> None:
+    win.ops.dispatch(op, arg)
+    settle()
+    run = win.ops.run
+    assert run is not None
+    wait(lambda: not run.alive)
+    settle()
+
+
+def test_mount_result_offers_open_and_unmount(app: ZarkApp) -> None:
+    """A2E-7: a mount that ended 0 offers Open in Files and Unmount on its
+    result row, for the drive left mounted; another run does not."""
+    win = _mounted_window(app)
+    win.select("drive:black")
+    settle()
+    _run_to_end(win, "mount", "black")
+    assert win.selected == "run"
+    assert {"Open in Files", "Unmount"} <= set(_tooltips(win.run_page.widget))  # type: ignore[union-attr]
+    win.ops.done()
+    settle()
+    _run_to_end(win, "refresh", "")
+    assert "Open in Files" not in _tooltips(win.run_page.widget)  # type: ignore[union-attr]
+    win.ops.done()
+    settle()
+    win.destroy()
+
+
+def test_done_returns_to_the_mounted_drive_page(app: ZarkApp) -> None:
+    """A2E-7: after the app's own run and Done, the browsed drive's page
+    keeps Open in Files and Unmount in its header, and its menu."""
+    win = _mounted_window(app)
+    win.select("drive:black")
+    settle()
+    _run_to_end(win, "refresh", "")
+    win.ops.done()
+    settle()
+    assert win.selected == "drive:black"
+    header = win._header_widgets  # pylint: disable=protected-access
+    assert [w.get_tooltip_text() for w in header[1:3]] == ["Open in Files", "Unmount"]
+    assert isinstance(header[-1], Gtk.MenuButton) and header[-1].get_mapped()
+    win.destroy()
+
+
 def test_refused_value_never_runs(window: ZarkWindow) -> None:
     """blue is not connected: Back Up refuses before any spawn."""
     window.ops.dispatch("backup", "blue")

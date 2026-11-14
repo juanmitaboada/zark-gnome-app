@@ -26,6 +26,7 @@ from zark_app.i18n import _
 from zark_app.model import Snapshot
 from zark_app.pages import run as run_page
 from zark_app.runner import Run, outcome_text
+from zark_app.widgets import mounted_buttons
 
 
 class RunPage:
@@ -55,6 +56,11 @@ class RunPage:
         if run.outcome is not None:
             title, subtitle = outcome_text(run.outcome, run.command.title)
             row = Adw.ActionRow(title=title, subtitle=subtitle)
+            browsed = browsed_drive(run, snapshot)
+            if browsed is not None:
+                # A2E-7: the plan's 2.2, Open and Unmount where the mount ended.
+                for button in mounted_buttons(browsed):
+                    row.add_suffix(button)
             group = Adw.PreferencesGroup()
             group.add(row)
             self.top.append(group)
@@ -70,3 +76,15 @@ class RunPage:
             group = Adw.PreferencesGroup()
             group.add(row)
             self.top.append(group)
+
+
+def browsed_drive(run: Run, snapshot: Snapshot) -> str | None:
+    """The drive a ``mount`` run that ended well left mounted for browsing:
+    the one clicked when it is mounted (zark asks which in the terminal),
+    else the only one mounted; None for any other run."""
+    if run.command.word != "mount" or run.outcome is None or run.outcome.kind != "done":
+        return None
+    mounted = [d.name for d in snapshot.drives if d.mounted]
+    if run.command.drive in mounted:
+        return run.command.drive
+    return mounted[0] if len(mounted) == 1 else None
