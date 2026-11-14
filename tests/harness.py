@@ -127,9 +127,14 @@ def zark_case(name: str, connected: Sequence[str] = ()) -> Case:
         timer_path=Path(tmp.name) / "zark-status.timer",
         zark_dir=zark_src(),
         now=lambda: now,
+        system_bus=no_bus,
         **extra,
     )
     return Case(name, sources, load(sources.zark_dir), runner, expected, keep=tmp)
+
+
+def no_bus() -> None:
+    """No system bus: the tests never ask logind for anything."""
 
 
 def app_case(name: str) -> Case:
@@ -160,6 +165,7 @@ def app_case(name: str) -> Case:
         zark_dir=zark_dir,
         now=lambda: now,
         alive=alive,
+        system_bus=no_bus,
     )
     return Case(name, sources, load(zark_dir), runner, None, keep=tmp)
 

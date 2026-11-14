@@ -65,3 +65,6 @@ class Sources:  # pylint: disable=too-many-instance-attributes
     # The privileged launch; tests put a fake program here.
     pkexec_prefix: tuple[str, ...] = PKEXEC_PREFIX
     zark_path: str = ZARK
+    # The system bus for logind's sleep inhibitor (A2E-5); None: the real one.
+    # Tests put one that answers nothing here.
+    system_bus: Callable[[], Any] | None = None

@@ -30,6 +30,11 @@ there as it always does. On Ubuntu 24.04 the terminal is not read by screen
 readers (VTE 0.76 has no GTK 4 accessibility); the app's own announcements
 still are.
 
+While the app's own command runs, logout and suspend are held: a Suspend
+chosen from GNOME's menu asks for the administrator's password first, and
+a logout lists zark as the reason. Closing a laptop's lid still suspends
+(logind's default, `LidSwitchIgnoreInhibited=yes`).
+
 What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Requirements

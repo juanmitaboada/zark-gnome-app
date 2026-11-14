@@ -200,6 +200,38 @@ def test_backup_from_the_overview(window: ZarkWindow) -> None:
     assert window.run_action.get_enabled()
 
 
+class RecordingSleep:
+    """Stands in for the logind inhibitor: records acquire and release."""
+
+    def __init__(self) -> None:
+        self.events: list[str] = []
+
+    def acquire(self, why: str) -> None:
+        """A run started."""
+        self.events.append(f"acquire {why}")
+
+    def release(self) -> None:
+        """A run ended."""
+        self.events.append("release")
+
+
+def test_sleep_inhibitor_follows_the_run(window: ZarkWindow) -> None:
+    """A2E-5: logind's sleep inhibitor is asked at the spawn and let go at
+    child-exited."""
+    sleep = RecordingSleep()
+    window.ops.sleep = sleep  # type: ignore[assignment]
+    window.ops.dispatch("backup", "black")
+    settle()
+    run = window.ops.run
+    assert run is not None and sleep.events == ["acquire " + run.command.title]
+    window.ops.stop()
+    wait(lambda: not run.alive)
+    settle()
+    assert sleep.events[-1] == "release"
+    window.ops.done()
+    settle()
+
+
 def test_refused_value_never_runs(window: ZarkWindow) -> None:
     """blue is not connected: Back Up refuses before any spawn."""
     window.ops.dispatch("backup", "blue")

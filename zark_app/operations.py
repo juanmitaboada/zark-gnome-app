@@ -33,6 +33,7 @@ from zark_app.commands import Command, CommandError, Context, Retention
 from zark_app.i18n import _
 from zark_app.model import Snapshot
 from zark_app.runner import Run, classify, outcome_text
+from zark_app.sleep import SleepInhibitor, system_bus
 
 if TYPE_CHECKING:
     from zark_app.window import ZarkWindow
@@ -68,6 +69,7 @@ class Operations:
         self.run: Run | None = None
         self.close_after = False
         self._inhibit = 0
+        self.sleep = SleepInhibitor(window.sources.system_bus or system_bus)
         self._notified = False
         self._was_waiting = False
 
@@ -140,6 +142,8 @@ class Operations:
                 Gtk.ApplicationInhibitFlags.LOGOUT | Gtk.ApplicationInhibitFlags.SUSPEND,
                 reason,
             )
+        # A2E-5: gnome-session's weak inhibitor does not hold the user's own Suspend.
+        self.sleep.acquire(command.title)
         self.window.style_terminal()
         self.run.start()
         self.window.select_run()
@@ -218,6 +222,7 @@ class Operations:
             run.outcome = classify(run.status, run.saw_progress, other)
         if self._notified:
             self._withdraw()
+        self.sleep.release()
         app = self.window.get_application()
         if app is not None:
             if self._inhibit:
