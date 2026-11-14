@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, Any
 
 from gi.repository import Adw, Gio, Gtk
 
-from zark_app import commands, dialogs
+from zark_app import commands, dialogs, disks
 from zark_app.commands import Command, CommandError, Context, Retention
 from zark_app.i18n import _
 from zark_app.model import Snapshot
@@ -110,8 +110,20 @@ class Operations:
         if op == "prepare":
             ctx = context(snap, self.window.sources.by_id)
             names = commands.disk_candidates(ctx.by_id, ctx.drives)
-            disks = [(n, commands.disk_label(ctx.by_id, n)) for n in names]
-            dialogs.prepare(self.window, disks, lambda name: self._start(op, name))
+
+            def show(used: set[str] | None) -> None:
+                # A2E-9: no disk the system uses; a failed read removes nothing, zark checks again.
+                kept = names if used is None else disks.free(ctx.by_id, names, used)
+                choices = [(n, commands.disk_label(ctx.by_id, n)) for n in kept]
+                dialogs.prepare(
+                    self.window,
+                    choices,
+                    lambda name: self._start(op, name),
+                    checked=used is not None,
+                    hidden=len(names) - len(kept),
+                )
+
+            disks.check(self.window.sources.runner, show)
             return
         self._start(op, arg)
 

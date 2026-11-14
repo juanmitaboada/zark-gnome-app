@@ -144,11 +144,17 @@ def exclude(
 
 
 def prepare(
-    parent: Gtk.Widget, disks: Sequence[tuple[str, str]], on_choose: Callable[[str], None]
+    parent: Gtk.Widget,
+    disks: Sequence[tuple[str, str]],
+    on_choose: Callable[[str], None],
+    checked: bool = True,
+    hidden: int = 0,
 ) -> Adw.AlertDialog:
     """A2-1: the disk to prepare, from the whole disks under
-    ``/dev/disk/by-id`` that are no registered drive. zark checks it and
-    asks its own typed confirmation after."""
+    ``/dev/disk/by-id`` that are no registered drive and that the system
+    does not use (A2E-9; ``hidden`` of them left out, ``checked`` False when
+    that could not be read). zark checks it and asks its own typed
+    confirmation after."""
     body = (
         _("zark erases the disk you choose and makes it a backup drive.")
         + " "
@@ -156,6 +162,10 @@ def prepare(
         if disks
         else _("No disk to prepare is connected: plug in an empty drive")
     )
+    if not checked:
+        body += "\n\n" + _("Could not check which disks this system uses: zark checks again before it writes")
+    elif hidden:
+        body += "\n\n" + _("Disks this system uses are not listed")
     dialog = _alert(_("Prepare a New Drive"), body, "prepare", _("Prepare..."), True)
     group: Gtk.CheckButton | None = None
     chosen: list[str] = []

@@ -298,6 +298,39 @@ def test_done_returns_to_the_mounted_drive_page(app: ZarkApp) -> None:
     win.destroy()
 
 
+def test_prepare_picker_leaves_out_disks_in_use(window: ZarkWindow, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A2E-9: the picker gets only free disks; with no answer to the reads it
+    keeps the list and says it could not check."""
+    by_id = window.sources.by_id
+    # Links to /dev names that do not exist: the reads only compare paths.
+    for name, dev in (
+        ("ata-System_Disk_0001", "/dev/zark-test-system"),
+        ("usb-New_Disk_0002-0:0", "/dev/zark-test-new"),
+    ):
+        (by_id / name).symlink_to(dev)
+    seen: list[tuple[list[str], bool, int]] = []
+
+    def fake_prepare(
+        _parent: object, choices: list[tuple[str, str]], _on: object, checked: bool, hidden: int
+    ) -> None:
+        seen.append(([n for n, _l in choices], checked, hidden))
+
+    monkeypatch.setattr("zark_app.dialogs.prepare", fake_prepare)
+    window.ops.dispatch("prepare", "")
+    assert seen == [(["ata-System_Disk_0001", "usb-New_Disk_0002-0:0"], False, 0)]
+    system = "/dev/zark-test-system"
+    runner = window.sources.runner
+    runner.answers = {  # type: ignore[attr-defined]
+        **runner.answers,  # type: ignore[attr-defined]
+        "zpool-vdevs": {"status": 0, "stdout": f"rpool\t1G\n\t{system}\t1G\n"},
+        "findmnt": {"status": 0, "stdout": ""},
+        "swapon": {"status": 0, "stdout": ""},
+        "lsblk": {"status": 0, "stdout": f"{system} disk \n"},
+    }
+    window.ops.dispatch("prepare", "")
+    assert seen[1] == (["usb-New_Disk_0002-0:0"], True, 1)
+
+
 def test_refused_value_never_runs(window: ZarkWindow) -> None:
     """blue is not connected: Back Up refuses before any spawn."""
     window.ops.dispatch("backup", "blue")

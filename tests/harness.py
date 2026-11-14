@@ -55,7 +55,9 @@ def zark_src() -> Path:
 
 def _key(argv: Sequence[str]) -> str:
     if argv[0] == "zpool":
-        return "zpool"
+        return "zpool-vdevs" if "-vHP" in argv else "zpool"
+    if argv[0] in ("findmnt", "swapon", "lsblk"):
+        return argv[0]
     if argv[0] == "dpkg-query":
         return "dpkg"
     return "used" if argv[1] == "list" else "get"
