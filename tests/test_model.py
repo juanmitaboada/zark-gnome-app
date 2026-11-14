@@ -13,6 +13,8 @@
 # limitations under the License.
 """The snapshot the window draws, from every case, without a display."""
 
+from dataclasses import replace
+
 import pytest
 
 from tests.harness import Case, any_case, app_case, zark_case, zark_case_names
@@ -262,6 +264,25 @@ def test_sent_after_this_runs_transfer() -> None:
     fresh = model.with_sent(snap(app_case("running-after-transfer")), set())
     assert fresh.run is not None and not fresh.run.sent
     assert model.progress_figure(fresh.run) == (None, "")
+
+
+def test_fraction_never_goes_back_within_a_run() -> None:
+    """A2E-2: a second round raises bytes_total and lowers the ratio; the bar
+    holds its peak for that run, and another run starts afresh."""
+    peaks: dict[model.RunKey, float] = {}
+    first = model.with_peak(snap(app_case("running-connected")), peaks)
+    assert first.run is not None and first.run.fraction is not None
+    high = first.run.fraction
+    lower = replace(first, run=replace(first.run, fraction=high / 2))
+    held = model.with_peak(lower, peaks)
+    assert held.run is not None and held.run.fraction == high
+    assert model.progress_figure(held.run)[1] == f"{int(high * 100)} %"
+    higher = replace(first, run=replace(first.run, fraction=min(1.0, high + 0.01)))
+    passed = model.with_peak(higher, peaks)
+    assert passed.run is not None and passed.run.fraction == min(1.0, high + 0.01)
+    other = replace(first, run=replace(first.run, pid=(first.run.pid or 0) + 1, fraction=0.1))
+    fresh = model.with_peak(other, peaks)
+    assert fresh.run is not None and fresh.run.fraction == 0.1
 
 
 def test_mounted_drive_offers_no_backup() -> None:

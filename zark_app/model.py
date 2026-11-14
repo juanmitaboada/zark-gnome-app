@@ -579,6 +579,23 @@ def with_sent(snapshot: Snapshot, seen: set[RunKey]) -> Snapshot:
     return snapshot
 
 
+def with_peak(snapshot: Snapshot, peaks: dict[RunKey, float]) -> Snapshot:
+    """Keep the run's byte fraction from going back (A2E-2): zark adds each
+    round's estimates to ``bytes_total`` when the round starts, so a second
+    round (after a resume) lowers ``bytes_done / bytes_total``. ``peaks``
+    keeps the highest fraction shown per run (pid, start); the bar holds it
+    until the real one passes it."""
+    run = snapshot.run
+    if run is None or run.fraction is None:
+        return snapshot
+    key = (run.pid, run.started_at)
+    peak = max(peaks.get(key, 0.0), run.fraction)
+    peaks[key] = peak
+    if peak == run.fraction:
+        return snapshot
+    return replace(snapshot, run=replace(run, fraction=peak))
+
+
 def progress_figure(run: RunView) -> tuple[float | None, str]:
     """The bar's fraction and text: bytes only, full once the data is sent,
     nothing (a pulsing bar) before data moves; never the step as a percent."""
