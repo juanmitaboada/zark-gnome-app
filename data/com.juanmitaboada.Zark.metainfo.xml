@@ -36,6 +36,17 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.1.2" date="2026-11-14">
+      <description>
+        <p>
+          Fixes: Suspend asks for the administrator's password while the
+          app's command runs, a mount offers Open in Files where it ends,
+          Prepare leaves out the disks this system uses, the progress never
+          goes back, a run cut short shows in red, and every run ends with a
+          closing line in the terminal.
+        </p>
+      </description>
+    </release>
     <release version="1.1.1" date="2026-11-12">
       <description>
         <p>

@@ -1,8 +1,32 @@
 # Changelog
 
-## [1.1.1] - unreleased
+## [1.1.2] - unreleased
 
-Fixes from the first eli checklist.
+Fixes from the first and the second eli checklists (1.1.1 was not
+released on its own).
+
+From the second:
+
+- While the app's own command runs, a Suspend chosen from GNOME's menu
+  asks for the administrator's password first: the app holds logind's
+  sleep inhibitor in block mode beside GTK's, which gnome-session takes in
+  block-weak mode and logind skips for the user's own request. Closing a
+  laptop's lid still suspends (logind's `LidSwitchIgnoreInhibited=yes`).
+- A mount that ends well offers Open in Files and Unmount on its result,
+  for the drive it left mounted.
+- Prepare a New Drive... leaves out the disks this system uses (a vdev of
+  an imported pool, a mounted filesystem, active swap, through partitions
+  and dm or md devices), as zark's own check does; if that cannot be read
+  it says so and zark checks again.
+- The run's percentage never goes back within a run (a second round of
+  transfers raises zark's estimate).
+- A drive whose last run was interrupted or not read back shows the error
+  icon in red; an incomplete one keeps the warning icon.
+- Every run ends with a line under zark's output saying what ran and how
+  it ended, in green, yellow or red.
+- The Exclude dialog's dataset names keep their end.
+
+From the first:
 
 - The launcher runs Python in isolated mode (`-I`) as installed too:
   dh-python 7 (resolute, stonking) no longer rewrites its shebang, and
