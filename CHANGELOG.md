@@ -12,6 +12,9 @@ From the third:
   zark estimates what follows a resume only in the next round, so a
   percentage would read near the end long before it. The peak hold from
   the second checklist, which kept the bar at that figure, is gone.
+- With a release candidate of zark installed (Debian's `2.3.1~rc1-1`), the
+  window no longer says the status file was written by another zark: the
+  installed version is compared in zark's own spelling (`2.3.1-rc1`).
 
 From the second:
 
