@@ -79,6 +79,8 @@ class DriveView:
     mounted: bool
     doc: Doc = field(compare=True)
     backup: Action | None = None
+    # How loud an "attention" drive is (A2E-4): "error" or "warning".
+    level: str = ""
 
 
 @dataclass(frozen=True)
@@ -364,6 +366,12 @@ def _running(ctx: _Ctx) -> bool:
     return ctx.progress_class in ("running", "stalled") and ctx.progress is not None
 
 
+def attention_level(result: str) -> str:
+    """A2E-4: a run cut short or not read back is an error; an incomplete one
+    a warning (``docs/STATUS-FILES.md``, ``last_run.result``)."""
+    return "error" if result in ("interrupted", "not_verified") else "warning"
+
+
 def _running_drive(ctx: _Ctx) -> str | None:
     if not _running(ctx) or ctx.progress is None:
         return None
@@ -407,7 +415,15 @@ def _drive_view(  # pylint: disable=too-many-locals
         }[str(result)]
         line = f"{words}, {fmt_since(ended, ctx.now)}" if ended is not None else words
         return DriveView(
-            name, connected, "attention", line, words, name in mounted, doc, backup if connected else None
+            name,
+            connected,
+            "attention",
+            line,
+            words,
+            name in mounted,
+            doc,
+            backup if connected else None,
+            attention_level(str(result)),
         )
     if connected:
         line = _("Connected - last backup {age}").format(age=age) if age else _("Connected - no backup yet")

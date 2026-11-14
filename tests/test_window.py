@@ -34,6 +34,7 @@ from tests.harness import any_case  # noqa: E402
 from tests.screenshots import settle  # noqa: E402
 from zark_app import compat, shortcuts  # noqa: E402
 from zark_app.main import ZarkApp  # noqa: E402
+from zark_app.pages import overview  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
 
 if Gdk.Display.get_default() is None:
@@ -359,6 +360,26 @@ def test_points_in_local_time(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     first = next(r for r in rows if (r.get_subtitle() or "").startswith("zark_2025-11-30_21:24:14Z"))
     assert first.get_title() == "30 Nov 2025, 22:24:38"
     assert any("22 Oct 2026, 23:32:42 (zark_2026-10-22_21:32:18Z)" in t for t in texts(page))
+
+
+@pytest.mark.parametrize(
+    ("case", "css", "icon"),
+    [
+        ("zark:interrupted", "error", "dialog-error-symbolic"),
+        ("zark:incomplete", "warning", "dialog-warning-symbolic"),
+    ],
+)
+def test_attention_icon_colours(
+    app: ZarkApp, windows: list[ZarkWindow], case: str, css: str, icon: str
+) -> None:
+    """A2E-4: the attention icon is red for a run cut short, amber otherwise."""
+    window = open_window(app, case)
+    windows.append(window)
+    s = window.snapshot
+    assert s is not None
+    black = next(d for d in s.drives if d.name == "black")
+    image = overview.drive_icon(black)
+    assert isinstance(image, Gtk.Image) and image.has_css_class(css) and image.get_icon_name() == icon
 
 
 def _tooltips(widget: Gtk.Widget) -> list[str]:

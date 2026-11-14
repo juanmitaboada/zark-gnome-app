@@ -32,13 +32,14 @@ def drive_icon(drive: DriveView) -> Gtk.Widget:
     if drive.state in ("running", "waiting"):
         return compat.spinner()
     names = {
-        "attention": "dialog-warning-symbolic",
+        "attention": "dialog-error-symbolic" if drive.level == "error" else "dialog-warning-symbolic",
         "connected": "emblem-ok-symbolic",
         "disconnected": "drive-harddisk-symbolic",
     }
     image = Gtk.Image.new_from_icon_name(names[drive.state])
     if drive.state == "attention":
-        image.add_css_class("warning")
+        # A2E-4: red for a run cut short or not read back, amber otherwise.
+        image.add_css_class("error" if drive.level == "error" else "warning")
     elif drive.state == "connected":
         image.add_css_class("success")
     else:

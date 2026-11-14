@@ -285,6 +285,16 @@ def test_fraction_never_goes_back_within_a_run() -> None:
     assert fresh.run is not None and fresh.run.fraction == 0.1
 
 
+@pytest.mark.parametrize(
+    ("case", "level"), [("interrupted", "error"), ("not-verified", "error"), ("incomplete", "warning")]
+)
+def test_attention_level(case: str, level: str) -> None:
+    """A2E-4: how loud black's attention state is."""
+    s = snap(zark_case(case))
+    black = next(d for d in s.drives if d.name == "black")
+    assert black.state == "attention" and black.level == level
+
+
 def test_mounted_drive_offers_no_backup() -> None:
     """A1E-6: a drive mounted for browsing has no Back Up and says why."""
     s = snap(app_case("mounted"))
