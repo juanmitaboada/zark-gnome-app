@@ -35,7 +35,7 @@ from zark_app.i18n import N_, _
 from zark_app.live import Exclusion, Live
 from zark_app.reader import Loaded
 from zark_app.sources import MOUNT_ROOT, REGISTRY_PATH, Sources
-from zark_app.units import fmt_bytes, fmt_since, upstream_version
+from zark_app.units import fmt_bytes, fmt_since, zark_release
 
 Doc = Mapping[str, Any]
 Level = Literal["ok", "warning", "critical"]
@@ -133,6 +133,8 @@ class RunView:
     pid: int | None = None
     # This run had a transfer block and no longer has one: its data is sent.
     sent: bool = False
+    # Another round may follow (A112E-2): bytes only, no percentage, no time left.
+    rounds: bool = False
 
 
 @dataclass(frozen=True)
@@ -505,7 +507,7 @@ def _writer_dir(registry: str) -> str:
 def _foreign_banner(status: Doc, installed: str | None) -> BannerView | None:
     registry = status.get("registry")
     writer = status.get("zark_version")
-    inst = upstream_version(installed) if installed else None
+    inst = zark_release(installed) if installed else None
     if isinstance(registry, str) and registry != REGISTRY_PATH:
         text = _("The status file was written by zark {writer} from {where}, not the installed {installed}")
         return BannerView(
@@ -595,26 +597,42 @@ def with_sent(snapshot: Snapshot, seen: set[RunKey]) -> Snapshot:
     return snapshot
 
 
-def with_peak(snapshot: Snapshot, peaks: dict[RunKey, float]) -> Snapshot:
-    """Keep the run's byte fraction from going back (A2E-2): zark adds each
-    round's estimates to ``bytes_total`` when the round starts, so a second
-    round (after a resume) lowers ``bytes_done / bytes_total``. ``peaks``
-    keeps the highest fraction shown per run (pid, start); the bar holds it
-    until the real one passes it."""
+def with_rounds(snapshot: Snapshot, totals: dict[RunKey, int | None]) -> Snapshot:
+    """Show bytes only once another round may follow (A112E-2). zark
+    estimates a round's transfers when the round starts: a resumed dataset
+    counts only what its partial lacks, and the rest of it is estimated in
+    the next round, so ``bytes_total`` grows and any percentage or time left
+    shown before was wrong. A run is open to more rounds from the first
+    ``resume`` dataset state or the first growth of ``bytes_total`` after
+    its first round was announced (a resume shorter than one read would
+    otherwise go unseen); from then on it shows bytes sent and the rate.
+    ``totals`` keeps per run (pid, start) the total first seen once sending
+    started, or None once the run is open."""
     run = snapshot.run
-    if run is None or run.fraction is None:
+    if run is None or run.transfer is None:
         return snapshot
     key = (run.pid, run.started_at)
-    peak = max(peaks.get(key, 0.0), run.fraction)
-    peaks[key] = peak
-    if peak == run.fraction:
+    t = run.transfer
+    total = t.get("bytes_total")
+    # Before the first send the round is still being announced: the total grows.
+    sending = isinstance(t.get("dataset"), str) or (_int(t.get("datasets_done")) or 0) > 0
+    known = totals.get(key, -1)
+    grew = isinstance(total, int) and known is not None and 0 <= known < total
+    if not (known is None or t.get("dataset_state") == "resume" or grew):
+        if sending and isinstance(total, int) and key not in totals:
+            totals[key] = total
         return snapshot
-    return replace(snapshot, run=replace(run, fraction=peak))
+    totals[key] = None
+    return replace(snapshot, run=replace(run, fraction=None, eta_s=None, rounds=True))
 
 
 def progress_figure(run: RunView) -> tuple[float | None, str]:
     """The bar's fraction and text: bytes only, full once the data is sent,
-    nothing (a pulsing bar) before data moves; never the step as a percent."""
+    nothing (a pulsing bar) before data moves; never the step as a percent.
+    A run open to more rounds pulses with the bytes sent as its text."""
+    if run.rounds and not run.sent:
+        done = run.transfer.get("bytes_done") if run.transfer is not None else None
+        return None, _("{done} sent").format(done=fmt_bytes(done)) if isinstance(done, int) else ""
     if run.fraction is not None:
         return run.fraction, f"{int(run.fraction * 100)} %"
     if run.sent:

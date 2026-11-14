@@ -102,7 +102,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         self.run_page: terminal_page.RunPage | None = None
         self._shown_key: str | None = None
         self._sent_runs: set[model.RunKey] = set()
-        self._peaks: dict[model.RunKey, float] = {}
+        self._totals: dict[model.RunKey, int | None] = {}
         self.gone = False
         self.ops = Operations(self)
         self._build_ui()
@@ -219,7 +219,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         """Read both files and redraw what changed; ``live`` refetches the
         live figures first."""
         snap, self.last_good = model.build(self.loaded, self.sources, self.live, self.last_good)
-        snap = model.with_peak(model.with_sent(snap, self._sent_runs), self._peaks)
+        snap = model.with_rounds(model.with_sent(snap, self._sent_runs), self._totals)
         self.ops.observe(snap)
         key = (snap.generated_at, snap.status_class)
         running = snap.run is not None
@@ -232,7 +232,7 @@ class ZarkWindow(Adw.ApplicationWindow):
     def _got_live(self, live: Live) -> None:
         self.live = live
         snap, self.last_good = model.build(self.loaded, self.sources, self.live, self.last_good)
-        self._show(model.with_peak(model.with_sent(snap, self._sent_runs), self._peaks))
+        self._show(model.with_rounds(model.with_sent(snap, self._sent_runs), self._totals))
 
     # --- drawing ---
 
@@ -576,5 +576,7 @@ def _step(snap: Snapshot) -> str:
         fraction, figure = model.progress_figure(r)
         if fraction is not None:
             text += ", " + (_("data sent") if r.sent and r.fraction is None else figure)
+        elif figure:
+            text += ", " + figure
         return text
     return ""

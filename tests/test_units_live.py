@@ -54,6 +54,14 @@ def test_upstream_version() -> None:
     assert units.upstream_version("2.3.0") == "2.3.0"
 
 
+def test_zark_release() -> None:
+    """A112E-1: Debian's ``~`` read as zark's ``-``."""
+    assert units.zark_release("2.3.1~rc1-1") == "2.3.1-rc1"
+    assert units.zark_release("2.3.1~rc1-1~ubuntu24.04.1") == "2.3.1-rc1"
+    assert units.zark_release("2.3.0-1~ubuntu24.04.1") == "2.3.0"
+    assert units.zark_release("2.3.0-1") == "2.3.0"
+
+
 def test_argv_reads_only() -> None:
     """Every command is a read: list, get or dpkg-query, never a change."""
     argvs = [live.zpool_argv(), live.zfs_list_argv(["rpool"]), live.zfs_get_argv(["rpool"]), live.dpkg_argv()]

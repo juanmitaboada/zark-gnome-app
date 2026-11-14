@@ -2,8 +2,16 @@
 
 ## [1.1.2] - unreleased
 
-Fixes from the first and the second eli checklists (1.1.1 was not
-released on its own).
+Fixes from the three eli checklists (1.1.1 was not released on its own).
+
+From the third:
+
+- A run that resumes a partial transfer, or whose estimate grows with a
+  further round of transfers, shows the bytes sent and the rate for the
+  rest of the run, with a pulsing bar and no percentage or time left:
+  zark estimates what follows a resume only in the next round, so a
+  percentage would read near the end long before it. The peak hold from
+  the second checklist, which kept the bar at that figure, is gone.
 
 From the second:
 
@@ -18,8 +26,6 @@ From the second:
   an imported pool, a mounted filesystem, active swap, through partitions
   and dm or md devices), as zark's own check does; if that cannot be read
   it says so and zark checks again.
-- The run's percentage never goes back within a run (a second round of
-  transfers raises zark's estimate).
 - A drive whose last run was interrupted or not read back shows the error
   icon in red; an incomplete one keeps the warning icon.
 - Every run ends with a line under zark's output saying what ran and how

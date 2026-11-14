@@ -3,9 +3,11 @@ zark-gnome-app (1.1.2-1) stable; urgency=medium
   * Fixes from the second eli checklist: Suspend from GNOME's menu is held
     during the app's run (a logind block inhibitor); a mount's result
     offers Open in Files and Unmount; the Prepare picker leaves out the
-    disks the system uses; the percentage never goes back within a run;
-    the attention icon in red for a run cut short; a closing line under
-    zark's output at every end; dataset names keep their end in Exclude.
+    disks the system uses; the attention icon in red for a run cut short;
+    a closing line under zark's output at every end; dataset names keep
+    their end in Exclude.
+  * From the third: bytes only, no percentage, once a run resumes a
+    partial transfer or its estimate grows with another round.
 
  -- Juanmi Taboada <juanmi@juanmitaboada.com>  Sat, 14 Nov 2026 12:07:09 +0100
 

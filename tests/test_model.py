@@ -13,7 +13,10 @@
 # limitations under the License.
 """The snapshot the window draws, from every case, without a display."""
 
+import json
+import shutil
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 
@@ -159,6 +162,35 @@ def test_older_writer() -> None:
     assert s.banner is not None and "zark 2.1.0, not the installed 2.3.0" in s.banner.text
 
 
+def _writer_case(tmp: Path, writer: str) -> Case:
+    """older-writer with its status file written by zark ``writer``."""
+    case = app_case("older-writer")
+    root = tmp / "root"
+    shutil.copytree(case.sources.root, root, symlinks=True)
+    status = root / "var" / "lib" / "zark" / "status.json"
+    doc = json.loads(status.read_text(encoding="utf-8"))
+    status.write_text(json.dumps({**doc, "zark_version": writer}), encoding="utf-8")
+    return replace(case, sources=replace(case.sources, root=root))
+
+
+@pytest.mark.parametrize(
+    ("writer", "installed", "banner"),
+    [
+        ("2.3.1-rc1", "2.3.1~rc1-1", None),
+        ("2.3.1-rc1", "2.3.1~rc1-1~ubuntu24.04.1", None),
+        ("2.3.0", "2.3.0-1", None),
+        ("2.3.0", "2.3.1~rc1-1", "The status file was written by zark 2.3.0, not the installed 2.3.1-rc1"),
+        ("2.3.1-rc1", "2.3.1-1", "The status file was written by zark 2.3.1-rc1, not the installed 2.3.1"),
+    ],
+)
+def test_writer_against_installed(tmp_path: Path, writer: str, installed: str, banner: str | None) -> None:
+    """A112E-1: a release candidate matches its Debian spelling; a real
+    mismatch still has the banner."""
+    case = _writer_case(tmp_path, writer)
+    s, _ = model.build(case.loaded, case.sources, Live(zark_version=installed))
+    assert (s.banner.text if s.banner is not None else None) == banner
+
+
 def test_mounted() -> None:
     """black imported with no run: mounted for browsing."""
     s = snap(app_case("mounted"))
@@ -266,23 +298,56 @@ def test_sent_after_this_runs_transfer() -> None:
     assert model.progress_figure(fresh.run) == (None, "")
 
 
-def test_fraction_never_goes_back_within_a_run() -> None:
-    """A2E-2: a second round raises bytes_total and lowers the ratio; the bar
-    holds its peak for that run, and another run starts afresh."""
-    peaks: dict[model.RunKey, float] = {}
-    first = model.with_peak(snap(app_case("running-connected")), peaks)
-    assert first.run is not None and first.run.fraction is not None
-    high = first.run.fraction
-    lower = replace(first, run=replace(first.run, fraction=high / 2))
-    held = model.with_peak(lower, peaks)
-    assert held.run is not None and held.run.fraction == high
-    assert model.progress_figure(held.run)[1] == f"{int(high * 100)} %"
-    higher = replace(first, run=replace(first.run, fraction=min(1.0, high + 0.01)))
-    passed = model.with_peak(higher, peaks)
-    assert passed.run is not None and passed.run.fraction == min(1.0, high + 0.01)
-    other = replace(first, run=replace(first.run, pid=(first.run.pid or 0) + 1, fraction=0.1))
-    fresh = model.with_peak(other, peaks)
-    assert fresh.run is not None and fresh.run.fraction == 0.1
+def _with_transfer(base: Snapshot, **fields: object) -> Snapshot:
+    """``base`` with its run's transfer block changed by ``fields``."""
+    assert base.run is not None and base.run.transfer is not None
+    return replace(base, run=replace(base.run, transfer={**base.run.transfer, **fields}))
+
+
+def test_a_resume_shows_bytes_only_for_the_rest_of_the_run() -> None:
+    """A112E-2: a resumed dataset's rest is estimated in the next round, so
+    from the first resume the run shows bytes sent and no percentage or time
+    left, also once the resume is done; another run starts afresh."""
+    totals: dict[model.RunKey, int | None] = {}
+    base = snap(app_case("running-connected"))
+    first = model.with_rounds(base, totals)
+    assert first.run is not None and first.run.fraction is not None and not first.run.rounds
+    resumed = model.with_rounds(_with_transfer(base, dataset_state="resume"), totals)
+    assert resumed.run is not None and resumed.run.rounds
+    assert resumed.run.fraction is None and resumed.run.eta_s is None
+    assert model.progress_figure(resumed.run) == (None, "7.00 GiB sent")
+    later = model.with_rounds(base, totals)
+    assert later.run is not None and later.run.rounds and later.run.fraction is None
+    assert base.run is not None
+    other = replace(base, run=replace(base.run, pid=(base.run.pid or 0) + 1))
+    fresh = model.with_rounds(other, totals)
+    assert fresh.run is not None and not fresh.run.rounds and fresh.run.fraction is not None
+
+
+def test_a_total_that_grows_shows_bytes_only() -> None:
+    """A112E-2: a second round raises bytes_total (a resume too short to be
+    read); from then on bytes only, and the data sent still shows 100 %."""
+    totals: dict[model.RunKey, int | None] = {}
+    base = snap(app_case("running-connected"))
+    assert base.run is not None and base.run.transfer is not None
+    total = base.run.transfer["bytes_total"]
+    assert not model.with_rounds(base, totals).run.rounds  # type: ignore[union-attr]
+    grown = model.with_rounds(_with_transfer(base, bytes_total=total + 3 * 2**30), totals)
+    assert grown.run is not None and grown.run.rounds and grown.run.fraction is None
+    sent = replace(grown, run=replace(grown.run, transfer=None, sent=True))
+    assert model.progress_figure(sent.run) == (1.0, "100 %")  # type: ignore[arg-type]
+
+
+def test_a_round_being_announced_is_not_growth() -> None:
+    """A112E-2: before the first send zark adds each estimate in turn, so
+    a growing total then is the first round's own announcement."""
+    totals: dict[model.RunKey, int | None] = {}
+    base = snap(app_case("running-connected"))
+    announcing = _with_transfer(base, dataset=None, dataset_state=None, datasets_done=0, bytes_total=2**30)
+    assert not model.with_rounds(announcing, totals).run.rounds  # type: ignore[union-attr]
+    assert not model.with_rounds(base, totals).run.rounds  # type: ignore[union-attr]
+    between = _with_transfer(base, dataset=None, dataset_state=None)
+    assert not model.with_rounds(between, totals).run.rounds  # type: ignore[union-attr]
 
 
 @pytest.mark.parametrize(

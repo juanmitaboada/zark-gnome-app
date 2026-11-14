@@ -34,6 +34,9 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
         text = _("{done} of {at_least}{total}").format(
             done=fmt_bytes(done), at_least=at_least, total=fmt_bytes(total)
         )
+        if run.rounds:
+            # The total is this round's only (A112E-2): it would mislead.
+            text = _("{done} sent").format(done=fmt_bytes(done))
         if isinstance(rate, int) and rate > 0:
             text += f" - {fmt_rate(rate)}"
         group.add(property_row(_("Data"), text))
@@ -85,7 +88,7 @@ def card(snapshot: Snapshot, run: RunView) -> Adw.PreferencesGroup:
             property_row(_("Step {i} of {n}").format(i=run.step_index, n=run.step_total), run.label or "-")
         )
     fraction, text = progress_figure(run)
-    progress = Gtk.ProgressBar(show_text=fraction is not None, text=text)
+    progress = Gtk.ProgressBar(show_text=bool(text), text=text)
     if fraction is not None:
         progress.set_fraction(fraction)
     elif run.stalled_s is None and not run.waiting:

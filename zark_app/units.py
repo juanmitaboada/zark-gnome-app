@@ -137,3 +137,10 @@ def upstream_version(debian_version: str) -> str:
     """``2.3.0`` from ``2.3.0-1`` or ``1:2.3.0-1ubuntu1``."""
     version = debian_version.split(":", 1)[-1]
     return version.rsplit("-", 1)[0] if "-" in version else version
+
+
+def zark_release(debian_version: str) -> str:
+    """The installed version as zark spells its own: ``2.3.1-rc1`` from
+    ``2.3.1~rc1-1``. Debian writes an upstream pre-release ``-`` as ``~`` so
+    it sorts before the release (A112E-1)."""
+    return upstream_version(debian_version).replace("~", "-")
