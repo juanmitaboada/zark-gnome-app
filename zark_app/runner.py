@@ -105,6 +105,29 @@ def outcome_text(outcome: Outcome, title: str) -> tuple[str, str]:
     return texts[outcome.kind]
 
 
+# The closing line's colour by result (A2E-6): ANSI green, yellow, red.
+END_COLOURS: dict[Kind, str] = {
+    "done": "32",
+    "stopped": "33",
+    "cancelled": "33",
+    "failed": "31",
+    "usage": "31",
+    "not_authorized": "31",
+    "busy": "31",
+    "updates": "31",
+    "killed": "31",
+}
+
+
+def end_line(command: Command, outcome: Outcome) -> str:
+    """A2E-6, A2E-10: the line the app writes under zark's output when the
+    run ends, the same for every operation: what ran and how it ended."""
+    title, _detail = outcome_text(outcome, command.title)
+    what = " ".join(("zark", *command.words))
+    text = _("{command}: {result}").format(command=what, result=title)
+    return f"\r\n\x1b[1;{END_COLOURS[outcome.kind]}m-- {text} --\x1b[0m\r\n"
+
+
 class Run:  # pylint: disable=too-many-instance-attributes
     """One command in its terminal, from spawn to ``child-exited``."""
 
@@ -164,6 +187,12 @@ class Run:  # pylint: disable=too-many-instance-attributes
         self.alive = False
         self.status = status
         self._on_exit(self)
+
+    def show_end(self) -> None:
+        """Write :func:`end_line` into the terminal's display (never to zark,
+        which has ended)."""
+        if self.outcome is not None:
+            self.terminal.feed(list(end_line(self.command, self.outcome).encode("utf-8")))
 
     def stop(self) -> bool:
         """Ctrl+C to the terminal: SIGINT to zark's foreground group; once

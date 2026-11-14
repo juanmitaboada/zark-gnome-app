@@ -232,6 +232,7 @@ class Operations:
         other = snap is not None and snap.run is not None and snap.run.pid != run.pid
         if run.outcome is None and run.status is not None:
             run.outcome = classify(run.status, run.saw_progress, other)
+        run.show_end()
         if self._notified:
             self._withdraw()
         self.sleep.release()

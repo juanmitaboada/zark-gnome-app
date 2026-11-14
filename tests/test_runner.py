@@ -40,7 +40,7 @@ from tests.harness import app_case  # noqa: E402
 from tests.screenshots import FAKE, settle, wait  # noqa: E402
 from zark_app.commands import Command  # noqa: E402
 from zark_app.main import ZarkApp  # noqa: E402
-from zark_app.runner import Run, child_env, classify  # noqa: E402
+from zark_app.runner import Run, child_env, classify, end_line  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
 
 if Gdk.Display.get_default() is None:
@@ -329,6 +329,32 @@ def test_prepare_picker_leaves_out_disks_in_use(window: ZarkWindow, monkeypatch:
     }
     window.ops.dispatch("prepare", "")
     assert seen[1] == (["usb-New_Disk_0002-0:0"], True, 1)
+
+
+@pytest.mark.parametrize(
+    ("status", "words"),
+    [(0, "zark status --refresh: Done"), (256, "zark status --refresh: Refreshing the Status failed")],
+)
+def test_end_line(status: int, words: str) -> None:
+    """A2E-6, A2E-10: the closing line says what ran and how it ended."""
+    command = Command("refresh", ("status", "--refresh"), "Refreshing the Status")
+    line = end_line(command, classify(status, False, False))
+    assert words in line and line.startswith("\r\n\x1b[1;") and line.endswith("\x1b[0m\r\n")
+
+
+def test_the_terminal_shows_the_end(window: ZarkWindow) -> None:
+    """A2E-6, A2E-10: a quiet command's terminal is not blank at its end."""
+    window.ops.sleep = RecordingSleep()  # type: ignore[assignment]
+    window.ops.start(
+        Command("refresh", ("status", "--refresh"), "Refreshing the Status"),
+        [sys.executable, "-I", FAKE, "exit:0", "/usr/share/zark/zark", "status", "--refresh"],
+    )
+    run = window.ops.run
+    assert run is not None
+    wait(lambda: not run.alive)
+    wait(lambda: "zark status --refresh: Done" in run.terminal.get_text_format(1))
+    window.ops.done()
+    settle()
 
 
 def test_refused_value_never_runs(window: ZarkWindow) -> None:
