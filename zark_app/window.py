@@ -28,7 +28,8 @@ from typing import Any
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
-from zark_app import about, compat, model, shortcuts
+from zark_app import about, compat, dialogs, model, shortcuts
+from zark_app.alert import DriveGoneAlert, session_bus
 from zark_app.i18n import _
 from zark_app.live import Fetcher, Live
 from zark_app.model import Action, DriveView, Snapshot
@@ -104,6 +105,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         self._sent_runs: set[model.RunKey] = set()
         self._totals: dict[model.RunKey, int | None] = {}
         self.gone = False
+        self.drive_gone = DriveGoneAlert(self._drive_gone, sources.session_bus or session_bus)
         self.ops = Operations(self)
         self._build_ui()
         self._add_actions()
@@ -237,6 +239,7 @@ class ZarkWindow(Adw.ApplicationWindow):
     # --- drawing ---
 
     def _show(self, snap: Snapshot) -> None:
+        self.drive_gone.see(snap.run)
         if self.snapshot is not None and snap == self.snapshot:
             self.snapshot = snap
             return
@@ -246,6 +249,15 @@ class ZarkWindow(Adw.ApplicationWindow):
         self._sidebar(snap)
         self._banner(snap.banner)
         self._content()
+
+    def _drive_gone(self, drive: str, gone: model.DriveGone) -> None:
+        # From the main loop: the first snapshot is drawn before the window is shown.
+        def show() -> bool:
+            if not self.gone:
+                dialogs.drive_gone(self, drive, gone)
+            return GLib.SOURCE_REMOVE
+
+        GLib.idle_add(show)
 
     def _menu(self, snap: Snapshot) -> None:
         menu = Gio.Menu()

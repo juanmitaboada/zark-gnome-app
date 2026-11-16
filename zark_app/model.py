@@ -112,6 +112,19 @@ class BannerView:
 
 
 @dataclass(frozen=True)
+class DriveGone:
+    """``progress.json``'s ``drive_gone`` (zark 2.3.1): the run's drive went
+    away while its pool was imported. ``hint`` is zark's text for people,
+    shown as written; ``key`` (``<pid>:<started_at>:<pool>``, as the
+    extension's) names the run and drive for the once-only alert."""
+
+    pool: str
+    since: datetime | None
+    hint: str
+    key: str
+
+
+@dataclass(frozen=True)
 class RunView:
     """A run in ``progress.json``; the app started none in A1."""
 
@@ -135,6 +148,7 @@ class RunView:
     sent: bool = False
     # The total grew with another round (A112E-2): bytes only, no percentage, no time left.
     rounds: bool = False
+    drive_gone: DriveGone | None = None
 
 
 @dataclass(frozen=True)
@@ -463,6 +477,23 @@ def _run_view(ctx: _Ctx) -> RunView | None:
         check=opt_obj(p.get("check")),
         drive_space=_drive_space(p),
         pid=_int(p.get("pid")),
+        drive_gone=_drive_gone(ctx, p),
+    )
+
+
+def _drive_gone(ctx: _Ctx, progress: Doc) -> DriveGone | None:
+    """``drive_gone`` when it is an object with a pool; null, absent (an
+    older zark) or malformed: None."""
+    gone = progress.get("drive_gone")
+    if not isinstance(gone, dict) or not isinstance(gone.get("pool"), str) or not gone["pool"]:
+        return None
+    hint = gone.get("hint")
+    key = f"{progress.get('pid')}:{progress.get('started_at')}:{gone['pool']}"
+    return DriveGone(
+        pool=gone["pool"],
+        since=ctx.mod.parse_timestamp(gone.get("since")),
+        hint=hint if isinstance(hint, str) else "",
+        key=key,
     )
 
 

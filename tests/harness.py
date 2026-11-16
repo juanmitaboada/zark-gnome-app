@@ -130,13 +130,14 @@ def zark_case(name: str, connected: Sequence[str] = ()) -> Case:
         zark_dir=zark_src(),
         now=lambda: now,
         system_bus=no_bus,
+        session_bus=no_bus,
         **extra,
     )
     return Case(name, sources, load(sources.zark_dir), runner, expected, keep=tmp)
 
 
 def no_bus() -> None:
-    """No system bus: the tests never ask logind for anything."""
+    """No bus: the tests never ask logind or GNOME Shell for anything."""
 
 
 def app_case(name: str) -> Case:
@@ -168,6 +169,7 @@ def app_case(name: str) -> Case:
         now=lambda: now,
         alive=alive,
         system_bus=no_bus,
+        session_bus=no_bus,
     )
     return Case(name, sources, load(zark_dir), runner, None, keep=tmp)
 

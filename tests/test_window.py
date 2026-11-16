@@ -443,3 +443,31 @@ def test_mounted_drive_buttons(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     window.activate_action("win.backup-selected", None)
     settle()
     assert window.ops.run is None
+
+
+def test_drive_gone_dialog(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A backup's drive gone (no GNOME Shell on the bus here): one alert on
+    the window, its drive and time, zark's hint selectable; no second one
+    when the window refreshes."""
+    window = open_window(app, "app:running-drive-gone")
+    windows.append(window)
+    dialog = window.get_visible_dialog()
+    assert isinstance(dialog, Adw.AlertDialog)
+    assert dialog.get_heading() == "black went away during the backup"
+    assert dialog.get_body().startswith("Since ")
+    hint = dialog.get_extra_child()
+    assert isinstance(hint, Gtk.Label) and hint.get_selectable()
+    assert hint.get_label().startswith("black's drive went away.") and "--force --force" in hint.get_label()
+    assert dialog.get_close_response() == "ok"
+    dialog.close()
+    settle()
+    window.refresh(live=False)
+    settle()
+    assert window.get_visible_dialog() is None
+
+
+def test_no_dialog_without_drive_gone(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A run whose drive is there: no alert."""
+    window = open_window(app, "app:running-connected")
+    windows.append(window)
+    assert window.get_visible_dialog() is None

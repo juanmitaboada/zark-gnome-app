@@ -35,6 +35,13 @@ chosen from GNOME's menu asks for the administrator's password first, and
 a logout lists zark as the reason. Closing a laptop's lid still suspends
 (logind's default, `LidSwitchIgnoreInhibited=yes`).
 
+When a backup's drive goes away during the run (zark 2.3.1 or later), the
+app shows one dialog with the drive, the time it went and zark's own advice,
+once per run and drive, besides zark's notification. It stays quiet when
+zark's GNOME Shell extension 1.3 or later is active, which shows its own;
+it asks GNOME Shell (`org.gnome.Shell.Extensions`), and without an answer it
+shows the dialog.
+
 What changed in each version is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Requirements

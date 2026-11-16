@@ -14,7 +14,8 @@
 """The questions the app asks itself before a run (design 4, A2 plan 2.2):
 Stop, Retention, Exclude and the Prepare disk picker. Every one is an
 ``AdwAlertDialog`` (libadwaita 1.5) with Cancel first and the close
-response; a destructive one has no default."""
+response; a destructive one has no default. And one alert with OK only:
+a backup's drive gone."""
 
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
@@ -23,6 +24,8 @@ from gi.repository import Adw, Gtk, Pango
 
 from zark_app.commands import MARGIN, MAX_AGE, WINDOW, CommandError, Retention, retention_words
 from zark_app.i18n import _
+from zark_app.model import DriveGone
+from zark_app.units import fmt_time
 
 CANCEL = "cancel"
 
@@ -214,5 +217,23 @@ def prepare(
         dialog.set_extra_child(rows)
     dialog.set_response_enabled("prepare", False)
     dialog.connect("response", lambda _d, r: on_choose(chosen[0]) if r == "prepare" and chosen else None)
+    dialog.present(parent)
+    return dialog
+
+
+def drive_gone(parent: Gtk.Widget, drive: str, gone: DriveGone) -> Adw.AlertDialog:
+    """A backup's drive went away (zark 2.3.1's ``drive_gone``): its name,
+    the local time it went, and zark's hint as written, selectable so its
+    commands can be copied. OK only."""
+    heading = _("{drive} went away during the backup").format(drive=drive)
+    body = _("Since {time}.").format(time=fmt_time(gone.since)) if gone.since is not None else ""
+    dialog = Adw.AlertDialog.new(heading, body)
+    dialog.add_response("ok", _("OK"))
+    dialog.set_default_response("ok")
+    dialog.set_close_response("ok")
+    if gone.hint:
+        hint = Gtk.Label(label=gone.hint, wrap=True, selectable=True, xalign=0.0)
+        hint.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        dialog.set_extra_child(hint)
     dialog.present(parent)
     return dialog

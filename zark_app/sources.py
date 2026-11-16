@@ -68,3 +68,6 @@ class Sources:  # pylint: disable=too-many-instance-attributes
     # The system bus for logind's sleep inhibitor (A2E-5); None: the real one.
     # Tests put one that answers nothing here.
     system_bus: Callable[[], Any] | None = None
+    # The session bus for GNOME Shell's extension state (the drive-gone
+    # alert); None: the real one. Tests put one that answers nothing here.
+    session_bus: Callable[[], Any] | None = None
