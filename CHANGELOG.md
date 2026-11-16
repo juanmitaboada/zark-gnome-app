@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.2] - unreleased
+## [1.1.2] - 2026-11-16
 
 Fixes from the three eli checklists (1.1.1 was not released on its own).
 
@@ -52,7 +52,7 @@ From the first:
   and page, no Back Up, and only those two in its menu. A run's title
   names its drive ("Mounting backup2").
 
-## [1.1] - unreleased
+## [1.1] - not released
 
 Operations, for zark 2.3.0 and later.
 
@@ -72,7 +72,7 @@ Operations, for zark 2.3.0 and later.
 - Ctrl+B backs up the selected drive, Ctrl+M browses or unmounts it.
 - The copy buttons of 1.0 are gone.
 
-## [1.0] - unreleased
+## [1.0] - not released
 
 The first version, read-only, for zark 2.3.0 and later.
 
