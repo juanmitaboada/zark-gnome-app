@@ -56,7 +56,10 @@ run:
 ORIG_TARBALL := ../$(PKG)_$(VERSION).orig.tar.gz
 PPA_TABLE := noble:24.04 resolute:26.04 stonking:26.10
 PPA_DPUT_TGT := zark-ppa
-LINTIAN_SUPPRESS_TAGS := bad-distribution-in-changes-file
+# deb-ppa's per-series revision -1~ubuntuXX.YY.1 reads to lintian as an old-style
+# binary NMU; the app makes none. Suppressed here, not overridden in the package,
+# so the plain -1 builds print no unused-override.
+LINTIAN_SUPPRESS_TAGS := bad-distribution-in-changes-file,binary-nmu-debian-revision-in-source
 DPUT ?= dput
 
 ## dist: the upstream tarball, tracked files without debian/ and .github/, at the commit's time
