@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.3] - unreleased
+
+- When a backup's drive goes away during the run (zark 2.3.1's
+  `drive_gone`), a dialog shows the drive, the local time it went away and
+  zark's hint as written, selectable so its reboot command can be copied;
+  once per run and drive, besides zark's own notification. It stays quiet
+  while zark's GNOME Shell extension 1.3 or later is active (GNOME Shell's
+  `org.gnome.Shell.Extensions`), which shows its own; with no answer from
+  GNOME Shell the app shows it.
+- Packaging: `make deb-ppa` no longer prints lintian's
+  `binary-nmu-debian-revision-in-source` for the PPA's per-series revision.
+
 ## [1.1.2] - 2026-11-16
 
 Fixes from the three eli checklists (1.1.1 was not released on its own).
