@@ -1,6 +1,6 @@
-# zark
+# zark for GNOME
 
-[![CI](https://github.com/juanmitaboada/zark-gnome-app/actions/workflows/ci.yml/badge.svg)](https://github.com/juanmitaboada/zark-gnome-app/actions/workflows/ci.yml) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![CI](https://github.com/juanmitaboada/zark-gnome-app/actions/workflows/ci.yml/badge.svg)](https://github.com/juanmitaboada/zark-gnome-app/actions/workflows/ci.yml) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=juanmitaboada_zark-gnome-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=juanmitaboada_zark-gnome-app) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=juanmitaboada_zark-gnome-app&metric=coverage)](https://sonarcloud.io/summary/overall?id=juanmitaboada_zark-gnome-app) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=juanmitaboada_zark-gnome-app&metric=security_rating)](https://sonarcloud.io/summary/overall?id=juanmitaboada_zark-gnome-app)
 
 A GNOME app for [zark](https://github.com/juanmitaboada/zark): the state of
 your backups and backup drives in one window.
@@ -12,7 +12,20 @@ system pools are, each backup drive with its last backup, its space and its
 backup points by month, the datasets left out of backups, and a backup
 running in a terminal, with its progress.
 
-It reads the two status files the installed
+<p align="center">
+  <img alt="The app's overview: how full the system pools are, the two backup drives with their last backup, and the notices" src="docs/screenshots/overview.png" width="640">
+</p>
+<p align="center">
+  <img alt="A backup running: its step, a progress bar, the data sent and the rate, the datasets, the one being sent and the time left" src="docs/screenshots/backup-running.png" width="640">
+</p>
+<p align="center">
+  <img alt="A connected backup drive's page in the dark style: its status, last run and space, with the Back Up button" src="docs/screenshots/drive-dark.png" width="640">
+</p>
+
+The pictures are rendered from the test fixtures (`make screenshots`), not
+from a real machine.
+
+The app reads the two status files the installed
 zark writes (`/run/zark/progress.json` and `/var/lib/zark/status.json`,
 described in zark's
 [`docs/STATUS-FILES.md`](https://github.com/juanmitaboada/zark/blob/main/docs/STATUS-FILES.md))
@@ -56,7 +69,8 @@ From the PPA zark uses:
 
 ```bash
 sudo add-apt-repository ppa:juanmitaboada/zark
-sudo apt install zark-gnome-app
+sudo apt update
+sudo apt install zark-gnome-app   # brings zark along
 ```
 
 ## Translations
@@ -70,7 +84,7 @@ are welcome as pull requests.
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 \
     xvfb xauth librsvg2-common python3-pytest
-git clone https://github.com/juanmitaboada/zark ../zark
+git clone --branch v2.3.0 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
 make test               # the suite under Xvfb, from the fixtures
 make screenshots        # one PNG per state, in build/screenshots
 make venv lint          # ruff, mypy, pylint at the pinned versions
