@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.3] - unreleased
+## [1.1.3] - 2026-11-16
 
 - When a backup's drive goes away during the run (zark 2.3.1's
   `drive_gone`), a dialog shows the drive, the local time it went away and
