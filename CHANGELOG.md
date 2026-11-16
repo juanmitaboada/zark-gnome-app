@@ -6,12 +6,13 @@ Fixes from the three eli checklists (1.1.1 was not released on its own).
 
 From the third:
 
-- A run that resumes a partial transfer, or whose estimate grows with a
-  further round of transfers, shows the bytes sent and the rate for the
-  rest of the run, with a pulsing bar and no percentage or time left:
-  zark estimates what follows a resume only in the next round, so a
-  percentage would read near the end long before it. The peak hold from
-  the second checklist, which kept the bar at that figure, is gone.
+- The run's percentage and time left are zark's, as before the peak hold
+  from the second checklist, which is gone. zark 2.3.1 counts what follows
+  a resume in the round of the resume, so its totals hold from start to
+  end. With zark 2.3.0, whose estimate grows with a further round after a
+  resume, the run shows the bytes sent and the rate from that growth on,
+  with a pulsing bar and no percentage or time left: a percentage would
+  read near the end long before it.
 - With a release candidate of zark installed (Debian's `2.3.1~rc1-1`), the
   window no longer says the status file was written by another zark: the
   installed version is compared in zark's own spelling (`2.3.1-rc1`).

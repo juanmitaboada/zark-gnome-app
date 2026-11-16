@@ -41,9 +41,9 @@
         <p>
           Fixes: Suspend asks for the administrator's password while the
           app's command runs, a mount offers Open in Files where it ends,
-          Prepare leaves out the disks this system uses, a run that resumes
-          shows the data sent instead of a percentage, a run cut short shows
-          in red, and every run ends with a closing line in the terminal.
+          Prepare leaves out the disks this system uses, a run whose estimate
+          grows shows the data sent instead of a percentage, a run cut short
+          shows in red, and every run ends with a closing line in the terminal.
         </p>
       </description>
     </release>

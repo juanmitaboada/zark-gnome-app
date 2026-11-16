@@ -35,7 +35,7 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
             done=fmt_bytes(done), at_least=at_least, total=fmt_bytes(total)
         )
         if run.rounds:
-            # The total is this round's only (A112E-2): it would mislead.
+            # The total grew with another round (A112E-2): it would mislead.
             text = _("{done} sent").format(done=fmt_bytes(done))
         if isinstance(rate, int) and rate > 0:
             text += f" - {fmt_rate(rate)}"

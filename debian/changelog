@@ -6,9 +6,10 @@ zark-gnome-app (1.1.2-1) stable; urgency=medium
     disks the system uses; the attention icon in red for a run cut short;
     a closing line under zark's output at every end; dataset names keep
     their end in Exclude.
-  * From the third: bytes only, no percentage, once a run resumes a
-    partial transfer or its estimate grows with another round; no
-    foreign-version banner with a release candidate of zark installed.
+  * From the third: zark's percentage and time left, the peak hold gone;
+    bytes only once a run's estimate grows with another round (zark 2.3.0
+    after a resume); no foreign-version banner with a release candidate of
+    zark installed.
 
  -- Juanmi Taboada <juanmi@juanmitaboada.com>  Sat, 14 Nov 2026 12:07:09 +0100
 

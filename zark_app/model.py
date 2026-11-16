@@ -133,7 +133,7 @@ class RunView:
     pid: int | None = None
     # This run had a transfer block and no longer has one: its data is sent.
     sent: bool = False
-    # Another round may follow (A112E-2): bytes only, no percentage, no time left.
+    # The total grew with another round (A112E-2): bytes only, no percentage, no time left.
     rounds: bool = False
 
 
@@ -598,16 +598,15 @@ def with_sent(snapshot: Snapshot, seen: set[RunKey]) -> Snapshot:
 
 
 def with_rounds(snapshot: Snapshot, totals: dict[RunKey, int | None]) -> Snapshot:
-    """Show bytes only once another round may follow (A112E-2). zark
-    estimates a round's transfers when the round starts: a resumed dataset
-    counts only what its partial lacks, and the rest of it is estimated in
+    """Show bytes only once the run's total grows (A112E-2, A112E-3). zark
+    2.3.1 estimates a resumed dataset's next stream in the round of its
+    resume, so its totals are whole from the first round and its percentage
+    and time left hold to the end. zark 2.3.0 estimates that stream only in
     the next round, so ``bytes_total`` grows and any percentage or time left
-    shown before was wrong. A run is open to more rounds from the first
-    ``resume`` dataset state or the first growth of ``bytes_total`` after
-    its first round was announced (a resume shorter than one read would
-    otherwise go unseen); from then on it shows bytes sent and the rate.
-    ``totals`` keeps per run (pid, start) the total first seen once sending
-    started, or None once the run is open."""
+    shown before was wrong: from the first growth after the first round was
+    announced, the run shows bytes sent and the rate instead. ``totals``
+    keeps per run (pid, start) the total first seen once sending started,
+    or None once the run shows bytes only."""
     run = snapshot.run
     if run is None or run.transfer is None:
         return snapshot
@@ -618,7 +617,7 @@ def with_rounds(snapshot: Snapshot, totals: dict[RunKey, int | None]) -> Snapsho
     sending = isinstance(t.get("dataset"), str) or (_int(t.get("datasets_done")) or 0) > 0
     known = totals.get(key, -1)
     grew = isinstance(total, int) and known is not None and 0 <= known < total
-    if not (known is None or t.get("dataset_state") == "resume" or grew):
+    if not (known is None or grew):
         if sending and isinstance(total, int) and key not in totals:
             totals[key] = total
         return snapshot
@@ -629,7 +628,7 @@ def with_rounds(snapshot: Snapshot, totals: dict[RunKey, int | None]) -> Snapsho
 def progress_figure(run: RunView) -> tuple[float | None, str]:
     """The bar's fraction and text: bytes only, full once the data is sent,
     nothing (a pulsing bar) before data moves; never the step as a percent.
-    A run open to more rounds pulses with the bytes sent as its text."""
+    A run whose total grew pulses with the bytes sent as its text."""
     if run.rounds and not run.sent:
         done = run.transfer.get("bytes_done") if run.transfer is not None else None
         return None, _("{done} sent").format(done=fmt_bytes(done)) if isinstance(done, int) else ""

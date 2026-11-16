@@ -304,38 +304,38 @@ def _with_transfer(base: Snapshot, **fields: object) -> Snapshot:
     return replace(base, run=replace(base.run, transfer={**base.run.transfer, **fields}))
 
 
-def test_a_resume_shows_bytes_only_for_the_rest_of_the_run() -> None:
-    """A112E-2: a resumed dataset's rest is estimated in the next round, so
-    from the first resume the run shows bytes sent and no percentage or time
-    left, also once the resume is done; another run starts afresh."""
+def test_a_resume_whose_total_holds_keeps_the_percentage() -> None:
+    """A112E-3: zark 2.3.1 estimates a resume's next stream in its round, so
+    a resume alone keeps the percentage and the time left to the end."""
     totals: dict[model.RunKey, int | None] = {}
     base = snap(app_case("running-connected"))
-    first = model.with_rounds(base, totals)
-    assert first.run is not None and first.run.fraction is not None and not first.run.rounds
-    resumed = model.with_rounds(_with_transfer(base, dataset_state="resume"), totals)
-    assert resumed.run is not None and resumed.run.rounds
-    assert resumed.run.fraction is None and resumed.run.eta_s is None
-    assert model.progress_figure(resumed.run) == (None, "7.00 GiB sent")
-    later = model.with_rounds(base, totals)
-    assert later.run is not None and later.run.rounds and later.run.fraction is None
     assert base.run is not None
-    other = replace(base, run=replace(base.run, pid=(base.run.pid or 0) + 1))
-    fresh = model.with_rounds(other, totals)
-    assert fresh.run is not None and not fresh.run.rounds and fresh.run.fraction is not None
+    for state in ("resume", "incremental", "resume"):
+        shown = model.with_rounds(_with_transfer(base, dataset_state=state), totals)
+        assert shown.run is not None and not shown.run.rounds
+        assert shown.run.fraction == base.run.fraction and shown.run.eta_s == base.run.eta_s
 
 
 def test_a_total_that_grows_shows_bytes_only() -> None:
-    """A112E-2: a second round raises bytes_total (a resume too short to be
-    read); from then on bytes only, and the data sent still shows 100 %."""
+    """A112E-2: a second round raises bytes_total (zark 2.3.0 after a
+    resume); from then on bytes only for the rest of the run, the data sent
+    still shows 100 %, and another run starts afresh."""
     totals: dict[model.RunKey, int | None] = {}
     base = snap(app_case("running-connected"))
     assert base.run is not None and base.run.transfer is not None
     total = base.run.transfer["bytes_total"]
     assert not model.with_rounds(base, totals).run.rounds  # type: ignore[union-attr]
     grown = model.with_rounds(_with_transfer(base, bytes_total=total + 3 * 2**30), totals)
-    assert grown.run is not None and grown.run.rounds and grown.run.fraction is None
+    assert grown.run is not None and grown.run.rounds
+    assert grown.run.fraction is None and grown.run.eta_s is None
+    assert model.progress_figure(grown.run) == (None, "7.00 GiB sent")
+    later = model.with_rounds(base, totals)
+    assert later.run is not None and later.run.rounds and later.run.fraction is None
     sent = replace(grown, run=replace(grown.run, transfer=None, sent=True))
     assert model.progress_figure(sent.run) == (1.0, "100 %")  # type: ignore[arg-type]
+    other = replace(base, run=replace(base.run, pid=(base.run.pid or 0) + 1))
+    fresh = model.with_rounds(other, totals)
+    assert fresh.run is not None and not fresh.run.rounds and fresh.run.fraction is not None
 
 
 def test_a_round_being_announced_is_not_growth() -> None:
