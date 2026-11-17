@@ -24,7 +24,9 @@ def no_zark(detail: str) -> Gtk.Widget:
     """zark is not installed, or its reader is not where zark puts it."""
     page = status_page(
         _("zark Is Not Installed"),
-        _("The zark package provides the commands this app runs: sudo apt install zark"),
+        _("The zark package provides the commands this app runs: {command}").format(
+            command="sudo apt install zark"
+        ),
     )
     page.set_tooltip_text(detail or None)
     return page

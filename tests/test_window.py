@@ -471,3 +471,75 @@ def test_no_dialog_without_drive_gone(app: ZarkApp, windows: list[ZarkWindow]) -
     window = open_window(app, "app:running-connected")
     windows.append(window)
     assert window.get_visible_dialog() is None
+
+
+def _children(widget: Gtk.Widget | None) -> list[Gtk.Widget]:
+    assert widget is not None
+    out = []
+    child = widget.get_first_child()
+    while child is not None:
+        out.append(child)
+        child = child.get_next_sibling()
+    return out
+
+
+_DISKS = [("usb-New_Disk_0002-0:0", "New Disk")]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        (
+            False,
+            0,
+            "The disk you choose is erased completely. Could not check which disks this system uses: "
+            "zark checks again before it writes.",
+        ),
+        (True, 2, "The disk you choose is erased completely. Disks this system uses are not listed."),
+        (True, 0, "The disk you choose is erased completely."),
+    ],
+)
+def test_prepare_risk_caption(
+    app: ZarkApp,
+    windows: list[ZarkWindow],
+    monkeypatch: pytest.MonkeyPatch,
+    case: tuple[bool, int, str],
+) -> None:
+    """BC22-44: the English score-2 lines stay; a translated caption per
+    branch sits between them and the disks, in the warning style; with no
+    translation there is none."""
+    checked, hidden, caption = case
+    window = open_window(app, "app:connected")
+    windows.append(window)
+    assert dialogs.risk_caption(checked, hidden) == ""
+    dialog = dialogs.prepare(window, _DISKS, lambda _d: None, checked, hidden)
+    assert dialog.get_body().startswith("zark erases the disk you choose and makes it a backup drive.")
+    assert [type(c) for c in _children(dialog.get_extra_child())] == [Gtk.ListBox]
+    dialog.close()
+    monkeypatch.setattr(dialogs, "_", lambda msgid: "XX " + msgid)
+    assert dialogs.risk_caption(checked, hidden) == "XX " + caption
+    dialog = dialogs.prepare(window, _DISKS, lambda _d: None, checked, hidden)
+    kids = _children(dialog.get_extra_child())
+    assert len(kids) == 2
+    first, rows = kids[0], kids[1]
+    assert first.has_css_class("warning") and isinstance(rows, Gtk.ListBox)
+    parts = _children(first)
+    assert len(parts) == 2
+    icon, label = parts[0], parts[1]
+    assert isinstance(icon, Gtk.Image) and isinstance(label, Gtk.Label)
+    assert label.get_label() == "XX " + caption and label.get_wrap()
+    dialog.close()
+    settle()
+
+
+def test_prepare_no_disk_no_caption(
+    app: ZarkApp, windows: list[ZarkWindow], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """BC22-44: no disk connected, no caption and no list."""
+    window = open_window(app, "app:connected")
+    windows.append(window)
+    monkeypatch.setattr(dialogs, "_", lambda msgid: "XX " + msgid)
+    dialog = dialogs.prepare(window, [], lambda _d: None, False, 0)
+    assert dialog.get_extra_child() is None
+    dialog.close()
+    settle()

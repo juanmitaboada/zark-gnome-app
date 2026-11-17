@@ -66,7 +66,9 @@ def _pool_row(pool: PoolView, now_label: Callable[[PoolView], str]) -> Adw.Actio
 def _computer(snapshot: Snapshot) -> Adw.PreferencesGroup:
     group = Adw.PreferencesGroup(title=_("This Computer"))
     group.set_description(
-        _("Live figures from zpool list") if snapshot.pools_live else _("Figures from zark's status file")
+        _("Live figures from {command}").format(command="zpool list")
+        if snapshot.pools_live
+        else _("Figures from zark's status file")
     )
 
     def label(pool: PoolView) -> str:

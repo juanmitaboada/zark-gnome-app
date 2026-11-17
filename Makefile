@@ -42,7 +42,7 @@ lint:
 
 ## pot: the translation template from the sources listed in po/POTFILES.in
 pot:
-	xgettext --from-code=UTF-8 --language=Python --keyword=_ --keyword=N_ \
+	xgettext --from-code=UTF-8 --language=Python --keyword=_ --keyword=N_ --add-comments=TRANSLATORS: \
 	    --keyword=ngettext:1,2 --package-name=$(PKG) --package-version=$(VERSION) \
 	    --files-from=po/POTFILES.in --output=$(POT)
 

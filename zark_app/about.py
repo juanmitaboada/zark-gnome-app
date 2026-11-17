@@ -59,6 +59,10 @@ def show(parent: Gtk.Widget, snapshot: Snapshot) -> Adw.AboutDialog:
         debug_info_filename="zark-gnome-app-debug.txt",
     )
     dialog.set_developers(["Juanmi Taboada https://www.juanmitaboada.com"])
+    # TRANSLATORS: your name, one translator per line, as GNOME apps credit them.
+    translators = _("translator-credits")
+    if translators != "translator-credits":
+        dialog.set_translator_credits(translators)
     dialog.add_link(_("zark"), "https://github.com/juanmitaboada/zark")
     dialog.present(parent)
     return dialog

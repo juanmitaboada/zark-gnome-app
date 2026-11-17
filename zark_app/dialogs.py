@@ -23,7 +23,7 @@ from typing import Any
 from gi.repository import Adw, Gtk, Pango
 
 from zark_app.commands import MARGIN, MAX_AGE, WINDOW, CommandError, Retention, retention_words
-from zark_app.i18n import _
+from zark_app.i18n import N_, _
 from zark_app.model import DriveGone
 from zark_app.units import fmt_time
 
@@ -169,6 +169,51 @@ def exclude(
     return dialog
 
 
+def risk_caption(checked: bool, hidden: int) -> str:
+    """BC22-44: the translated caption under Prepare's English lines, one
+    per branch of its body with disks listed; empty when the catalogue does
+    not translate it, so an English reader does not read the risk twice."""
+    if not checked:
+        msgid = N_(
+            # TRANSLATORS: risk caption, shown under English lines that stay
+            # untranslated. It may only add caution: never say less than those lines.
+            "The disk you choose is erased completely. Could not check which disks this system uses: "
+            "zark checks again before it writes."
+        )
+    elif hidden:
+        # TRANSLATORS: risk caption, shown under English lines that stay
+        # untranslated. It may only add caution: never say less than those lines.
+        msgid = N_("The disk you choose is erased completely. Disks this system uses are not listed.")
+    else:
+        # TRANSLATORS: risk caption, shown under English lines that stay
+        # untranslated. It may only add caution: never say less than those lines.
+        msgid = N_("The disk you choose is erased completely.")
+    text = _(msgid)
+    return "" if text == msgid else text
+
+
+def _caption_box(text: str) -> Gtk.Widget:
+    """A warning icon and a wrapped label in libadwaita's warning style."""
+    box = Gtk.Box(spacing=12)
+    box.add_css_class("warning")
+    icon = Gtk.Image.new_from_icon_name("dialog-warning-symbolic")
+    icon.set_valign(Gtk.Align.START)
+    label = Gtk.Label(label=text, wrap=True, xalign=0.0, hexpand=True)
+    label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+    box.append(icon)
+    box.append(label)
+    return box
+
+
+def _with_caption(rows: Gtk.Widget, caption: str) -> Gtk.Widget:
+    """The disk list, under the risk caption when there is one."""
+    extra = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    if caption:
+        extra.append(_caption_box(caption))
+    extra.append(rows)
+    return extra
+
+
 def prepare(
     parent: Gtk.Widget,
     disks: Sequence[tuple[str, str]],
@@ -181,17 +226,19 @@ def prepare(
     does not use (A2E-9; ``hidden`` of them left out, ``checked`` False when
     that could not be read). zark checks it and asks its own typed
     confirmation after."""
+    # The three lines on what is erased and which disks are listed stay
+    # English (risk score 2, glossary 6); the caption below carries them.
     body = (
-        _("zark erases the disk you choose and makes it a backup drive.")
+        "zark erases the disk you choose and makes it a backup drive."
         + " "
         + _("It asks you to confirm in the terminal")
         if disks
         else _("No disk to prepare is connected: plug in an empty drive")
     )
     if not checked:
-        body += "\n\n" + _("Could not check which disks this system uses: zark checks again before it writes")
+        body += "\n\n" + "Could not check which disks this system uses: zark checks again before it writes"
     elif hidden:
-        body += "\n\n" + _("Disks this system uses are not listed")
+        body += "\n\n" + "Disks this system uses are not listed"
     dialog = _alert(_("Prepare a New Drive"), body, "prepare", _("Prepare..."), True)
     group: Gtk.CheckButton | None = None
     chosen: list[str] = []
@@ -214,7 +261,7 @@ def prepare(
         check.connect("toggled", picked)
         rows.append(row)
     if disks:
-        dialog.set_extra_child(rows)
+        dialog.set_extra_child(_with_caption(rows, risk_caption(checked, hidden)))
     dialog.set_response_enabled("prepare", False)
     dialog.connect("response", lambda _d, r: on_choose(chosen[0]) if r == "prepare" and chosen else None)
     dialog.present(parent)

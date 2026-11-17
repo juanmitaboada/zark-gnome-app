@@ -5,6 +5,12 @@
 - Tests: zark 2.3.2's reader and status fixtures (`tests/fixtures/zark-2.3.2/`);
   a fixture's connected drive has its `-part1` link, which zark 2.3.1's reader
   looks for. CI and the README's Development steps use zark `v2.3.2`.
+- Translations: the three lines of Prepare a New Drive on what is erased and
+  which disks are listed stay English in every language; a translated
+  caption under them, in the warning style, says the same where a catalogue
+  translates it. Commands shown inside a text (`sudo apt install zark`,
+  `zfs get`, `zpool list`) are no longer part of the translatable text.
+  About credits the translators.
 
 ## [1.1.3] - 2026-11-16
 

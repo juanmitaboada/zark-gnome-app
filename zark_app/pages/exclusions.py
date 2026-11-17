@@ -46,7 +46,9 @@ def build(snapshot: Snapshot) -> Gtk.Widget:
     if snapshot.exclusions is None:
         status = Adw.StatusPage(
             title=_("Exclusions Not Read"),
-            description=_("zfs get could not read zark's properties. Reload with Ctrl+R"),
+            description=_("{command} could not read zark's properties. Reload with Ctrl+R").format(
+                command="zfs get"
+            ),
             icon_name="dialog-warning-symbolic",
         )
         holder = Adw.PreferencesGroup()
