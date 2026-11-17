@@ -44,7 +44,7 @@ DATA = ROOT / "data"
 APP_ID = "com.juanmitaboada.Zark"
 DOMAIN = "zark-gnome-app"
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
-DESKTOP_KEYS = ["--keyword=", "--keyword=GenericName", "--keyword=Comment", "--keyword=Keywords"]
+PSEUDO_LANGS = ("es", "pt_BR")
 
 
 def _tool(name: str) -> str:
@@ -62,16 +62,19 @@ def linguas() -> list[str]:
 
 @pytest.fixture(scope="module")
 def pseudo_po(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A po directory holding the pseudo-translation as ``es``."""
+    """A po directory holding the pseudo-translation as ``es`` and, for a
+    language with a region, as ``pt_BR``."""
     out = tmp_path_factory.mktemp("po")
-    (out / "es.po").write_text(potools.pseudo(potools.parse(potools.POT)), encoding="utf-8")
-    (out / "LINGUAS").write_text("es\n", encoding="utf-8")
+    entries = potools.parse(potools.POT)
+    for lang in PSEUDO_LANGS:
+        (out / f"{lang}.po").write_text(potools.pseudo(entries, lang), encoding="utf-8")
+    (out / "LINGUAS").write_text("\n".join(PSEUDO_LANGS) + "\n", encoding="utf-8")
     return out
 
 
 def catalogues(pseudo_po: Path) -> list[Path]:
     """Every catalogue to check: po/LINGUAS's and the pseudo-translation."""
-    return [PO / f"{lang}.po" for lang in linguas()] + [pseudo_po / "es.po"]
+    return [PO / f"{lang}.po" for lang in linguas()] + [pseudo_po / f"{lang}.po" for lang in PSEUDO_LANGS]
 
 
 def _key(entry: potools.Entry) -> tuple[str | None, str]:
@@ -311,23 +314,35 @@ def test_plural_forms(pseudo_po: Path) -> None:
 
 def merge(po_dir: Path, out: Path) -> Path:
     """The desktop file, the metainfo and the policy merged with the
-    catalogues of ``po_dir``, as make i18n merges them."""
-    msgfmt = _tool("msgfmt")
-    out.mkdir(parents=True, exist_ok=True)
-    env = {"GETTEXTDATADIRS": str(PO), "PATH": "/usr/bin:/bin"}
-    for suffix, mode in (
-        (".desktop", ["--desktop", *DESKTOP_KEYS]),
-        (".metainfo.xml", ["--xml"]),
-        (".policy", ["--xml"]),
-    ):
-        template = DATA / f"{APP_ID}{suffix}.in"
-        target = out / f"{APP_ID}{suffix}"
-        subprocess.run(
-            [msgfmt, *mode, "--template", str(template), "-d", str(po_dir), "-o", str(target)],
-            check=True,
-            env=env,
-        )
+    catalogues of ``po_dir`` by make i18n itself, as the package build does."""
+    _tool("msgfmt")
+    subprocess.run(
+        ["make", "-s", "-C", str(ROOT), "i18n", f"PODIR={po_dir}", f"I18N={out}"],
+        check=True,
+        capture_output=True,
+    )
     return out
+
+
+def xml_langs(path: Path) -> set[str]:
+    """The xml:lang values of a merged XML file."""
+    return {e.get(XML_LANG) or "" for e in ET.parse(path).getroot().iter() if e.get(XML_LANG)}
+
+
+def desktop_langs(path: Path) -> set[str]:
+    """The languages of a merged desktop file's keys (``Comment[pt_BR]``)."""
+    return set(re.findall(r"^[A-Za-z]+\[([^\]]+)\]=", path.read_text(encoding="utf-8"), re.MULTILINE))
+
+
+def bcp47(lang: str) -> str:
+    """``pt-BR`` from the locale name ``pt_BR``."""
+    return lang.replace("_", "-")
+
+
+def test_language_names() -> None:
+    """po/LINGUAS's names are a language and maybe a region (``pt_BR``):
+    the forms make i18n turns between a locale name and BCP 47."""
+    assert all(re.fullmatch(r"[a-z]{2,3}(_[A-Z]{2})?", lang) for lang in linguas())
 
 
 @pytest.fixture(scope="module")
@@ -365,6 +380,16 @@ def test_metainfo_merged(merged: Path) -> None:
     assert not [p for p in root.iterfind("./releases/release/description/p") if p.get(XML_LANG)]
 
 
+def test_merged_language_forms(merged: Path) -> None:
+    """Each merged file carries its languages in the form its reader wants,
+    whatever gettext built it (0.21 writes pt_BR, 0.22 and later pt-BR):
+    the policy the locale name (polkitd matches $LANG's variants), the
+    metainfo BCP 47 (AppStream), the desktop file the locale name."""
+    assert xml_langs(merged / f"{APP_ID}.policy") == set(PSEUDO_LANGS)
+    assert xml_langs(merged / f"{APP_ID}.metainfo.xml") == {bcp47(lang) for lang in PSEUDO_LANGS}
+    assert desktop_langs(merged / f"{APP_ID}.desktop") == set(PSEUDO_LANGS)
+
+
 def test_policy_merged(merged: Path) -> None:
     """The merged policy carries an xml:lang copy of every action's
     description and message, the command placeholder intact, and no
@@ -393,7 +418,8 @@ def test_policy_merged_same_without_catalogue(tmp_path: Path) -> None:
 
 def test_merged_real_catalogues(merged_real: Path) -> None:
     """The catalogues of po/LINGUAS merged: valid files, every policy
-    message keeps its command placeholder (A1TR-7)."""
+    message keeps its command placeholder, every language in each file in
+    its reader's form (A1TR-7)."""
     subprocess.run([_tool("desktop-file-validate"), str(merged_real / f"{APP_ID}.desktop")], check=True)
     subprocess.run(
         [_tool("appstreamcli"), "validate", "--no-net", str(merged_real / f"{APP_ID}.metainfo.xml")],
@@ -402,7 +428,9 @@ def test_merged_real_catalogues(merged_real: Path) -> None:
     root = ET.parse(merged_real / f"{APP_ID}.policy").getroot()
     for message in root.iter("message"):
         assert (message.text or "").endswith("$(cmdline_short)"), message.get(XML_LANG)
-    assert {e.get(XML_LANG) for e in root.iter() if e.get(XML_LANG)} <= set(linguas())
+    assert xml_langs(merged_real / f"{APP_ID}.policy") == set(linguas())
+    assert xml_langs(merged_real / f"{APP_ID}.metainfo.xml") == {bcp47(lang) for lang in linguas()}
+    assert desktop_langs(merged_real / f"{APP_ID}.desktop") == set(linguas())
 
 
 # -- the app in Spanish ------------------------------------------------------

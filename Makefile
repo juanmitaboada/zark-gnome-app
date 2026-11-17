@@ -13,8 +13,11 @@ SERIES ?= noble resolute stonking
 MIRROR ?= http://archive.ubuntu.com/ubuntu
 POT := po/$(PKG).pot
 APP_ID := com.juanmitaboada.Zark
-LINGUAS := $(shell sed -e 's/\#.*//' po/LINGUAS)
-I18N := build/i18n
+# PODIR and I18N are variables so that the tests can build from their own
+# catalogues into their own directory.
+PODIR ?= po
+LINGUAS = $(shell sed -e 's/\#.*//' $(PODIR)/LINGUAS)
+I18N ?= build/i18n
 # The desktop file's translated keys; Name is the product's, kept as is.
 DESKTOP_KEYS := --keyword= --keyword=GenericName --keyword=Comment --keyword=Keywords
 
@@ -68,11 +71,16 @@ i18n:
 	@mkdir -p $(I18N)
 	@for lang in $(LINGUAS); do \
 	    mkdir -p $(I18N)/locale/$$lang/LC_MESSAGES; \
-	    msgfmt -c -o $(I18N)/locale/$$lang/LC_MESSAGES/$(PKG).mo po/$$lang.po || exit 1; \
+	    msgfmt -c -o $(I18N)/locale/$$lang/LC_MESSAGES/$(PKG).mo $(PODIR)/$$lang.po || exit 1; \
 	done
-	msgfmt --desktop $(DESKTOP_KEYS) --template data/$(APP_ID).desktop.in -d po -o $(I18N)/$(APP_ID).desktop
-	msgfmt --xml --template data/$(APP_ID).metainfo.xml.in -d po -o $(I18N)/$(APP_ID).metainfo.xml
-	GETTEXTDATADIRS=po msgfmt --xml --template data/$(APP_ID).policy.in -d po -o $(I18N)/$(APP_ID).policy
+	msgfmt --desktop $(DESKTOP_KEYS) --template data/$(APP_ID).desktop.in -d $(PODIR) -o $(I18N)/$(APP_ID).desktop
+	@# xml:lang as each reader wants it, whatever gettext wrote (0.21: pt_BR,
+	@# 0.22 and later: pt-BR): AppStream's BCP 47 in the metainfo; the locale
+	@# name in the policy, which polkitd matches against $$LANG's variants.
+	msgfmt --xml --template data/$(APP_ID).metainfo.xml.in -d $(PODIR) -o $(I18N)/$(APP_ID).metainfo.xml
+	sed -i -E 's/(xml:lang="[a-z]{2,3})_([A-Z]{2})"/\1-\2"/g' $(I18N)/$(APP_ID).metainfo.xml
+	GETTEXTDATADIRS=po msgfmt --xml --template data/$(APP_ID).policy.in -d $(PODIR) -o $(I18N)/$(APP_ID).policy
+	sed -i -E 's/(xml:lang="[a-z]{2,3})-([A-Z]{2})"/\1_\2"/g' $(I18N)/$(APP_ID).policy
 
 ## run: the app from this tree against a fixture case (CASE=app:connected)
 run:
