@@ -1,2 +1,11 @@
 # The languages of the catalogues built and installed, one per line
 # (po/<lang>.po).
+es
+pt_BR
+pt
+fr
+it
+ca
+gl
+de
+nl
