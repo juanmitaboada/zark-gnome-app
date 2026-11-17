@@ -137,7 +137,7 @@ def test_potfiles_list_every_translated_module() -> None:
     } - {
         "data/com.juanmitaboada.Zark.desktop.in",
         "data/com.juanmitaboada.Zark.metainfo.xml.in",
-        "data/com.juanmitaboada.Zark.policy",
+        "data/com.juanmitaboada.Zark.policy.in",
     }
     users = {
         str(p.relative_to(ROOT))

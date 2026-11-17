@@ -63,6 +63,6 @@ def show(parent: Gtk.Widget, snapshot: Snapshot) -> Adw.AboutDialog:
     translators = _("translator-credits")
     if translators != "translator-credits":
         dialog.set_translator_credits(translators)
-    dialog.add_link(_("zark"), "https://github.com/juanmitaboada/zark")
+    dialog.add_link("zark", "https://github.com/juanmitaboada/zark")
     dialog.present(parent)
     return dialog

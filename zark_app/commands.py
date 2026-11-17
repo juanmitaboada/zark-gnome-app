@@ -38,7 +38,7 @@ PKEXEC_PREFIX: tuple[str, ...] = (PKEXEC, "--disable-internal-agent")
 # does not; the policy names this one.
 ZARK = "/usr/share/zark/zark"
 
-# The policy's argv1 values, one action each (data/com.juanmitaboada.Zark.policy).
+# The policy's argv1 values, one action each (data/com.juanmitaboada.Zark.policy.in).
 POLICY_WORDS = frozenset(
     {
         "backup",
@@ -144,13 +144,14 @@ OPS = frozenset(TITLES)
 
 def _title(op: str, drive: str | None = None) -> str:
     title = _(TITLES[op])
+    # TRANSLATORS: {title} is a run title such as "Backing Up", {drive} a drive's name.
     return _("{title} to {drive}").format(title=title, drive=drive) if op == "backup" and drive else title
 
 
 def check_name(name: str) -> str:
     """A drive name as zark's registry and ZFS allow it."""
     if not NAME_RE.fullmatch(name):
-        raise CommandError(_("{name!r} is not a drive name").format(name=name))
+        raise CommandError(_("{name} is not a drive name").format(name=repr(name)))
     return name
 
 
@@ -165,7 +166,7 @@ def _drive(ctx: Context, name: str) -> Mapping[str, Any]:
 def _device(ctx: Context, name: str) -> str:
     """``/dev/disk/by-id/<name>``, a link to a block device that exists."""
     if not DEVICE_RE.fullmatch(name):
-        raise CommandError(_("{name!r} is not a disk name").format(name=name))
+        raise CommandError(_("{name} is not a disk name").format(name=repr(name)))
     path = ctx.by_id / name
     if not path.is_symlink() or not path.exists():
         raise CommandError(_("{name} is not connected").format(name=name))
@@ -190,8 +191,10 @@ def _int_in(value: int, limits: tuple[int, int], what: str) -> int:
 
 def retention_words(values: Retention) -> tuple[str, ...]:
     """``window=N max_age=N|off margin=N``, checked as zark checks them."""
+    # TRANSLATORS: the retention window (days), named in an error such as "The window must be 1 to 365".
     window = _int_in(values.window, WINDOW, _("The window"))
     max_age = _int_in(values.max_age, MAX_AGE, _("The maximum age"))
+    # TRANSLATORS: the retention margin (percent of the drive left free), named in an error.
     margin = _int_in(values.margin, MARGIN, _("The margin"))
     if 0 < max_age <= window:
         raise CommandError(_("The maximum age must be longer than the window, or no limit"))
@@ -253,14 +256,14 @@ def build(  # pylint: disable=too-many-return-statements,too-many-branches
     if op in ("exclude-add", "exclude-remove"):
         dataset, word = _split(arg)
         if not DATASET_RE.fullmatch(dataset) or word not in EXCLUDE_WORDS:
-            raise CommandError(_("{arg!r} is not a dataset and a word").format(arg=arg))
+            raise CommandError(_("{arg} is not a dataset and a word").format(arg=repr(arg)))
         if op == "exclude-add" and dataset not in ctx.datasets:
             raise CommandError(_("{dataset} is not a dataset of this computer").format(dataset=dataset))
         if op == "exclude-remove" and dataset not in ctx.excluded:
             raise CommandError(_("{dataset} is not excluded").format(dataset=dataset))
         verb = "add" if op == "exclude-add" else "remove"
         return Command(op, ("exclude", verb, dataset, word), _title(op))
-    raise CommandError(_("Unknown operation {op!r}").format(op=op))
+    raise CommandError(_("Unknown operation {op}").format(op=repr(op)))
 
 
 def argv(command: Command, prefix: Sequence[str] = PKEXEC_PREFIX, zark: str = ZARK) -> list[str]:

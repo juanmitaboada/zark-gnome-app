@@ -279,6 +279,7 @@ class ZarkWindow(Adw.ApplicationWindow):
         rows: list[SidebarRow] = []
         own = self.ops.run
         if own is not None and (snap.run is None or snap.run.pid != own.pid):
+            # TRANSLATORS: the state of the app's own zark command.
             sub = _("Stopping") if own.stopping else (_("Ended") if not own.alive else _("Running"))
             icon = _spinner() if own.alive else _icon("utilities-terminal-symbolic")
             rows.append(SidebarRow("run", "run", own.command.title, sub, icon))
@@ -587,6 +588,7 @@ def _step(snap: Snapshot) -> str:
         text = _("Step {i} of {n}").format(i=r.step_index, n=r.step_total)
         fraction, figure = model.progress_figure(r)
         if fraction is not None:
+            # TRANSLATORS: data sent: a backup's data has all been sent, lower case after a comma.
             text += ", " + (_("data sent") if r.sent and r.fraction is None else figure)
         elif figure:
             text += ", " + figure

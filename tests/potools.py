@@ -42,6 +42,7 @@ class Entry:
     """One message of a catalogue."""
 
     msgid: str = ""
+    msgctxt: str | None = None
     msgid_plural: str | None = None
     msgstr: dict[int, str] = field(default_factory=dict)
     locations: list[str] = field(default_factory=list)
@@ -104,7 +105,7 @@ def parse(path: Path) -> list[Entry]:
 
 
 def _keyword(word: str) -> tuple[str, int] | None:
-    if word in ("msgid", "msgid_plural", "msgstr"):
+    if word in ("msgctxt", "msgid", "msgid_plural", "msgstr"):
         return (word, 0)
     match = re.fullmatch(r"msgstr\[(\d+)\]", word)
     return ("msgstr", int(match.group(1))) if match else None
@@ -112,7 +113,9 @@ def _keyword(word: str) -> tuple[str, int] | None:
 
 def _append(entry: Entry, key: tuple[str, int], text: str) -> None:
     name, index = key
-    if name == "msgid":
+    if name == "msgctxt":
+        entry.msgctxt = (entry.msgctxt or "") + text
+    elif name == "msgid":
         entry.msgid += text
     elif name == "msgid_plural":
         entry.msgid_plural = (entry.msgid_plural or "") + text
@@ -178,6 +181,8 @@ def pseudo(entries: list[Entry], lang: str = "es") -> str:
     for entry in entries:
         if not entry.msgid:
             continue
+        if entry.msgctxt is not None:
+            lines.append(f"msgctxt {quote(entry.msgctxt)}")
         lines.append(f"msgid {quote(entry.msgid)}")
         if entry.msgid_plural is not None:
             lines.append(f"msgid_plural {quote(entry.msgid_plural)}")

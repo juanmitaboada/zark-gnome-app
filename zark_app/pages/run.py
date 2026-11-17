@@ -30,9 +30,9 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
         return
     done, total, rate = t.get("bytes_done"), t.get("bytes_total"), t.get("rate_bytes_per_s")
     if isinstance(done, int) and isinstance(total, int):
-        at_least = _("at least ") if t.get("bytes_total_partial") is not False else ""
-        text = _("{done} of {at_least}{total}").format(
-            done=fmt_bytes(done), at_least=at_least, total=fmt_bytes(total)
+        partial = t.get("bytes_total_partial") is not False
+        text = (_("{done} of at least {total}") if partial else _("{done} of {total}")).format(
+            done=fmt_bytes(done), total=fmt_bytes(total)
         )
         if run.rounds:
             # The total grew with another round (A112E-2): it would mislead.
@@ -52,6 +52,7 @@ def _transfer_rows(run: RunView, group: Adw.PreferencesGroup) -> None:
     if isinstance(t.get("dataset"), str):
         state = t.get("dataset_state")
         value = f"{t['dataset']} ({state})" if isinstance(state, str) else t["dataset"]
+        # TRANSLATORS: Now: what zark is doing at this moment.
         group.add(property_row(_("Now"), value))
     if run.eta_s is not None:
         group.add(property_row(_("Time left"), fmt_duration(run.eta_s)))

@@ -20,7 +20,7 @@ from typing import Any
 
 from gi.repository import Adw, Gtk
 
-from zark_app.i18n import _, ngettext
+from zark_app.i18n import _, ngettext, pgettext
 from zark_app.model import (
     CHECK_WORDS,
     Doc,
@@ -84,7 +84,11 @@ def _status(snapshot: Snapshot, drive: DriveView) -> Adw.PreferencesGroup:
     check = doc.get("last_check")
     if isinstance(check, dict):
         result = check.get("result")
-        words = _(CHECK_WORDS[result]) if isinstance(result, str) and result in CHECK_WORDS else str(result)
+        words = (
+            pgettext(*CHECK_WORDS[result])
+            if isinstance(result, str) and result in CHECK_WORDS
+            else str(result)
+        )
         ended = mod.parse_timestamp(check.get("ended_at")) if mod is not None else None
         when = f" ({fmt_since(ended, snapshot.now)})" if ended is not None else ""
         message = f" - {check['message']}" if check.get("message") else ""
@@ -120,8 +124,10 @@ def _space(snapshot: Snapshot, drive: DriveView, details: DriveDetails) -> Adw.P
     holder = Adw.PreferencesRow(activatable=False)
     holder.set_child(meter)
     group.add(holder)
+    # TRANSLATORS: Used: space used on the drive.
     group.add(property_row(_("Used"), fmt_bytes(space.used)))
-    group.add(property_row(_("Free"), fmt_bytes(space.available)))
+    # TRANSLATORS: Free: the space left on the drive.
+    group.add(property_row(pgettext("space", "Free"), fmt_bytes(space.available)))
     group.add(property_row(_("Reserved by ZFS"), fmt_bytes(space.reserved)))
     if space.margin is not None:
         margin_pct = obj(drive.doc.get("retention")).get("margin_pct")
@@ -134,7 +140,11 @@ def _space(snapshot: Snapshot, drive: DriveView, details: DriveDetails) -> Adw.P
             )
         )
     if details.after_free is not None and details.after_reclaim is not None:
-        floor = _("at least ") if details.after_floor else ""
+        after = (
+            _("After the next retention: at least {free} free")
+            if details.after_floor
+            else _("After the next retention: {free} free")
+        )
         what = []
         if details.after_points is not None:
             what.append(
@@ -147,9 +157,7 @@ def _space(snapshot: Snapshot, drive: DriveView, details: DriveDetails) -> Adw.P
                 )
             )
         row = Adw.ActionRow(
-            title=_("After the next retention: {floor}{free} free").format(
-                floor=floor, free=fmt_bytes(details.after_free)
-            ),
+            title=after.format(free=fmt_bytes(details.after_free)),
             subtitle=_("Frees {size}: {what}").format(
                 size=fmt_bytes(details.after_reclaim), what=", ".join(what)
             )
@@ -170,7 +178,9 @@ def _month_row(month: MonthView) -> Adw.ExpanderRow:
             ngettext("{n} incomplete", "{n} incomplete", month.incomplete).format(n=month.incomplete)
         )
     elif month.all_whole:
+        # TRANSLATORS: all whole: every backup point of the month holds every dataset.
         parts.append(_("all whole"))
+    # TRANSLATORS: {what} is a list such as "4 points, all whole"; {size} the space only these points hold.
     subtitle = _("{what} - held alone {size}").format(what=", ".join(parts), size=fmt_bytes(month.held_alone))
     row = Adw.ExpanderRow(title=fmt_month(month.key), subtitle=subtitle)
     if month.has_entry:
@@ -181,10 +191,12 @@ def _month_row(month: MonthView) -> Adw.ExpanderRow:
         )
         row.add_suffix(Gtk.Label(label=text, css_classes=["dim-label"], wrap=True))
     elif month.inside_window:
+        # TRANSLATORS: the retention window: these points are all kept.
         row.add_suffix(Gtk.Label(label=_("inside the window"), css_classes=["dim-label"]))
     for point in month.points:
         marks = []
         if point.get("complete") is False:
+            # TRANSLATORS: incomplete, whole: a backup point's state, lower case in a list.
             marks.append(_("incomplete"))
         if point.get("whole") is True:
             marks.append(_("whole"))
@@ -234,6 +246,7 @@ def _other(details: DriveDetails) -> Adw.PreferencesGroup | None:
     if details.other is None:
         return None
     group = Adw.PreferencesGroup(title=_("Other Snapshots"))
+    # TRANSLATORS: kinds of dataset in the largest-datasets list.
     labels = {"intermediate": _("Intermediate"), "other": _("Other")}
     for key, title in labels.items():
         entry: Any = details.other.get(key)
@@ -255,7 +268,8 @@ def _retention(drive: DriveView) -> Adw.PreferencesGroup:
     margin = retention.get("margin_pct")
     group.add(
         property_row(
-            _("Window"),
+            # TRANSLATORS: Window: the retention window, in days; not a window on screen.
+            pgettext("retention", "Window"),
             ngettext("{n} day", "{n} days", window).format(n=window) if isinstance(window, int) else "-",
         )
     )

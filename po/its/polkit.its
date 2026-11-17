@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!-- What xgettext extracts from a polkit policy: the descriptions and
-     messages that carry gettext-domain; polkitd translates exactly those. -->
+<!-- What xgettext extracts from the polkit policy and msgfmt merges
+     into it: every action's description and message. -->
 <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
   <its:translateRule selector="/policyconfig" translate="no"/>
-  <its:translateRule selector="//description[@gettext-domain] | //message[@gettext-domain]" translate="yes"/>
+  <its:translateRule selector="//action/description | //action/message" translate="yes"/>
 </its:rules>

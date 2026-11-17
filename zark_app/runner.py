@@ -84,6 +84,7 @@ def classify(wait_status: int, saw_progress: bool, other_run: bool) -> Outcome:
 def outcome_text(outcome: Outcome, title: str) -> tuple[str, str]:
     """The result row's title and subtitle."""
     texts: dict[Kind, tuple[str, str]] = {
+        # TRANSLATORS: results of a zark command: Done, Failed, Stopped, Cancelled and the rest.
         "done": (_("Done"), title),
         "failed": (_("{title} failed").format(title=title), _("zark's output below says why")),
         "usage": (_("zark refused the command"), _("This is a defect of the app: please report it")),
@@ -124,6 +125,8 @@ def end_line(command: Command, outcome: Outcome) -> str:
     run ends, the same for every operation: what ran and how it ended."""
     title, _detail = outcome_text(outcome, command.title)
     what = " ".join(("zark", *command.words))
+    # TRANSLATORS: {command} is the command as typed (zark status --refresh),
+    # kept as is; {result} is another text of the app.
     text = _("{command}: {result}").format(command=what, result=title)
     return f"\r\n\x1b[1;{END_COLOURS[outcome.kind]}m-- {text} --\x1b[0m\r\n"
 

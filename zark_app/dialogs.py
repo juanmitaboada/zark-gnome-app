@@ -23,7 +23,7 @@ from typing import Any
 from gi.repository import Adw, Gtk, Pango
 
 from zark_app.commands import MARGIN, MAX_AGE, WINDOW, CommandError, Retention, retention_words
-from zark_app.i18n import N_, _
+from zark_app.i18n import N_, _, pgettext
 from zark_app.model import DriveGone
 from zark_app.units import fmt_time
 
@@ -55,7 +55,8 @@ def stop(parent: Gtk.Widget, backup: bool, closing: bool, on_stop: Callable[[], 
     )
     dialog = Adw.AlertDialog.new(heading, body)
     dialog.add_response("keep", _("Keep Running"))
-    dialog.add_response("stop", _("Stop and Close") if closing else _("Stop"))
+    # TRANSLATORS: Stop: the button that stops the running zark command.
+    dialog.add_response("stop", _("Stop and Close") if closing else pgettext("button", "Stop"))
     dialog.set_response_appearance("stop", Adw.ResponseAppearance.DESTRUCTIVE)
     dialog.set_default_response("keep")
     dialog.set_close_response("keep")
@@ -84,8 +85,16 @@ def retention(
         v = current.get(key)
         return v if isinstance(v, int) and not isinstance(v, bool) else default
 
-    window = _spin(_("Window"), WINDOW, value("window_days", 30), _("Days with every backup point kept"))
+    window = _spin(
+        # TRANSLATORS: Window: the retention window, the days with every backup
+        # point kept; not a window on screen.
+        pgettext("retention", "Window"),
+        WINDOW,
+        value("window_days", 30),
+        _("Days with every backup point kept"),
+    )
     max_age = _spin(_("Maximum age"), MAX_AGE, value("max_age_days", 0), _("Days; 0 is no limit"))
+    # TRANSLATORS: Margin: the share of the drive a backup leaves free.
     margin = _spin(_("Margin"), MARGIN, value("margin_pct", 10), _("Percent of the drive left free"))
     rows = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
     rows.add_css_class("boxed-list")
@@ -151,7 +160,15 @@ def exclude(
     which.set_factory(_label_factory(Pango.EllipsizeMode.START))
     which.set_list_factory(_label_factory(Pango.EllipsizeMode.NONE))
     words = ("backups", "snapshots", "both")
-    labels = Gtk.StringList.new([_("Backups"), _("Local snapshots"), _("Both")])
+    labels = Gtk.StringList.new(
+        [
+            # TRANSLATORS: what a dataset is left out of: zark's backups, its
+            # local snapshots, or both.
+            pgettext("exclusion scope", "Backups"),
+            _("Local snapshots"),
+            pgettext("exclusion scope", "Both"),
+        ]
+    )
     what = Adw.ComboRow(title=_("Leave out of"), model=labels)
     rows = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
     rows.add_css_class("boxed-list")

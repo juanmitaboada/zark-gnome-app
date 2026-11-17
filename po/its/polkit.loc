@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
-<!-- Points xgettext at polkit.its for *.policy (GETTEXTDATADIRS=po). -->
+<!-- Points xgettext (which drops .in) and msgfmt (which does not) at
+     polkit.its, with GETTEXTDATADIRS=po. -->
 <locatingRules>
   <locatingRule name="polkit" pattern="*.policy">
+    <documentRule localName="policyconfig" target="polkit.its"/>
+  </locatingRule>
+  <locatingRule name="polkit" pattern="*.policy.in">
     <documentRule localName="policyconfig" target="polkit.its"/>
   </locatingRule>
 </locatingRules>

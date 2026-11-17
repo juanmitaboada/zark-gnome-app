@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-POLICY = ROOT / "data" / "com.juanmitaboada.Zark.policy"
+POLICY = ROOT / "data" / "com.juanmitaboada.Zark.policy.in"
 PATH_KEY = "org.freedesktop.policykit.exec.path"
 ARGV1_KEY = "org.freedesktop.policykit.exec.argv1"
 EVERY_TIME = {"prepare", "purge", "health"}

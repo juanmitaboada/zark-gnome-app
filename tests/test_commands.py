@@ -148,6 +148,6 @@ def test_policy_words_match_file() -> None:
     """POLICY_WORDS is the policy file's argv1 set."""
     import xml.etree.ElementTree as ET  # pylint: disable=import-outside-toplevel
 
-    root = ET.parse(ROOT / "data" / "com.juanmitaboada.Zark.policy").getroot()
+    root = ET.parse(ROOT / "data" / "com.juanmitaboada.Zark.policy.in").getroot()
     argv1 = {a.text for a in root.iter("annotate") if a.get("key") == "org.freedesktop.policykit.exec.argv1"}
     assert argv1 == set(commands.POLICY_WORDS)

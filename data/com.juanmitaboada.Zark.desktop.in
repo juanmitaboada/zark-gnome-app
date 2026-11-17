@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=zark
+# TRANSLATORS: what the app is, under its name in the app grid.
 GenericName=Backups
 Comment=See the state of your zark backups and backup drives
 Exec=zark-gnome-app
@@ -8,4 +9,5 @@ Icon=com.juanmitaboada.Zark
 Terminal=false
 StartupNotify=true
 Categories=GTK;GNOME;Utility;Archiving;
+# TRANSLATORS: search words, separated by ; and ending in ;; keep zfs, add your language's words.
 Keywords=backup;restore;zfs;drive;snapshot;

@@ -55,6 +55,7 @@ def _pool_row(pool: PoolView, now_label: Callable[[PoolView], str]) -> Adw.Actio
         row.set_subtitle(f"{row.get_subtitle()} - {extra}")
     if pool.level in ("warning", "critical"):
         # The level in words too, in the subtitle so the narrow layout keeps it.
+        # TRANSLATORS: critical, warning: how full a pool is, lower case after a comma in its line.
         word = _("critical") if pool.level == "critical" else _("warning")
         row.set_subtitle(f"{row.get_subtitle()}, {word}")
         row.add_suffix(level_icon(pool.level))

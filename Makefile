@@ -48,12 +48,11 @@ lint:
 ## pot: the translation template from the sources listed in po/POTFILES.in
 # One xgettext run for every kind: Python by its keywords, the desktop file's
 # GenericName, Comment and Keywords (not Name: the product's), the metainfo by
-# gettext's own rules, the polkit policy by po/its (the elements carrying
-# gettext-domain). The template's creation date is dropped so it only changes
+# gettext's own rules, the polkit policy's descriptions and messages by po/its. The template's creation date is dropped so it only changes
 # with its strings.
 pot:
 	GETTEXTDATADIRS=po xgettext --from-code=UTF-8 --add-comments=TRANSLATORS: \
-	    --keyword= --keyword=_ --keyword=N_ --keyword=ngettext:1,2 \
+	    --keyword= --keyword=_ --keyword=N_ --keyword=ngettext:1,2 --keyword=pgettext:1c,2 --keyword=NC_:1c,2 \
 	    $(filter-out --keyword=,$(DESKTOP_KEYS)) \
 	    --package-name=$(PKG) --package-version=$(VERSION) \
 	    --msgid-bugs-address=https://github.com/juanmitaboada/zark-gnome-app/issues \
@@ -64,7 +63,7 @@ pot:
 po-risk:
 	$(PYTHON) -I tests/potools.py risk
 
-## i18n: the catalogues of po/LINGUAS, the desktop file and the metainfo with their translations, in build/i18n
+## i18n: the catalogues of po/LINGUAS; the desktop file, the metainfo and the polkit policy with their translations; in build/i18n
 i18n:
 	@mkdir -p $(I18N)
 	@for lang in $(LINGUAS); do \
@@ -73,6 +72,7 @@ i18n:
 	done
 	msgfmt --desktop $(DESKTOP_KEYS) --template data/$(APP_ID).desktop.in -d po -o $(I18N)/$(APP_ID).desktop
 	msgfmt --xml --template data/$(APP_ID).metainfo.xml.in -d po -o $(I18N)/$(APP_ID).metainfo.xml
+	GETTEXTDATADIRS=po msgfmt --xml --template data/$(APP_ID).policy.in -d po -o $(I18N)/$(APP_ID).policy
 
 ## run: the app from this tree against a fixture case (CASE=app:connected)
 run:

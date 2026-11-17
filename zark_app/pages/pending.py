@@ -28,6 +28,7 @@ def build(pending: PendingView) -> Gtk.Widget:
         title=_("Not Read Back Yet"),
         description=_("zark prepared this drive while apt was running, so it could not read it back"),
     )
+    # TRANSLATORS: followed by zark's own notice, in English.
     group.add(property_row(_("zark says"), pending.text, subtitle_selectable=True))
     row = Adw.ActionRow(title=_("Read it back and register it"))
     row.add_suffix(action_button(pending.action, suggested=True))

@@ -31,7 +31,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Literal
 
-from zark_app.i18n import N_, _
+from zark_app.i18n import N_, NC_, _, pgettext
 from zark_app.live import Exclusion, Live
 from zark_app.reader import Loaded
 from zark_app.sources import MOUNT_ROOT, REGISTRY_PATH, Sources
@@ -215,6 +215,7 @@ DRIVE_TITLES = {
 }
 
 RESULT_WORDS = {
+    # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "completed": N_("Completed"),
     "incomplete": N_("Incomplete"),
     "not_verified": N_("Not verified"),
@@ -222,22 +223,25 @@ RESULT_WORDS = {
     "interrupted": N_("Interrupted"),
 }
 
+# The result of zark's check of a drive (fullcheck).
 CHECK_WORDS = {
-    "clean": N_("Clean"),
-    "damage": N_("Damage found"),
-    "not_finished": N_("Not finished"),
-    "failed": N_("Failed"),
+    # TRANSLATORS: Clean: a drive check's result, nothing wrong found (an adjective).
+    "clean": NC_("drive check", "Clean"),
+    "damage": NC_("drive check", "Damage found"),
+    "not_finished": NC_("drive check", "Not finished"),
+    "failed": NC_("drive check", "Failed"),
 }
 
 NOTICE_TITLES = {
-    "boot_capacity": N_("/boot Space"),
-    "backup_age": N_("Backups"),
-    "no_anchor": N_("No Anchor"),
-    "read_error": N_("Could Not Read"),
-    "origin_residues": N_("Leftover Snapshots"),
-    "drive_check": N_("Drive Check"),
-    "selftest": N_("Self-Test"),
-    "upgrade_risk": N_("Upgrade Risk"),
+    "boot_capacity": NC_("notice title", "/boot Space"),
+    # TRANSLATORS: the title of a notice about how old the last backups are.
+    "backup_age": NC_("notice title", "Backups"),
+    "no_anchor": NC_("notice title", "No Anchor"),
+    "read_error": NC_("notice title", "Could Not Read"),
+    "origin_residues": NC_("notice title", "Leftover Snapshots"),
+    "drive_check": NC_("notice title", "Drive Check"),
+    "selftest": NC_("notice title", "Self-Test"),
+    "upgrade_risk": NC_("notice title", "Upgrade Risk"),
 }
 
 # Shown elsewhere: capacity on its pool's row, drive_pending as a drive row.
@@ -510,7 +514,7 @@ def _notices(status: Doc) -> tuple[NoticeView, ...]:
         if code in NOTICES_ELSEWHERE:
             continue
         action = Action(_("Reclaim Space..."), "prune") if code == "origin_residues" else None
-        title = _(NOTICE_TITLES[code]) if code in NOTICE_TITLES else _("Notice")
+        title = pgettext(*NOTICE_TITLES[code]) if code in NOTICE_TITLES else _("Notice")
         out.append(NoticeView(code, str(n.get("level") or "info"), title, str(n.get("text") or ""), action))
     return tuple(out)
 
@@ -573,6 +577,7 @@ def _banner(  # pylint: disable=too-many-return-statements
         name = drive.get("name") if isinstance(drive, dict) else None
         what = _("{command} to {drive}").format(command=command, drive=name) if name else command
         return BannerView(
+            # TRANSLATORS: {what} is zark's own description of what was left, in English.
             _("A zark run ended without cleaning up ({what})").format(what=what),
             Action(_("Clean Up..."), "clean"),
         )
@@ -923,6 +928,7 @@ def drive_details(mod: ModuleType, drive: Doc, progress: Doc | None, now: dateti
 
 def eject_words(autoeject: object) -> str:
     """``autoeject`` in words (design 2.2)."""
+    # TRANSLATORS: whether zark asks before ejecting the drive after a backup.
     return _("Ask with a countdown") if autoeject is True else _("Ask")
 
 

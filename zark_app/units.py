@@ -16,7 +16,39 @@
 import re
 from datetime import UTC, datetime
 
-from zark_app.i18n import _, ngettext
+from zark_app.i18n import NC_, _, ngettext, pgettext
+
+# A1TR-9: month names from the app's catalogue, not the C library's LC_TIME,
+# so a date follows the app's language (as the extension's do).
+_MONTHS = (
+    NC_("month", "January"),
+    NC_("month", "February"),
+    NC_("month", "March"),
+    NC_("month", "April"),
+    NC_("month", "May"),
+    NC_("month", "June"),
+    NC_("month", "July"),
+    NC_("month", "August"),
+    NC_("month", "September"),
+    NC_("month", "October"),
+    NC_("month", "November"),
+    NC_("month", "December"),
+)
+_SHORT_MONTHS = (
+    # TRANSLATORS: a month's short name, in a date such as "13 Nov 2026, 06:15".
+    NC_("month, short", "Jan"),
+    NC_("month, short", "Feb"),
+    NC_("month, short", "Mar"),
+    NC_("month, short", "Apr"),
+    NC_("month, short", "May"),
+    NC_("month, short", "Jun"),
+    NC_("month, short", "Jul"),
+    NC_("month, short", "Aug"),
+    NC_("month, short", "Sep"),
+    NC_("month, short", "Oct"),
+    NC_("month, short", "Nov"),
+    NC_("month, short", "Dec"),
+)
 
 _UNITS = ("KiB", "MiB", "GiB", "TiB", "PiB")
 
@@ -25,6 +57,7 @@ def fmt_bytes(n: int) -> str:
     """Binary units, as zark and ``zfs list`` show them, with three
     significant figures: ``412 GiB``, ``1.79 TiB``, ``9.20 GiB``."""
     if n < 1024:
+        # TRANSLATORS: unit symbols (B, s, min, h) as your language writes them; keep the placeholders.
         return _("{n} B").format(n=max(n, 0))
     value = float(n)
     index = 0
@@ -49,6 +82,7 @@ def fmt_pct(pct: int) -> str:
 
 def fmt_rate(bytes_per_s: int) -> str:
     """A transfer rate."""
+    # TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second.
     return _("{size}/s").format(size=fmt_bytes(bytes_per_s))
 
 
@@ -80,6 +114,7 @@ def fmt_duration(seconds: int) -> str:
     minutes = seconds // 60
     if minutes < 60:
         return _("{n} min").format(n=minutes)
+    # TRANSLATORS: keep {m:02d}: minutes with two digits.
     return _("{h} h {m:02d} min").format(h=minutes // 60, m=minutes % 60)
 
 
@@ -91,13 +126,13 @@ def local(when: datetime) -> datetime:
 def fmt_date_time(when: datetime) -> str:
     """``7 Nov 2026, 09:31`` in local time."""
     t = local(when)
-    return f"{t.day} {t.strftime('%b %Y, %H:%M')}"
+    return f"{t.day} {pgettext(*_SHORT_MONTHS[t.month - 1])} {t.strftime('%Y, %H:%M')}"
 
 
 def fmt_date_time_s(when: datetime) -> str:
     """``13 Nov 2026, 06:15:10`` in local time: a backup point's time."""
     t = local(when)
-    return f"{t.day} {t.strftime('%b %Y, %H:%M:%S')}"
+    return f"{t.day} {pgettext(*_SHORT_MONTHS[t.month - 1])} {t.strftime('%Y, %H:%M:%S')}"
 
 
 # A point's name holds its time in UTC: zark_2026-11-13_05:15:10Z.
@@ -130,7 +165,8 @@ def fmt_time(when: datetime) -> str:
 def fmt_month(key: str) -> str:
     """``November 2026`` from ``2026-11``."""
     when = datetime.strptime(key, "%Y-%m").replace(tzinfo=UTC)
-    return when.strftime("%B %Y")
+    # TRANSLATORS: a month and its year, as "November 2026".
+    return _("{month} {year}").format(month=pgettext(*_MONTHS[when.month - 1]), year=when.year)
 
 
 def upstream_version(debian_version: str) -> str:

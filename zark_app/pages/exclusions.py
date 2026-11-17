@@ -62,6 +62,7 @@ def build(snapshot: Snapshot) -> Gtk.Widget:
     for title, what, items in groups:
         group = Adw.PreferencesGroup(title=title)
         if not items:
+            # TRANSLATORS: None: no dataset is excluded.
             group.set_description(_("None"))
         for item in items:
             group.add(_row(item, what))

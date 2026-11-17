@@ -20,6 +20,7 @@ The catalogues live in ``/usr/share/locale/<lang>/LC_MESSAGES``.
 
 import gettext
 import locale
+import sys
 from pathlib import Path
 
 DOMAIN = "zark-gnome-app"
@@ -38,7 +39,12 @@ def setup(localedir: Path = LOCALEDIR) -> None:
         # A locale that is not generated: C for the C library, the
         # catalogue still chosen from the environment below.
         pass
-    _translation = gettext.translation(DOMAIN, str(localedir), fallback=True)
+    try:
+        _translation = gettext.translation(DOMAIN, str(localedir), fallback=True)
+    except (OSError, LookupError, ValueError, UnicodeDecodeError) as error:
+        # A catalogue that cannot be read (A1TR-2): English beats no app.
+        print(f"zark-gnome-app: translations not loaded, English used: {error}", file=sys.stderr)
+        _translation = gettext.NullTranslations()
 
 
 def _(message: str) -> str:
@@ -51,6 +57,18 @@ def ngettext(singular: str, plural: str, n: int) -> str:
     return _translation.ngettext(singular, plural, n)
 
 
+def pgettext(context: str, message: str) -> str:
+    """The translation of ``message`` in ``context``, for a word with more
+    than one meaning."""
+    return _translation.pgettext(context, message)
+
+
 def N_(message: str) -> str:  # pylint: disable=invalid-name
     """Marks ``message`` for extraction; translated where it is shown."""
     return message
+
+
+def NC_(context: str, message: str) -> tuple[str, str]:  # pylint: disable=invalid-name
+    """Marks ``message`` in ``context`` for extraction; translated where it
+    is shown, with :func:`pgettext`."""
+    return (context, message)

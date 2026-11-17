@@ -8,25 +8,29 @@
 - Translations: the three lines of Prepare a New Drive on which disk zark
   takes and which disks are listed stay English in every language; a
   translated caption under them, in the warning style, says the same where
-  a catalogue translates it.
+  a catalogue translates it. Commands shown inside a text
+  (`sudo apt install zark`, `zfs get`, `zpool list`) are no longer part of
+  the translatable text. About credits the translators.
 - Prepare a New Drive says that the disk must be empty and that zark
   refuses one with partitions or data, as zark does, instead of saying
   that it erases the disk; the polkit texts of prepare and health say the
-  same. Commands shown inside a text (`sudo apt install zark`,
-  `zfs get`, `zpool list`) are no longer part of the translatable text.
-  About credits the translators.
+  same.
 - Translations are built and installed: the catalogues of `po/LINGUAS` as
-  `/usr/share/locale/<lang>/LC_MESSAGES/zark-gnome-app.mo`, the desktop
-  file and the metainfo with their translations merged at build
-  (`make i18n`), and the polkit policy's descriptions and messages looked
-  up by polkit in the same catalogue (`gettext-domain`). The template,
-  `po/zark-gnome-app.pot`, holds all four kinds of string (`make pot`).
-  No language yet.
+  `/usr/share/locale/<lang>/LC_MESSAGES/zark-gnome-app.mo`, and the
+  desktop file, the metainfo and the polkit policy with their translations
+  merged at build (`make i18n`; polkit reads the policy's `xml:lang`
+  copies, since its run-time lookup in a catalogue lasts only until its
+  first prompt). The template, `po/zark-gnome-app.pot`, holds all four
+  kinds of string (`make pot`), with notes and contexts for translators
+  where a word is ambiguous. Month names come from the catalogue. A
+  catalogue that cannot be loaded leaves the app in English. No language
+  yet.
 - Translation checks: `make po-risk` lists the template's msgids that match
   `po/RISK-WORDS` with their review in `po/RISK-REVIEWED`, and a test fails
-  on a match not reviewed; the tests compile every catalogue, check its
-  placeholders and plural forms, validate the merged desktop file and
-  metainfo, and start the app in Spanish from a pseudo-translation.
+  on a match not reviewed; the tests compile and load every catalogue,
+  compare it with the template, check its placeholders, white space and
+  plural forms, validate the merged desktop file, metainfo and policy, and
+  open every state of the app in a pseudo-translation.
 
 ## [1.1.3] - 2026-11-16
 
