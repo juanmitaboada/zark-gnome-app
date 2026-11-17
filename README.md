@@ -75,9 +75,14 @@ sudo apt install zark-gnome-app   # brings zark along
 
 ## Translations
 
-The texts are marked for gettext (domain `zark-gnome-app`; `make pot`
-writes the template). No catalogue ships yet. Corrections to translations
-are welcome as pull requests.
+The app's texts, its desktop entry, its AppStream metadata and its polkit
+messages share one gettext domain, `zark-gnome-app`: `make pot` writes the
+template `po/zark-gnome-app.pot`, each language is `po/<lang>.po` listed in
+`po/LINGUAS`, and the package installs the catalogues under
+`/usr/share/locale`. Commands, options and zark's own output stay English
+in every language, and so do a few lines whose translation could mislead
+about what a command erases. If you are a native speaker and a translation
+reads wrong, please open an issue or a pull request on the `.po` file.
 
 ## Development
 

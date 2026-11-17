@@ -4,15 +4,17 @@
 
 <!-- zark-gnome-app: one action per zark command the app runs, matched by pkexec on
      the program and its first argument. Installed as
-     /usr/share/polkit-1/actions/com.juanmitaboada.Zark.policy. -->
+     /usr/share/polkit-1/actions/com.juanmitaboada.Zark.policy. polkitd translates each
+     description and message at run time from the app's catalogue (gettext-domain);
+     $(cmdline_short) is filled in after the lookup, so the command stays literal. -->
 <policyconfig>
   <vendor>zark</vendor>
   <vendor_url>https://github.com/juanmitaboada/zark-gnome-app</vendor_url>
   <icon_name>com.juanmitaboada.Zark</icon_name>
 
   <action id="com.juanmitaboada.Zark.backup">
-    <description>Back up this computer with zark</description>
-    <message>Authentication is needed to back up this computer: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Back up this computer with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to back up this computer: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -23,8 +25,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.prune">
-    <description>Reclaim space with zark</description>
-    <message>Authentication is needed to reclaim space with zark: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Reclaim space with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to reclaim space with zark: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -35,8 +37,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.registry">
-    <description>Change zark's registry of backup drives</description>
-    <message>Authentication is needed to change zark's registry of backup drives: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Change zark's registry of backup drives</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to change zark's registry of backup drives: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -47,8 +49,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.exclude">
-    <description>Change what zark backs up</description>
-    <message>Authentication is needed to change what zark backs up: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Change what zark backs up</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to change what zark backs up: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -59,8 +61,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.mount">
-    <description>Mount a backup drive with zark</description>
-    <message>Authentication is needed to mount a backup drive: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Mount a backup drive with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to mount a backup drive: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -71,8 +73,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.umount">
-    <description>Unmount a backup drive with zark</description>
-    <message>Authentication is needed to unmount a backup drive: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Unmount a backup drive with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to unmount a backup drive: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -83,8 +85,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.explore">
-    <description>Look for backup drives with zark</description>
-    <message>Authentication is needed to look for backup drives: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Look for backup drives with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to look for backup drives: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -95,8 +97,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.clean">
-    <description>Clean up after a stopped zark run</description>
-    <message>Authentication is needed to clean up after a stopped zark run: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Clean up after a stopped zark run</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to clean up after a stopped zark run: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -107,8 +109,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.status">
-    <description>Refresh zark's status</description>
-    <message>Authentication is needed to refresh zark's status: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Refresh zark's status</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to refresh zark's status: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -119,8 +121,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.alerts">
-    <description>Turn zark's hourly checks on or off</description>
-    <message>Authentication is needed to change zark's hourly checks: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Turn zark's hourly checks on or off</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to change zark's hourly checks: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -131,8 +133,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.fullcheck">
-    <description>Verify a backup drive with zark</description>
-    <message>Authentication is needed to verify a backup drive: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Verify a backup drive with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to verify a backup drive: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -143,8 +145,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.prepare">
-    <description>Prepare a new backup drive with zark (erases it)</description>
-    <message>Authentication is needed to prepare a backup drive, which erases it: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Prepare a new backup drive with zark (erases it)</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to prepare a backup drive, which erases it: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -155,8 +157,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.purge">
-    <description>Erase a backup drive with zark</description>
-    <message>Authentication is needed to erase a backup drive: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Erase a backup drive with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to erase a backup drive: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -167,8 +169,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.health">
-    <description>Check a drive's health with zark (may erase it)</description>
-    <message>Authentication is needed to check a drive's health, which can erase it: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Check a drive's health with zark (may erase it)</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to check a drive's health, which can erase it: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>

@@ -9,9 +9,25 @@
 %:
 	dh $@ --with python3 --buildsystem=none
 
+# The catalogues of po/LINGUAS, and the desktop file and metainfo with
+# their translations merged (Makefile's i18n).
+override_dh_auto_build:
+	$(MAKE) i18n
+
 override_dh_auto_test:
-	desktop-file-validate data/com.juanmitaboada.Zark.desktop
-	appstreamcli validate --no-net data/com.juanmitaboada.Zark.metainfo.xml
+	desktop-file-validate build/i18n/com.juanmitaboada.Zark.desktop
+	appstreamcli validate --no-net build/i18n/com.juanmitaboada.Zark.metainfo.xml
+
+override_dh_auto_clean:
+	rm -rf build/i18n
+
+# The .mo files land in /usr/share/locale/<lang>/LC_MESSAGES; with no
+# language in po/LINGUAS there is nothing to install.
+override_dh_install:
+	dh_install
+	if [ -d build/i18n/locale ]; then \
+	    mkdir -p debian/zark-gnome-app/usr/share && cp -r build/i18n/locale debian/zark-gnome-app/usr/share/; \
+	fi
 
 # The launcher runs Python in isolated mode (-I); dh_python3 would rewrite
 # its shebang to a bare /usr/bin/python3, so the rewrite is off. The

@@ -115,7 +115,7 @@ jobs:
           # build, and the distribution images do not carry it.
           apt-get install -y --no-install-recommends \
               git ca-certificates make python3 build-essential fakeroot \
-              debhelper dh-python devscripts lintian desktop-file-utils appstream
+              debhelper dh-python devscripts lintian desktop-file-utils appstream gettext
 
       - uses: actions/checkout@v6
 

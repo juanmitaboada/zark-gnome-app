@@ -11,6 +11,13 @@
   translates it. Commands shown inside a text (`sudo apt install zark`,
   `zfs get`, `zpool list`) are no longer part of the translatable text.
   About credits the translators.
+- Translations are built and installed: the catalogues of `po/LINGUAS` as
+  `/usr/share/locale/<lang>/LC_MESSAGES/zark-gnome-app.mo`, the desktop
+  file and the metainfo with their translations merged at build
+  (`make i18n`), and the polkit policy's descriptions and messages looked
+  up by polkit in the same catalogue (`gettext-domain`). The template,
+  `po/zark-gnome-app.pot`, holds all four kinds of string (`make pot`).
+  No language yet.
 
 ## [1.1.3] - 2026-11-16
 

@@ -128,11 +128,16 @@ def test_text_rules() -> None:
 
 def test_potfiles_list_every_translated_module() -> None:
     """Every module that imports the translation functions is in
-    po/POTFILES.in, so make pot extracts its strings."""
+    po/POTFILES.in, so make pot extracts its strings; the other entries are
+    the desktop file, the metainfo and the polkit policy."""
     listed = {
         line.strip()
         for line in (ROOT / "po" / "POTFILES.in").read_text(encoding="utf-8").splitlines()
         if line.strip() and not line.startswith("#")
+    } - {
+        "data/com.juanmitaboada.Zark.desktop.in",
+        "data/com.juanmitaboada.Zark.metainfo.xml.in",
+        "data/com.juanmitaboada.Zark.policy",
     }
     users = {
         str(p.relative_to(ROOT))

@@ -12,7 +12,7 @@ Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
 License: Apache-2.0
 Comment: copied unchanged from zark 2.3.2's tests/fixtures/status/
 
-Files: data/com.juanmitaboada.Zark.metainfo.xml
+Files: data/com.juanmitaboada.Zark.metainfo.xml.in
 Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
 License: CC0-1.0
 

@@ -6,7 +6,8 @@ Build-Depends: debhelper-compat (= 13),
                dh-python,
                python3:any,
                desktop-file-utils,
-               appstream
+               appstream,
+               gettext
 Standards-Version: 4.6.2
 Homepage: https://github.com/juanmitaboada/zark-gnome-app
 Vcs-Git: https://github.com/juanmitaboada/zark-gnome-app.git

@@ -16,3 +16,6 @@ zark_app/shortcuts.py
 zark_app/units.py
 zark_app/window.py
 zark_app/widgets.py
+data/com.juanmitaboada.Zark.desktop.in
+data/com.juanmitaboada.Zark.metainfo.xml.in
+data/com.juanmitaboada.Zark.policy

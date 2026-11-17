@@ -13,16 +13,32 @@
 # limitations under the License.
 """Translations: gettext with the domain ``zark-gnome-app``.
 
-No catalogue ships yet (A1T adds them); without one every string is
-English, its source.
+``setup`` binds the domain at start (``main``); until then, and without a
+catalogue for the user's language, every string is English, its source.
+The catalogues live in ``/usr/share/locale/<lang>/LC_MESSAGES``.
 """
 
 import gettext
+import locale
+from pathlib import Path
 
 DOMAIN = "zark-gnome-app"
-LOCALEDIR = "/usr/share/locale"
+LOCALEDIR = Path("/usr/share/locale")
 
-_translation = gettext.translation(DOMAIN, LOCALEDIR, fallback=True)
+_translation: gettext.NullTranslations = gettext.NullTranslations()
+
+
+def setup(localedir: Path = LOCALEDIR) -> None:
+    """Bind the domain for the user's locale (``LANGUAGE``, ``LC_ALL``,
+    ``LC_MESSAGES``, ``LANG``), from the catalogues under ``localedir``."""
+    global _translation  # pylint: disable=global-statement
+    try:
+        locale.setlocale(locale.LC_ALL, "")
+    except locale.Error:
+        # A locale that is not generated: C for the C library, the
+        # catalogue still chosen from the environment below.
+        pass
+    _translation = gettext.translation(DOMAIN, str(localedir), fallback=True)
 
 
 def _(message: str) -> str:

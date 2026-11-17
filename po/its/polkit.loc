@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Points xgettext at polkit.its for *.policy (GETTEXTDATADIRS=po). -->
+<locatingRules>
+  <locatingRule name="polkit" pattern="*.policy">
+    <documentRule localName="policyconfig" target="polkit.its"/>
+  </locatingRule>
+</locatingRules>

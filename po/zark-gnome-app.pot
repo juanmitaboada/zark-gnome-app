@@ -1,0 +1,1566 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the zark-gnome-app package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: zark-gnome-app 1.1.3\n"
+"Report-Msgid-Bugs-To: https://github.com/juanmitaboada/zark-gnome-app/"
+"issues\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: zark_app/about.py:44
+#, python-brace-format
+msgid "Reads the status files of the installed zark {version}"
+msgstr ""
+
+#: zark_app/about.py:46
+msgid "Reads zark's status files"
+msgstr ""
+
+#. TRANSLATORS: your name, one translator per line, as GNOME apps credit them.
+#: zark_app/about.py:63
+msgid "translator-credits"
+msgstr ""
+
+#: zark_app/about.py:66
+msgid "zark"
+msgstr ""
+
+#: zark_app/commands.py:121 zark_app/model.py:187
+msgid "Backing Up"
+msgstr ""
+
+#: zark_app/commands.py:122
+msgid "Refreshing the Status"
+msgstr ""
+
+#: zark_app/commands.py:123 zark_app/model.py:195
+msgid "Looking for Drives"
+msgstr ""
+
+#: zark_app/commands.py:124 zark_app/model.py:189
+msgid "Preparing a Drive"
+msgstr ""
+
+#: zark_app/commands.py:125
+msgid "Finishing a Registration"
+msgstr ""
+
+#: zark_app/commands.py:126
+msgid "Turning On Hourly Checks"
+msgstr ""
+
+#: zark_app/commands.py:127
+msgid "Turning Off Hourly Checks"
+msgstr ""
+
+#: zark_app/commands.py:128 zark_app/model.py:198
+msgid "Cleaning Up"
+msgstr ""
+
+#: zark_app/commands.py:129 zark_app/model.py:193
+msgid "Mounting a Drive"
+msgstr ""
+
+#: zark_app/commands.py:130 zark_app/model.py:194
+msgid "Unmounting a Drive"
+msgstr ""
+
+#: zark_app/commands.py:131 zark_app/model.py:188
+msgid "Reclaiming Space"
+msgstr ""
+
+#: zark_app/commands.py:132 zark_app/model.py:191
+msgid "Checking Health"
+msgstr ""
+
+#: zark_app/commands.py:133 zark_app/model.py:192
+msgid "Verifying a Drive"
+msgstr ""
+
+#: zark_app/commands.py:134
+msgid "Changing Retention"
+msgstr ""
+
+#: zark_app/commands.py:135
+msgid "Repairing an Entry"
+msgstr ""
+
+#: zark_app/commands.py:136
+msgid "Forgetting a Drive"
+msgstr ""
+
+#: zark_app/commands.py:137 zark_app/model.py:190
+msgid "Erasing a Drive"
+msgstr ""
+
+#: zark_app/commands.py:138
+msgid "Excluding a Dataset"
+msgstr ""
+
+#: zark_app/commands.py:139
+msgid "Including a Dataset Again"
+msgstr ""
+
+#: zark_app/commands.py:140
+msgid "Listing Exclusions"
+msgstr ""
+
+#: zark_app/commands.py:147
+#, python-brace-format
+msgid "{title} to {drive}"
+msgstr ""
+
+#: zark_app/commands.py:153
+msgid "{name!r} is not a drive name"
+msgstr ""
+
+#: zark_app/commands.py:161
+#, python-brace-format
+msgid "{name} is not a registered drive"
+msgstr ""
+
+#: zark_app/commands.py:168
+msgid "{name!r} is not a disk name"
+msgstr ""
+
+#: zark_app/commands.py:171
+#, python-brace-format
+msgid "{name} is not connected"
+msgstr ""
+
+#: zark_app/commands.py:179
+#, python-brace-format
+msgid "{name} has no disk name in the status file"
+msgstr ""
+
+#: zark_app/commands.py:186
+#, python-brace-format
+msgid "{what} must be a whole number from {lo} to {hi}"
+msgstr ""
+
+#: zark_app/commands.py:193
+msgid "The window"
+msgstr ""
+
+#: zark_app/commands.py:194
+msgid "The maximum age"
+msgstr ""
+
+#: zark_app/commands.py:195
+msgid "The margin"
+msgstr ""
+
+#: zark_app/commands.py:197
+msgid "The maximum age must be longer than the window, or no limit"
+msgstr ""
+
+#: zark_app/commands.py:234
+#, python-brace-format
+msgid "{name} is not waiting for its registration"
+msgstr ""
+
+#: zark_app/commands.py:242
+msgid "No retention values"
+msgstr ""
+
+#: zark_app/commands.py:249
+#, python-brace-format
+msgid "{name} is a registered backup drive"
+msgstr ""
+
+#: zark_app/commands.py:251
+#, python-brace-format
+msgid "{name} is not a whole disk"
+msgstr ""
+
+#: zark_app/commands.py:256
+msgid "{arg!r} is not a dataset and a word"
+msgstr ""
+
+#: zark_app/commands.py:258
+#, python-brace-format
+msgid "{dataset} is not a dataset of this computer"
+msgstr ""
+
+#: zark_app/commands.py:260
+#, python-brace-format
+msgid "{dataset} is not excluded"
+msgstr ""
+
+#: zark_app/commands.py:263
+msgid "Unknown operation {op!r}"
+msgstr ""
+
+#: zark_app/dialogs.py:35
+msgid "Cancel"
+msgstr ""
+
+#: zark_app/dialogs.py:50
+msgid "Stop the Backup?"
+msgstr ""
+
+#: zark_app/dialogs.py:50
+msgid "Stop zark?"
+msgstr ""
+
+#: zark_app/dialogs.py:52
+msgid "Closing the window stops zark. It cleans up before it ends"
+msgstr ""
+
+#: zark_app/dialogs.py:54
+msgid "zark stops the running command and cleans up before it ends"
+msgstr ""
+
+#: zark_app/dialogs.py:57
+msgid "Keep Running"
+msgstr ""
+
+#: zark_app/dialogs.py:58
+msgid "Stop and Close"
+msgstr ""
+
+#: zark_app/dialogs.py:58
+msgid "Stop"
+msgstr ""
+
+#: zark_app/dialogs.py:81
+#, python-brace-format
+msgid "Retention for {name}"
+msgstr ""
+
+#: zark_app/dialogs.py:81
+msgid "Apply"
+msgstr ""
+
+#: zark_app/dialogs.py:87 zark_app/pages/drive.py:258
+msgid "Window"
+msgstr ""
+
+#: zark_app/dialogs.py:87
+msgid "Days with every backup point kept"
+msgstr ""
+
+#: zark_app/dialogs.py:88 zark_app/pages/drive.py:264
+msgid "Maximum age"
+msgstr ""
+
+#: zark_app/dialogs.py:88
+msgid "Days; 0 is no limit"
+msgstr ""
+
+#: zark_app/dialogs.py:89 zark_app/pages/drive.py:270
+msgid "Margin"
+msgstr ""
+
+#: zark_app/dialogs.py:89
+msgid "Percent of the drive left free"
+msgstr ""
+
+#: zark_app/dialogs.py:147
+msgid "Exclude a Dataset"
+msgstr ""
+
+#: zark_app/dialogs.py:147
+msgid "Exclude"
+msgstr ""
+
+#: zark_app/dialogs.py:149
+msgid "Dataset"
+msgstr ""
+
+#: zark_app/dialogs.py:154 zark_app/model.py:234
+#: data/com.juanmitaboada.Zark.desktop.in:5
+msgid "Backups"
+msgstr ""
+
+#: zark_app/dialogs.py:154
+msgid "Local snapshots"
+msgstr ""
+
+#: zark_app/dialogs.py:154
+msgid "Both"
+msgstr ""
+
+#: zark_app/dialogs.py:155
+msgid "Leave out of"
+msgstr ""
+
+#. TRANSLATORS: risk caption, shown under English lines that stay
+#. untranslated. It may only add caution: never say less than those lines.
+#: zark_app/dialogs.py:180
+msgid ""
+"The disk you choose is erased completely. Could not check which disks this "
+"system uses: zark checks again before it writes."
+msgstr ""
+
+#. TRANSLATORS: risk caption, shown under English lines that stay
+#. untranslated. It may only add caution: never say less than those lines.
+#: zark_app/dialogs.py:186
+msgid ""
+"The disk you choose is erased completely. Disks this system uses are not "
+"listed."
+msgstr ""
+
+#. TRANSLATORS: risk caption, shown under English lines that stay
+#. untranslated. It may only add caution: never say less than those lines.
+#: zark_app/dialogs.py:190
+msgid "The disk you choose is erased completely."
+msgstr ""
+
+#: zark_app/dialogs.py:234
+msgid "It asks you to confirm in the terminal"
+msgstr ""
+
+#: zark_app/dialogs.py:236
+msgid "No disk to prepare is connected: plug in an empty drive"
+msgstr ""
+
+#: zark_app/dialogs.py:242
+msgid "Prepare a New Drive"
+msgstr ""
+
+#: zark_app/dialogs.py:242
+msgid "Prepare..."
+msgstr ""
+
+#: zark_app/dialogs.py:275
+#, python-brace-format
+msgid "{drive} went away during the backup"
+msgstr ""
+
+#: zark_app/dialogs.py:276
+#, python-brace-format
+msgid "Since {time}."
+msgstr ""
+
+#: zark_app/dialogs.py:278
+msgid "OK"
+msgstr ""
+
+#: zark_app/model.py:196
+msgid "Changing the Registry"
+msgstr ""
+
+#: zark_app/model.py:197
+msgid "Changing Exclusions"
+msgstr ""
+
+#: zark_app/model.py:199
+msgid "Recovering"
+msgstr ""
+
+#: zark_app/model.py:200
+msgid "Setting Up zark"
+msgstr ""
+
+#: zark_app/model.py:201
+msgid "Testing zark"
+msgstr ""
+
+#: zark_app/model.py:207
+#, python-brace-format
+msgid "Backing Up to {drive}"
+msgstr ""
+
+#: zark_app/model.py:208
+#, python-brace-format
+msgid "Reclaiming Space on {drive}"
+msgstr ""
+
+#: zark_app/model.py:209
+#, python-brace-format
+msgid "Preparing {drive}"
+msgstr ""
+
+#: zark_app/model.py:210
+#, python-brace-format
+msgid "Erasing {drive}"
+msgstr ""
+
+#: zark_app/model.py:211
+#, python-brace-format
+msgid "Checking the Health of {drive}"
+msgstr ""
+
+#: zark_app/model.py:212
+#, python-brace-format
+msgid "Verifying {drive}"
+msgstr ""
+
+#: zark_app/model.py:213
+#, python-brace-format
+msgid "Mounting {drive}"
+msgstr ""
+
+#: zark_app/model.py:214
+#, python-brace-format
+msgid "Unmounting {drive}"
+msgstr ""
+
+#: zark_app/model.py:218
+msgid "Completed"
+msgstr ""
+
+#: zark_app/model.py:219
+msgid "Incomplete"
+msgstr ""
+
+#: zark_app/model.py:220
+msgid "Not verified"
+msgstr ""
+
+#: zark_app/model.py:221
+msgid "Aborted"
+msgstr ""
+
+#: zark_app/model.py:222
+msgid "Interrupted"
+msgstr ""
+
+#: zark_app/model.py:226
+msgid "Clean"
+msgstr ""
+
+#: zark_app/model.py:227
+msgid "Damage found"
+msgstr ""
+
+#: zark_app/model.py:228
+msgid "Not finished"
+msgstr ""
+
+#: zark_app/model.py:229
+msgid "Failed"
+msgstr ""
+
+#: zark_app/model.py:233
+msgid "/boot Space"
+msgstr ""
+
+#: zark_app/model.py:235
+msgid "No Anchor"
+msgstr ""
+
+#: zark_app/model.py:236
+msgid "Could Not Read"
+msgstr ""
+
+#: zark_app/model.py:237
+msgid "Leftover Snapshots"
+msgstr ""
+
+#: zark_app/model.py:238
+msgid "Drive Check"
+msgstr ""
+
+#: zark_app/model.py:239
+msgid "Self-Test"
+msgstr ""
+
+#: zark_app/model.py:240
+msgid "Upgrade Risk"
+msgstr ""
+
+#: zark_app/model.py:251 zark_app/runner.py:93
+msgid "zark Is Busy"
+msgstr ""
+
+#: zark_app/model.py:267 zark_app/model.py:595 zark_app/widgets.py:60
+#: zark_app/widgets.py:62
+msgid "Unmount"
+msgstr ""
+
+#: zark_app/model.py:267
+msgid "Browse Files"
+msgstr ""
+
+#: zark_app/model.py:271 zark_app/model.py:512
+msgid "Reclaim Space..."
+msgstr ""
+
+#: zark_app/model.py:272
+msgid "Check Health..."
+msgstr ""
+
+#: zark_app/model.py:273
+msgid "Verify Drive..."
+msgstr ""
+
+#: zark_app/model.py:274
+msgid "Retention..."
+msgstr ""
+
+#: zark_app/model.py:277
+msgid "Repair Entry"
+msgstr ""
+
+#: zark_app/model.py:278
+msgid "Forget Drive..."
+msgstr ""
+
+#: zark_app/model.py:279
+msgid "Erase Drive..."
+msgstr ""
+
+#: zark_app/model.py:287
+msgid "Turn Off Hourly Checks"
+msgstr ""
+
+#: zark_app/model.py:289
+msgid "Turn On Hourly Checks"
+msgstr ""
+
+#: zark_app/model.py:293 zark_app/pages/states.py:49
+msgid "Refresh Status"
+msgstr ""
+
+#: zark_app/model.py:294
+msgid "Look for Drives..."
+msgstr ""
+
+#: zark_app/model.py:295 zark_app/pages/states.py:58
+msgid "Prepare a New Drive..."
+msgstr ""
+
+#: zark_app/model.py:297
+msgid "Clean Up After a Stopped Run..."
+msgstr ""
+
+#: zark_app/model.py:414 zark_app/window.py:427
+msgid "Back Up"
+msgstr ""
+
+#: zark_app/model.py:417
+msgid "Backing up now"
+msgstr ""
+
+#: zark_app/model.py:417
+msgid "In use by zark now"
+msgstr ""
+
+#: zark_app/model.py:418 zark_app/window.py:286
+msgid "Waiting for your answer"
+msgstr ""
+
+#: zark_app/model.py:423
+msgid "Mounted for browsing"
+msgstr ""
+
+#: zark_app/model.py:424
+msgid "Mounted"
+msgstr ""
+
+#: zark_app/model.py:428
+msgid "Last run incomplete"
+msgstr ""
+
+#: zark_app/model.py:429
+msgid "Last run not verified"
+msgstr ""
+
+#: zark_app/model.py:430
+msgid "Last run interrupted"
+msgstr ""
+
+#: zark_app/model.py:445
+#, python-brace-format
+msgid "Connected - last backup {age}"
+msgstr ""
+
+#: zark_app/model.py:445
+msgid "Connected - no backup yet"
+msgstr ""
+
+#: zark_app/model.py:446
+msgid "Connected"
+msgstr ""
+
+#: zark_app/model.py:447
+#, python-brace-format
+msgid "Not connected - last backup {age}"
+msgstr ""
+
+#: zark_app/model.py:447 zark_app/pages/drive.py:68
+msgid "No backup yet"
+msgstr ""
+
+#: zark_app/model.py:448
+msgid "Not connected"
+msgstr ""
+
+#: zark_app/model.py:513
+msgid "Notice"
+msgstr ""
+
+#: zark_app/model.py:527
+msgid "Finish Registration..."
+msgstr ""
+
+#: zark_app/model.py:543
+#, python-brace-format
+msgid ""
+"The status file was written by zark {writer} from {where}, not the installed "
+"{installed}"
+msgstr ""
+
+#: zark_app/model.py:548
+#, python-brace-format
+msgid ""
+"The status file was written by zark {writer}, not the installed {installed}"
+msgstr ""
+
+#: zark_app/model.py:561
+msgid ""
+"The status file is from a newer zark than the installed one: update zark to "
+"read it"
+msgstr ""
+
+#: zark_app/model.py:565
+#, python-brace-format
+msgid "The status file could not be read ({error})"
+msgstr ""
+
+#: zark_app/model.py:566 zark_app/model.py:605
+msgid "Refresh"
+msgstr ""
+
+#: zark_app/model.py:569
+msgid "zark's progress file could not be read"
+msgstr ""
+
+#: zark_app/model.py:574
+#, python-brace-format
+msgid "{command} to {drive}"
+msgstr ""
+
+#: zark_app/model.py:576
+#, python-brace-format
+msgid "A zark run ended without cleaning up ({what})"
+msgstr ""
+
+#: zark_app/model.py:577
+msgid "Clean Up..."
+msgstr ""
+
+#: zark_app/model.py:584
+#, python-brace-format
+msgid ""
+"{drive} was disconnected during the run: zark records the result when it ends"
+msgstr ""
+
+#: zark_app/model.py:592
+#, python-brace-format
+msgid ""
+"{drive} is mounted for browsing: kernel, GRUB and ZFS updates are blocked "
+"until it is unmounted"
+msgstr ""
+
+#: zark_app/model.py:602
+#, python-brace-format
+msgid "Status from {age}: the hourly checks are off"
+msgstr ""
+
+#: zark_app/model.py:603
+msgid "Turn On..."
+msgstr ""
+
+#: zark_app/model.py:605
+#, python-brace-format
+msgid "Status from {age}"
+msgstr ""
+
+#: zark_app/model.py:665 zark_app/pages/run.py:39
+#, python-brace-format
+msgid "{done} sent"
+msgstr ""
+
+#: zark_app/model.py:926
+msgid "Ask with a countdown"
+msgstr ""
+
+#: zark_app/model.py:926
+msgid "Ask"
+msgstr ""
+
+#: zark_app/model.py:932
+msgid "Could not be read"
+msgstr ""
+
+#: zark_app/model.py:934
+#, python-brace-format
+msgid "{used} used of {size}"
+msgstr ""
+
+#: zark_app/operations.py:92 zark_app/operations.py:144 zark_app/window.py:429
+#: zark_app/window.py:567
+msgid "zark is busy"
+msgstr ""
+
+#: zark_app/operations.py:177 zark_app/operations.py:188
+msgid "zark is waiting for your answer"
+msgstr ""
+
+#: zark_app/operations.py:259
+msgid "Close"
+msgstr ""
+
+#: zark_app/pages/drive.py:63
+msgid "Status"
+msgstr ""
+
+#: zark_app/pages/drive.py:69
+msgid "Last backup"
+msgstr ""
+
+#: zark_app/pages/drive.py:77
+#, python-brace-format
+msgid "{n} dataset missing"
+msgid_plural "{n} datasets missing"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/drive.py:80 zark_app/pages/drive.py:82
+msgid "Last run"
+msgstr ""
+
+#: zark_app/pages/drive.py:82
+msgid "No run recorded"
+msgstr ""
+
+#: zark_app/pages/drive.py:83
+msgid "Eject after a backup"
+msgstr ""
+
+#: zark_app/pages/drive.py:91
+msgid "Last full check"
+msgstr ""
+
+#: zark_app/pages/drive.py:94
+msgid "Last point's record"
+msgstr ""
+
+#: zark_app/pages/drive.py:99
+msgid "Space"
+msgstr ""
+
+#: zark_app/pages/drive.py:102
+msgid "Not measured yet: back up to this drive"
+msgstr ""
+
+#: zark_app/pages/drive.py:105
+msgid "Live, while zark has the drive imported"
+msgstr ""
+
+#: zark_app/pages/drive.py:108
+#, python-brace-format
+msgid "Measured at the last backup, {age}"
+msgstr ""
+
+#: zark_app/pages/drive.py:119
+msgid "Used space"
+msgstr ""
+
+#: zark_app/pages/drive.py:123
+msgid "Used"
+msgstr ""
+
+#: zark_app/pages/drive.py:124
+msgid "Free"
+msgstr ""
+
+#: zark_app/pages/drive.py:125
+msgid "Reserved by ZFS"
+msgstr ""
+
+#: zark_app/pages/drive.py:130
+msgid "Margin a backup leaves free"
+msgstr ""
+
+#: zark_app/pages/drive.py:137 zark_app/pages/run.py:33
+msgid "at least "
+msgstr ""
+
+#: zark_app/pages/drive.py:141 zark_app/pages/drive.py:167
+#: zark_app/pages/drive.py:211
+#, python-brace-format
+msgid "{n} point"
+msgid_plural "{n} points"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/drive.py:145 zark_app/pages/drive.py:243
+#, python-brace-format
+msgid "{n} snapshot"
+msgid_plural "{n} snapshots"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/drive.py:150
+#, python-brace-format
+msgid "After the next retention: {floor}{free} free"
+msgstr ""
+
+#: zark_app/pages/drive.py:153
+#, python-brace-format
+msgid "Frees {size}: {what}"
+msgstr ""
+
+#: zark_app/pages/drive.py:157
+#, python-brace-format
+msgid "Frees {size}"
+msgstr ""
+
+#: zark_app/pages/drive.py:161
+msgid "After the next retention"
+msgstr ""
+
+#: zark_app/pages/drive.py:161
+msgid "Not measured"
+msgstr ""
+
+#: zark_app/pages/drive.py:170
+#, python-brace-format
+msgid "{n} incomplete"
+msgid_plural "{n} incomplete"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/drive.py:173
+msgid "all whole"
+msgstr ""
+
+#: zark_app/pages/drive.py:174
+#, python-brace-format
+msgid "{what} - held alone {size}"
+msgstr ""
+
+#: zark_app/pages/drive.py:178
+#, python-brace-format
+msgid "Removing older points frees {size}"
+msgstr ""
+
+#: zark_app/pages/drive.py:180
+msgid "Removing older points: not measured"
+msgstr ""
+
+#: zark_app/pages/drive.py:184
+msgid "inside the window"
+msgstr ""
+
+#: zark_app/pages/drive.py:188
+msgid "incomplete"
+msgstr ""
+
+#: zark_app/pages/drive.py:190
+msgid "whole"
+msgstr ""
+
+#: zark_app/pages/drive.py:193
+#, python-brace-format
+msgid "holds {size} alone"
+msgstr ""
+
+#: zark_app/pages/drive.py:211
+msgid "Backup Points"
+msgstr ""
+
+#: zark_app/pages/drive.py:217
+msgid ""
+"Each month shows what it holds alone; removing several months frees more "
+"than their sum"
+msgstr ""
+
+#: zark_app/pages/drive.py:227
+msgid "Largest Datasets"
+msgstr ""
+
+#: zark_app/pages/drive.py:236
+msgid "Other Snapshots"
+msgstr ""
+
+#: zark_app/pages/drive.py:237
+msgid "Intermediate"
+msgstr ""
+
+#: zark_app/pages/drive.py:237
+msgid "Other"
+msgstr ""
+
+#: zark_app/pages/drive.py:251
+msgid "Retention"
+msgstr ""
+
+#: zark_app/pages/drive.py:259 zark_app/pages/drive.py:265
+#, python-brace-format
+msgid "{n} day"
+msgid_plural "{n} days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/drive.py:267
+msgid "No limit"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:27
+msgid "The boot environments"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:28
+msgid "The boot pool"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:29
+msgid "The keystore"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:30
+msgid "The structural containers"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:37
+msgid "Size not read"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:39
+msgid "Include Again"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:48
+msgid "Exclusions Not Read"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:49
+#, python-brace-format
+msgid "{command} could not read zark's properties. Reload with Ctrl+R"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:59
+msgid "Left Out of Backups"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:60
+msgid "Left Out of Local Snapshots"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:65
+msgid "None"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:70
+msgid "Never Excluded"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:71
+msgid "zark always keeps these, whatever their properties say"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:75
+msgid "zark's full list, with inherited values and the ones it ignores"
+msgstr ""
+
+#: zark_app/pages/exclusions.py:76
+msgid "Show zark's Full List..."
+msgstr ""
+
+#: zark_app/pages/exclusions.py:84
+msgid "Exclude..."
+msgstr ""
+
+#: zark_app/pages/overview.py:58
+msgid "critical"
+msgstr ""
+
+#: zark_app/pages/overview.py:58
+msgid "warning"
+msgstr ""
+
+#: zark_app/pages/overview.py:67
+msgid "This Computer"
+msgstr ""
+
+#: zark_app/pages/overview.py:69
+#, python-brace-format
+msgid "Live figures from {command}"
+msgstr ""
+
+#: zark_app/pages/overview.py:71
+msgid "Figures from zark's status file"
+msgstr ""
+
+#: zark_app/pages/overview.py:77
+#, python-brace-format
+msgid "measured {age}"
+msgstr ""
+
+#: zark_app/pages/overview.py:103
+msgid "Prepared, not read back yet (apt was running)"
+msgstr ""
+
+#: zark_app/pages/overview.py:114 zark_app/shortcuts.py:43
+#: zark_app/window.py:161
+msgid "Backup Drives"
+msgstr ""
+
+#: zark_app/pages/overview.py:126
+msgid "Notices"
+msgstr ""
+
+#: zark_app/pages/pending.py:28
+msgid "Not Read Back Yet"
+msgstr ""
+
+#: zark_app/pages/pending.py:29
+msgid ""
+"zark prepared this drive while apt was running, so it could not read it back"
+msgstr ""
+
+#: zark_app/pages/pending.py:31
+msgid "zark says"
+msgstr ""
+
+#: zark_app/pages/pending.py:32
+msgid "Read it back and register it"
+msgstr ""
+
+#: zark_app/pages/run.py:29 zark_app/pages/run.py:42
+msgid "Data"
+msgstr ""
+
+#: zark_app/pages/run.py:29
+msgid "All data sent"
+msgstr ""
+
+#: zark_app/pages/run.py:29
+msgid "No data is moving yet"
+msgstr ""
+
+#: zark_app/pages/run.py:34
+#, python-brace-format
+msgid "{done} of {at_least}{total}"
+msgstr ""
+
+#: zark_app/pages/run.py:45
+#, python-brace-format
+msgid "{done} of {n} dataset"
+msgid_plural "{done} of {n} datasets"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/run.py:50
+#, python-brace-format
+msgid "{n} failed"
+msgid_plural "{n} failed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/pages/run.py:51
+msgid "Datasets"
+msgstr ""
+
+#: zark_app/pages/run.py:55
+msgid "Now"
+msgstr ""
+
+#: zark_app/pages/run.py:57
+msgid "Time left"
+msgstr ""
+
+#: zark_app/pages/run.py:82
+#, python-brace-format
+msgid "Started {time}, running for {duration}"
+msgstr ""
+
+#: zark_app/pages/run.py:88 zark_app/window.py:587
+#, python-brace-format
+msgid "Step {i} of {n}"
+msgstr ""
+
+#: zark_app/pages/run.py:108
+msgid "zark is waiting for you"
+msgstr ""
+
+#: zark_app/pages/run.py:108
+msgid "Answer in the terminal"
+msgstr ""
+
+#: zark_app/pages/run.py:110
+msgid "Heartbeat"
+msgstr ""
+
+#: zark_app/pages/run.py:110
+#, python-brace-format
+msgid "No update for {n} s"
+msgstr ""
+
+#: zark_app/pages/run.py:122
+msgid "Running in a Terminal"
+msgstr ""
+
+#: zark_app/pages/run.py:123
+msgid "Answer its questions there"
+msgstr ""
+
+#: zark_app/pages/run.py:123
+msgid "zark runs in another window"
+msgstr ""
+
+#: zark_app/pages/states.py:26
+msgid "zark Is Not Installed"
+msgstr ""
+
+#: zark_app/pages/states.py:27
+#, python-brace-format
+msgid "The zark package provides the commands this app runs: {command}"
+msgstr ""
+
+#: zark_app/pages/states.py:37
+msgid "an unknown version"
+msgstr ""
+
+#: zark_app/pages/states.py:39
+msgid "zark Is Too Old"
+msgstr ""
+
+#: zark_app/pages/states.py:40
+#, python-brace-format
+msgid "This app needs zark 2.3.0 or later; the installed one is {installed}"
+msgstr ""
+
+#: zark_app/pages/states.py:47
+msgid "No Status Yet"
+msgstr ""
+
+#: zark_app/pages/states.py:48
+msgid "zark has not written its status file. Refresh it, or run a first backup"
+msgstr ""
+
+#: zark_app/pages/states.py:56
+msgid "No Backup Drives Yet"
+msgstr ""
+
+#: zark_app/pages/states.py:57
+msgid "Prepare an empty drive to hold the backups of this computer"
+msgstr ""
+
+#: zark_app/pages/terminal.py:42
+msgid "zark's output - answer its questions here"
+msgstr ""
+
+#: zark_app/pages/terminal.py:73
+msgid "Stopping, zark is cleaning up"
+msgstr ""
+
+#: zark_app/pages/terminal.py:74
+msgid "GNOME asks for the administrator's password first"
+msgstr ""
+
+#: zark_app/runner.py:87 zark_app/window.py:464
+msgid "Done"
+msgstr ""
+
+#: zark_app/runner.py:88
+#, python-brace-format
+msgid "{title} failed"
+msgstr ""
+
+#: zark_app/runner.py:88
+msgid "zark's output below says why"
+msgstr ""
+
+#: zark_app/runner.py:89
+msgid "zark refused the command"
+msgstr ""
+
+#: zark_app/runner.py:89
+msgid "This is a defect of the app: please report it"
+msgstr ""
+
+#: zark_app/runner.py:90
+msgid "Stopped"
+msgstr ""
+
+#: zark_app/runner.py:90
+msgid "zark cleaned up"
+msgstr ""
+
+#: zark_app/runner.py:91
+msgid "Cancelled"
+msgstr ""
+
+#: zark_app/runner.py:92
+msgid "Not Authorized"
+msgstr ""
+
+#: zark_app/runner.py:92
+msgid "An administrator's password is needed to run zark"
+msgstr ""
+
+#: zark_app/runner.py:93
+msgid "Another zark command is running. Try again when it ends"
+msgstr ""
+
+#: zark_app/runner.py:95
+msgid "Updates Are Being Installed"
+msgstr ""
+
+#: zark_app/runner.py:96
+msgid ""
+"apt is running, so zark did not import the drive. Try again when it ends"
+msgstr ""
+
+#: zark_app/runner.py:99
+msgid "zark ended unexpectedly"
+msgstr ""
+
+#: zark_app/runner.py:100
+#, python-brace-format
+msgid "It was stopped by signal {n}"
+msgstr ""
+
+#: zark_app/runner.py:127
+#, python-brace-format
+msgid "{command}: {result}"
+msgstr ""
+
+#: zark_app/runner.py:162
+msgid "zark's output"
+msgstr ""
+
+#: zark_app/shortcuts.py:25
+msgid "General"
+msgstr ""
+
+#: zark_app/shortcuts.py:27 zark_app/window.py:270
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: zark_app/shortcuts.py:28
+msgid "Open the Main Menu"
+msgstr ""
+
+#: zark_app/shortcuts.py:29
+msgid "Reload"
+msgstr ""
+
+#: zark_app/shortcuts.py:30
+msgid "Close the Window"
+msgstr ""
+
+#: zark_app/shortcuts.py:31
+msgid "Quit"
+msgstr ""
+
+#: zark_app/shortcuts.py:35
+msgid "Navigation"
+msgstr ""
+
+#: zark_app/shortcuts.py:37 zark_app/window.py:143 zark_app/window.py:148
+#: zark_app/window.py:288 zark_app/window.py:420
+msgid "Overview"
+msgstr ""
+
+#: zark_app/shortcuts.py:38
+msgid "Backup Drives, in Order"
+msgstr ""
+
+#: zark_app/shortcuts.py:39
+msgid "Back, in the Narrow Layout"
+msgstr ""
+
+#: zark_app/shortcuts.py:45
+msgid "Back Up the Selected Drive"
+msgstr ""
+
+#: zark_app/shortcuts.py:46
+msgid "Browse Files or Unmount the Selected Drive"
+msgstr ""
+
+#: zark_app/shortcuts.py:50
+msgid "Terminal"
+msgstr ""
+
+#: zark_app/shortcuts.py:52
+msgid "Stop zark, after a question"
+msgstr ""
+
+#: zark_app/shortcuts.py:53
+msgid "Copy"
+msgstr ""
+
+#: zark_app/shortcuts.py:54
+msgid "Paste"
+msgstr ""
+
+#: zark_app/units.py:28
+#, python-brace-format
+msgid "{n} B"
+msgstr ""
+
+#: zark_app/units.py:52
+#, python-brace-format
+msgid "{size}/s"
+msgstr ""
+
+#: zark_app/units.py:60
+msgid "just now"
+msgstr ""
+
+#: zark_app/units.py:63
+#, python-brace-format
+msgid "{n} minute ago"
+msgid_plural "{n} minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/units.py:66
+#, python-brace-format
+msgid "{n} hour ago"
+msgid_plural "{n} hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/units.py:68
+#, python-brace-format
+msgid "{n} day ago"
+msgid_plural "{n} days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/units.py:79
+#, python-brace-format
+msgid "{n} s"
+msgstr ""
+
+#: zark_app/units.py:82
+#, python-brace-format
+msgid "{n} min"
+msgstr ""
+
+#: zark_app/units.py:83
+#, python-brace-format
+msgid "{h} h {m:02d} min"
+msgstr ""
+
+#: zark_app/window.py:128 zark_app/window.py:129
+msgid "Main Menu"
+msgstr ""
+
+#: zark_app/window.py:161
+msgid "Settings"
+msgstr ""
+
+#: zark_app/window.py:271
+msgid "About zark"
+msgstr ""
+
+#: zark_app/window.py:282
+msgid "Stopping"
+msgstr ""
+
+#: zark_app/window.py:282
+msgid "Ended"
+msgstr ""
+
+#: zark_app/window.py:282
+msgid "Running"
+msgstr ""
+
+#: zark_app/window.py:298 zark_app/window.py:412
+msgid "Not read back yet"
+msgstr ""
+
+#: zark_app/window.py:302 zark_app/window.py:415
+msgid "Exclusions"
+msgstr ""
+
+#: zark_app/window.py:387
+#, python-brace-format
+msgid "Status updated {age}"
+msgstr ""
+
+#: zark_app/window.py:431 zark_app/window.py:484
+#, python-brace-format
+msgid "Unmount {drive} first"
+msgstr ""
+
+#: zark_app/window.py:433
+#, python-brace-format
+msgid "Connect {drive} to back up"
+msgstr ""
+
+#: zark_app/window.py:438 zark_app/widgets.py:62
+msgid "Open in Files"
+msgstr ""
+
+#: zark_app/window.py:450 zark_app/window.py:451
+msgid "Drive Menu"
+msgstr ""
+
+#: zark_app/window.py:468
+msgid "Stopping..."
+msgstr ""
+
+#: zark_app/window.py:468
+msgid "Stop..."
+msgstr ""
+
+#: zark_app/window.py:590
+msgid "data sent"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.desktop.in:6
+#: data/com.juanmitaboada.Zark.metainfo.xml.in:7
+msgid "See the state of your zark backups and backup drives"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.desktop.in:12
+msgid "backup;restore;zfs;drive;snapshot;"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.metainfo.xml.in:12
+msgid ""
+"zark backs up and recovers Ubuntu systems installed on encrypted ZFS. This "
+"app shows how its backups stand: how full the system pools are, each backup "
+"drive with its last backup, its space and its backup points by month, the "
+"datasets left out of backups, and a backup running in a terminal, with its "
+"progress."
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.metainfo.xml.in:19
+msgid ""
+"It runs zark's operations: each is one zark command, run with the "
+"administrator's password through pkexec, in a terminal inside the window "
+"where zark asks its questions as it always does."
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:16
+msgid "Back up this computer with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:17
+msgid "Authentication is needed to back up this computer: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:28
+msgid "Reclaim space with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:29
+msgid "Authentication is needed to reclaim space with zark: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:40
+msgid "Change zark's registry of backup drives"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:41
+msgid ""
+"Authentication is needed to change zark's registry of backup drives: "
+"$(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:52
+msgid "Change what zark backs up"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:53
+msgid "Authentication is needed to change what zark backs up: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:64
+msgid "Mount a backup drive with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:65
+msgid "Authentication is needed to mount a backup drive: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:76
+msgid "Unmount a backup drive with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:77
+msgid "Authentication is needed to unmount a backup drive: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:88
+msgid "Look for backup drives with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:89
+msgid "Authentication is needed to look for backup drives: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:100
+msgid "Clean up after a stopped zark run"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:101
+msgid ""
+"Authentication is needed to clean up after a stopped zark run: "
+"$(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:112
+msgid "Refresh zark's status"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:113
+msgid "Authentication is needed to refresh zark's status: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:124
+msgid "Turn zark's hourly checks on or off"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:125
+msgid ""
+"Authentication is needed to change zark's hourly checks: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:136
+msgid "Verify a backup drive with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:137
+msgid "Authentication is needed to verify a backup drive: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:148
+msgid "Prepare a new backup drive with zark (erases it)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:149
+msgid ""
+"Authentication is needed to prepare a backup drive, which erases it: "
+"$(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:160
+msgid "Erase a backup drive with zark"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:161
+msgid "Authentication is needed to erase a backup drive: $(cmdline_short)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:172
+msgid "Check a drive's health with zark (may erase it)"
+msgstr ""
+
+#: data/com.juanmitaboada.Zark.policy:173
+msgid ""
+"Authentication is needed to check a drive's health, which can erase it: "
+"$(cmdline_short)"
+msgstr ""

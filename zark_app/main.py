@@ -26,7 +26,7 @@ gi.require_version("Vte", "3.91")
 # pylint: disable=wrong-import-position
 from gi.repository import Adw, Gio  # noqa: E402
 
-from zark_app import APP_ID, reader  # noqa: E402
+from zark_app import APP_ID, i18n, reader  # noqa: E402
 from zark_app.gio_runner import GioRunner  # noqa: E402
 from zark_app.reader import Loaded  # noqa: E402
 from zark_app.sources import Sources  # noqa: E402
@@ -88,4 +88,5 @@ class ZarkApp(Adw.Application):
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the app."""
+    i18n.setup()
     return int(ZarkApp().run(list(argv if argv is not None else sys.argv)))

@@ -12,8 +12,13 @@ VENV ?= build/venv
 SERIES ?= noble resolute stonking
 MIRROR ?= http://archive.ubuntu.com/ubuntu
 POT := po/$(PKG).pot
+APP_ID := com.juanmitaboada.Zark
+LINGUAS := $(shell sed -e 's/\#.*//' po/LINGUAS)
+I18N := build/i18n
+# The desktop file's translated keys; Name is the product's, kept as is.
+DESKTOP_KEYS := --keyword= --keyword=GenericName --keyword=Comment --keyword=Keywords
 
-.PHONY: test screenshots lint venv pot run dist deb deb-check deb-series deb-all release-guard deb-ppa clean
+.PHONY: test screenshots lint venv pot i18n run dist deb deb-check deb-series deb-all release-guard deb-ppa clean
 
 ## test: the suite under Xvfb, on the system's Python and PyGObject
 test:
@@ -41,10 +46,29 @@ lint:
 	$(VENV)/bin/python -m pylint zark_app tests
 
 ## pot: the translation template from the sources listed in po/POTFILES.in
+# One xgettext run for every kind: Python by its keywords, the desktop file's
+# GenericName, Comment and Keywords (not Name: the product's), the metainfo by
+# gettext's own rules, the polkit policy by po/its (the elements carrying
+# gettext-domain). The template's creation date is dropped so it only changes
+# with its strings.
 pot:
-	xgettext --from-code=UTF-8 --language=Python --keyword=_ --keyword=N_ --add-comments=TRANSLATORS: \
-	    --keyword=ngettext:1,2 --package-name=$(PKG) --package-version=$(VERSION) \
+	GETTEXTDATADIRS=po xgettext --from-code=UTF-8 --add-comments=TRANSLATORS: \
+	    --keyword= --keyword=_ --keyword=N_ --keyword=ngettext:1,2 \
+	    $(filter-out --keyword=,$(DESKTOP_KEYS)) \
+	    --package-name=$(PKG) --package-version=$(VERSION) \
+	    --msgid-bugs-address=https://github.com/juanmitaboada/zark-gnome-app/issues \
 	    --files-from=po/POTFILES.in --output=$(POT)
+	sed -i '/^"POT-Creation-Date: /d' $(POT)
+
+## i18n: the catalogues of po/LINGUAS, the desktop file and the metainfo with their translations, in build/i18n
+i18n:
+	@mkdir -p $(I18N)
+	@for lang in $(LINGUAS); do \
+	    mkdir -p $(I18N)/locale/$$lang/LC_MESSAGES; \
+	    msgfmt -c -o $(I18N)/locale/$$lang/LC_MESSAGES/$(PKG).mo po/$$lang.po || exit 1; \
+	done
+	msgfmt --desktop $(DESKTOP_KEYS) --template data/$(APP_ID).desktop.in -d po -o $(I18N)/$(APP_ID).desktop
+	msgfmt --xml --template data/$(APP_ID).metainfo.xml.in -d po -o $(I18N)/$(APP_ID).metainfo.xml
 
 ## run: the app from this tree against a fixture case (CASE=app:connected)
 run:
@@ -96,7 +120,7 @@ deb-all: dist
 deb-series:
 	@set -e; root=build/chroot-$(S); out=build/deb/$(S); mkdir -p $$out; \
 	test -d $$root || mmdebstrap --variant=buildd --components=main,universe \
-	    --include=debhelper,dh-python,python3,desktop-file-utils,appstream,lintian,devscripts \
+	    --include=debhelper,dh-python,python3,desktop-file-utils,appstream,gettext,lintian,devscripts \
 	    $(S) $$root "deb $(MIRROR) $(S) main universe"; \
 	rm -rf $$root/build && mkdir -p $$root/build/src; \
 	cp $(ORIG_TARBALL) $$root/build/; \
