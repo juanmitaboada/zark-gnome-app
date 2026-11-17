@@ -57,7 +57,7 @@ def fmt_bytes(n: int) -> str:
     """Binary units, as zark and ``zfs list`` show them, with three
     significant figures: ``412 GiB``, ``1.79 TiB``, ``9.20 GiB``."""
     if n < 1024:
-        # TRANSLATORS: unit symbols (B, s, min, h) as your language writes them; keep the placeholders.
+        # TRANSLATORS: B is the unit symbol of bytes and stays as it is, as s, min and h do elsewhere.
         return _("{n} B").format(n=max(n, 0))
     value = float(n)
     index = 0
@@ -82,7 +82,7 @@ def fmt_pct(pct: int) -> str:
 
 def fmt_rate(bytes_per_s: int) -> str:
     """A transfer rate."""
-    # TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second.
+    # TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second; /s stays as it is.
     return _("{size}/s").format(size=fmt_bytes(bytes_per_s))
 
 
@@ -110,11 +110,13 @@ def fmt_since(when: datetime, now: datetime) -> str:
 def fmt_duration(seconds: int) -> str:
     """A duration: ``45 s``, ``17 min``, ``2 h 05 min``."""
     if seconds < 60:
+        # TRANSLATORS: s is the unit symbol of seconds and stays as it is.
         return _("{n} s").format(n=max(seconds, 0))
     minutes = seconds // 60
     if minutes < 60:
+        # TRANSLATORS: min is the unit symbol of minutes and stays as it is.
         return _("{n} min").format(n=minutes)
-    # TRANSLATORS: keep {m:02d}: minutes with two digits.
+    # TRANSLATORS: h and min are unit symbols and stay as they are; keep {m:02d}: minutes with two digits.
     return _("{h} h {m:02d} min").format(h=minutes // 60, m=minutes % 60)
 
 

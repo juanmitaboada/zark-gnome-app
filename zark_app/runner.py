@@ -84,12 +84,19 @@ def classify(wait_status: int, saw_progress: bool, other_run: bool) -> Outcome:
 def outcome_text(outcome: Outcome, title: str) -> tuple[str, str]:
     """The result row's title and subtitle."""
     texts: dict[Kind, tuple[str, str]] = {
-        # TRANSLATORS: results of a zark command: Done, Failed, Stopped, Cancelled and the rest.
+        # TRANSLATORS: a zark command's result: it ended well.
         "done": (_("Done"), title),
-        "failed": (_("{title} failed").format(title=title), _("zark's output below says why")),
+        "failed": (
+            # TRANSLATORS: a zark command's result; {title} is the command's title, such as "Backing Up".
+            _("{title} failed").format(title=title),
+            _("zark's output below says why"),
+        ),
         "usage": (_("zark refused the command"), _("This is a defect of the app: please report it")),
+        # TRANSLATORS: a zark command's result: it was stopped.
         "stopped": (_("Stopped"), _("zark cleaned up")),
+        # TRANSLATORS: a zark command's result: the password was not given.
         "cancelled": (_("Cancelled"), title),
+        # TRANSLATORS: a zark command's result: the password was refused.
         "not_authorized": (_("Not Authorized"), _("An administrator's password is needed to run zark")),
         "busy": (_("zark Is Busy"), _("Another zark command is running. Try again when it ends")),
         "updates": (

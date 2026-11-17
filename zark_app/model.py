@@ -217,9 +217,13 @@ DRIVE_TITLES = {
 RESULT_WORDS = {
     # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "completed": N_("Completed"),
+    # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "incomplete": N_("Incomplete"),
+    # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "not_verified": N_("Not verified"),
+    # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "aborted": N_("Aborted"),
+    # TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
     "interrupted": N_("Interrupted"),
 }
 
@@ -928,8 +932,13 @@ def drive_details(mod: ModuleType, drive: Doc, progress: Doc | None, now: dateti
 
 def eject_words(autoeject: object) -> str:
     """``autoeject`` in words (design 2.2)."""
-    # TRANSLATORS: whether zark asks before ejecting the drive after a backup.
-    return _("Ask with a countdown") if autoeject is True else _("Ask")
+    return (
+        # TRANSLATORS: zark asks before ejecting the drive after a backup, with a countdown.
+        _("Ask with a countdown")
+        if autoeject is True
+        # TRANSLATORS: zark asks before ejecting the drive after a backup.
+        else _("Ask")
+    )
 
 
 def size_line(used: int | None, size: int | None, pct: int | None) -> str:

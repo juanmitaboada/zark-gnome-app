@@ -492,21 +492,23 @@ _DISKS = [("usb-New_Disk_0002-0:0", "New Disk")]
         (
             False,
             0,
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first. Could not check which disks this system uses: "
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first. "
+            "Could not check which disks this system uses: "
             "zark checks again before it writes.",
         ),
         (
             True,
             2,
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first. Disks this system uses are not listed.",
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first. "
+            "Disks this system uses are not listed.",
         ),
         (
             True,
             0,
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first.",
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first.",
         ),
     ],
 )
@@ -525,7 +527,8 @@ def test_prepare_risk_caption(
     assert dialogs.risk_caption(checked, hidden) == ""
     dialog = dialogs.prepare(window, _DISKS, lambda _d: None, checked, hidden)
     assert dialog.get_body().startswith(
-        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it untouched."
+        "The disk you choose must be empty: zark refuses one with partitions or a format it recognizes, "
+        "and leaves it untouched."
     )
     assert [type(c) for c in _children(dialog.get_extra_child())] == [Gtk.ListBox]
     dialog.close()

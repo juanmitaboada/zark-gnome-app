@@ -12,9 +12,10 @@
   (`sudo apt install zark`, `zfs get`, `zpool list`) are no longer part of
   the translatable text. About credits the translators.
 - Prepare a New Drive says that the disk must be empty and that zark
-  refuses one with partitions or data, as zark does, instead of saying
-  that it erases the disk; the polkit texts of prepare and health say the
-  same.
+  refuses one with partitions or a format it recognizes, as zark does,
+  instead of saying that it erases the disk; its caption adds that zark
+  cannot see every kind of data. The polkit texts of prepare and health
+  say that the disk must be empty.
 - Translations are built and installed: the catalogues of `po/LINGUAS` as
   `/usr/share/locale/<lang>/LC_MESSAGES/zark-gnome-app.mo`, and the
   desktop file, the metainfo and the polkit policy with their translations

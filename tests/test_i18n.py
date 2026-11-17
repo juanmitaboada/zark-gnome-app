@@ -149,8 +149,8 @@ def test_kept_out_of_the_template() -> None:
     never reach a translator (glossary 1 and 6; plan T-2; A1TR-6)."""
     msgids = [e.msgid for e in potools.parse(potools.POT)]
     for line in (
-        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it "
-        "untouched.",
+        "The disk you choose must be empty: zark refuses one with partitions or a format it recognizes, "
+        "and leaves it untouched.",
         "Could not check which disks this system uses: zark checks again before it writes",
         "Disks this system uses are not listed",
         "zark",

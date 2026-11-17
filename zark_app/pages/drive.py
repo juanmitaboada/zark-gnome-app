@@ -196,9 +196,10 @@ def _month_row(month: MonthView) -> Adw.ExpanderRow:
     for point in month.points:
         marks = []
         if point.get("complete") is False:
-            # TRANSLATORS: incomplete, whole: a backup point's state, lower case in a list.
+            # TRANSLATORS: a backup point's state, lower case in a list.
             marks.append(_("incomplete"))
         if point.get("whole") is True:
+            # TRANSLATORS: a backup point's state, lower case in a list: it holds every dataset.
             marks.append(_("whole"))
         used = point.get("used_bytes")
         if isinstance(used, int):
@@ -246,8 +247,12 @@ def _other(details: DriveDetails) -> Adw.PreferencesGroup | None:
     if details.other is None:
         return None
     group = Adw.PreferencesGroup(title=_("Other Snapshots"))
-    # TRANSLATORS: kinds of dataset in the largest-datasets list.
-    labels = {"intermediate": _("Intermediate"), "other": _("Other")}
+    labels = {
+        # TRANSLATORS: a kind of snapshot on the drive: the intermediate ones between two backup points.
+        "intermediate": _("Intermediate"),
+        # TRANSLATORS: a kind of snapshot on the drive: the others, neither backup points nor intermediate.
+        "other": _("Other"),
+    }
     for key, title in labels.items():
         entry: Any = details.other.get(key)
         if isinstance(entry, dict):

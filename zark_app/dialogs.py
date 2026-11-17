@@ -55,8 +55,16 @@ def stop(parent: Gtk.Widget, backup: bool, closing: bool, on_stop: Callable[[], 
     )
     dialog = Adw.AlertDialog.new(heading, body)
     dialog.add_response("keep", _("Keep Running"))
-    # TRANSLATORS: Stop: the button that stops the running zark command.
-    dialog.add_response("stop", _("Stop and Close") if closing else pgettext("button", "Stop"))
+    dialog.add_response(
+        "stop",
+        (
+            # TRANSLATORS: the button that stops the running zark command and closes the window.
+            _("Stop and Close")
+            if closing
+            # TRANSLATORS: the button that stops the running zark command.
+            else pgettext("button", "Stop")
+        ),
+    )
     dialog.set_response_appearance("stop", Adw.ResponseAppearance.DESTRUCTIVE)
     dialog.set_default_response("keep")
     dialog.set_close_response("keep")
@@ -194,23 +202,25 @@ def risk_caption(checked: bool, hidden: int) -> str:
         msgid = N_(
             # TRANSLATORS: risk caption, shown under English lines that stay
             # untranslated. It may only add caution: never say less than those lines.
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first. Could not check which disks this system uses: "
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first. "
+            "Could not check which disks this system uses: "
             "zark checks again before it writes."
         )
     elif hidden:
         msgid = N_(
             # TRANSLATORS: risk caption, shown under English lines that stay
             # untranslated. It may only add caution: never say less than those lines.
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first. Disks this system uses are not listed."
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first. "
+            "Disks this system uses are not listed."
         )
     else:
         msgid = N_(
             # TRANSLATORS: risk caption, shown under English lines that stay
             # untranslated. It may only add caution: never say less than those lines.
-            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
-            "Check the disk's name and size first."
+            "Choose an empty disk: zark refuses one with partitions or a format it recognizes, "
+            "but it cannot see every kind of data. Check the disk's name and size first."
         )
     text = _(msgid)
     return "" if text == msgid else text
@@ -249,13 +259,13 @@ def prepare(
     ``/dev/disk/by-id`` that are no registered drive and that the system
     does not use (A2E-9; ``hidden`` of them left out, ``checked`` False when
     that could not be read). A disk that is not empty is listed too: zark
-    refuses it before writing anything."""
+    refuses one with partitions or a signature blkid knows before writing
+    anything, and writes over data it cannot see."""
     # The three lines on which disk zark takes and which disks are listed
     # stay English (risk score 2, glossary 6); the caption below carries them.
     body = (
-        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it untouched."
-        + " "
-        + _("It asks you to confirm in the terminal")
+        "The disk you choose must be empty: zark refuses one with partitions or a format it recognizes, "
+        "and leaves it untouched." + " " + _("It asks you to confirm in the terminal")
         if disks
         else _("No disk to prepare is connected: plug in an empty drive")
     )

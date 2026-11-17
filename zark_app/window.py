@@ -279,8 +279,15 @@ class ZarkWindow(Adw.ApplicationWindow):
         rows: list[SidebarRow] = []
         own = self.ops.run
         if own is not None and (snap.run is None or snap.run.pid != own.pid):
-            # TRANSLATORS: the state of the app's own zark command.
-            sub = _("Stopping") if own.stopping else (_("Ended") if not own.alive else _("Running"))
+            if own.stopping:
+                # TRANSLATORS: the state of the app's own zark command.
+                sub = _("Stopping")
+            elif not own.alive:
+                # TRANSLATORS: the state of the app's own zark command.
+                sub = _("Ended")
+            else:
+                # TRANSLATORS: the state of the app's own zark command.
+                sub = _("Running")
             icon = _spinner() if own.alive else _icon("utilities-terminal-symbolic")
             rows.append(SidebarRow("run", "run", own.command.title, sub, icon))
         elif snap.run is not None:
