@@ -18,6 +18,11 @@
   up by polkit in the same catalogue (`gettext-domain`). The template,
   `po/zark-gnome-app.pot`, holds all four kinds of string (`make pot`).
   No language yet.
+- Translation checks: `make po-risk` lists the template's msgids that match
+  `po/RISK-WORDS` with their review in `po/RISK-REVIEWED`, and a test fails
+  on a match not reviewed; the tests compile every catalogue, check its
+  placeholders and plural forms, validate the merged desktop file and
+  metainfo, and start the app in Spanish from a pseudo-translation.
 
 ## [1.1.3] - 2026-11-16
 

@@ -88,11 +88,13 @@ reads wrong, please open an issue or a pull request on the `.po` file.
 
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 \
-    xvfb xauth librsvg2-common python3-pytest
+    xvfb xauth librsvg2-common python3-pytest gettext desktop-file-utils appstream
 git clone --branch v2.3.2 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
 make test               # the suite under Xvfb, from the fixtures
 make screenshots        # one PNG per state, in build/screenshots
 make venv lint          # ruff, mypy, pylint at the pinned versions
+make pot                # the translation template, after a text changes
+make po-risk            # its msgids that match po/RISK-WORDS, with their review
 make run CASE=app:connected
 make deb                # the .deb on this machine's series
 sudo make deb-all       # the .deb in a clean chroot of each series

@@ -57,7 +57,7 @@ jobs:
           apt-get install -y --no-install-recommends \
               git ca-certificates make python3 python3-gi python3-pytest python3-pytest-cov \
               gir1.2-glib-2.0 gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 librsvg2-common \
-              xvfb xauth fonts-cantarell adwaita-icon-theme
+              xvfb xauth fonts-cantarell adwaita-icon-theme gettext desktop-file-utils appstream
           python3 --version
           python3 -c "import gi; gi.require_version('Adw', '1'); from gi.repository import Adw; print('libadwaita', Adw.get_major_version(), Adw.get_minor_version())"
 

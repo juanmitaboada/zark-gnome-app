@@ -1,0 +1,288 @@
+# Copyright 2026 Juanmi Taboada
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""The translations (A1T plan sections 2 to 5): the template is current,
+every risky msgid was reviewed, the texts kept English stay out, every
+catalogue compiles with its placeholders and plural forms, the merged
+desktop file, metainfo and policy are valid, and the app starts in
+Spanish from a catalogue. The catalogue in the tests is a
+pseudo-translation of the template (each text prefixed with ``XX``),
+built here and never shipped."""
+
+# pylint: disable=redefined-outer-name
+
+import gettext
+import locale
+import re
+import shutil
+import subprocess
+import xml.etree.ElementTree as ET
+from collections.abc import Iterator
+from pathlib import Path
+
+import pytest
+
+from tests import potools
+from zark_app import i18n
+
+ROOT = potools.ROOT
+PO = potools.PO
+DATA = ROOT / "data"
+APP_ID = "com.juanmitaboada.Zark"
+DOMAIN = "zark-gnome-app"
+
+
+def _tool(name: str) -> str:
+    path = shutil.which(name)
+    if path is None:
+        pytest.skip(f"{name} is not installed")
+    return path
+
+
+def linguas() -> list[str]:
+    """The languages of po/LINGUAS."""
+    text = (PO / "LINGUAS").read_text(encoding="utf-8")
+    return [w for line in text.splitlines() for w in line.split("#", 1)[0].split()]
+
+
+@pytest.fixture(scope="module")
+def pseudo_po(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """A po directory holding the pseudo-translation as ``es``."""
+    out = tmp_path_factory.mktemp("po")
+    (out / "es.po").write_text(potools.pseudo(potools.parse(potools.POT)), encoding="utf-8")
+    (out / "LINGUAS").write_text("es\n", encoding="utf-8")
+    return out
+
+
+def catalogues(pseudo_po: Path) -> list[Path]:
+    """Every catalogue to check: po/LINGUAS's and the pseudo-translation."""
+    return [PO / f"{lang}.po" for lang in linguas()] + [pseudo_po / "es.po"]
+
+
+# -- the template ----------------------------------------------------------
+
+
+def _messages(path: Path) -> list[tuple[str, str | None, list[str]]]:
+    return [(e.msgid, e.msgid_plural, e.comments) for e in potools.parse(path)[1:]]
+
+
+def test_pot_current(tmp_path: Path) -> None:
+    """po/zark-gnome-app.pot holds what make pot writes from the sources:
+    the same messages and translator comments. Source lines and wrapping
+    are left out, since gettext's versions differ on them (0.21 on noble,
+    1.0 on stonking)."""
+    _tool("xgettext")
+    fresh = tmp_path / "fresh.pot"
+    subprocess.run(["make", "-s", "-C", str(ROOT), "pot", f"POT={fresh}"], check=True, capture_output=True)
+    assert _messages(fresh) == _messages(potools.POT)
+
+
+def test_risk_words_reviewed() -> None:
+    """Every msgid that matches po/RISK-WORDS has a score in
+    po/RISK-REVIEWED, and that file names nothing else."""
+    hits = {e.msgid for e, _stems in potools.risk_hits(potools.parse(potools.POT), potools.risk_stems())}
+    done = potools.reviewed()
+    assert sorted(hits - set(done)) == [], "not reviewed: add them to po/RISK-REVIEWED"
+    assert sorted(set(done) - hits) == [], "reviewed but no longer in the template"
+    assert set(done.values()) <= {"label", "caption", "1"}
+
+
+def test_risk_words_match_stems() -> None:
+    """A stem matches the start of a word, in any case."""
+    entries = [potools.Entry(msgid=m) for m in ("Erasing a Drive", "Keyboard", "A cleared pool", "Unstop")]
+    got = [e.msgid for e, _s in potools.risk_hits(entries, ["eras", "key", "clear", "stop"])]
+    assert got == ["Erasing a Drive", "Keyboard", "A cleared pool"]
+
+
+def test_kept_out_of_the_template() -> None:
+    """The score-2 lines and the commands inside texts never reach a
+    translator (glossary 6; plan T-2). The captions repeat two of those
+    lines in their own msgids, which is their purpose (BC22-44)."""
+    msgids = [e.msgid for e in potools.parse(potools.POT)]
+    for line in (
+        "zark erases the disk you choose and makes it a backup drive.",
+        "Could not check which disks this system uses: zark checks again before it writes",
+        "Disks this system uses are not listed",
+    ):
+        assert line not in msgids
+    for command in ("sudo apt install", "zfs get", "zpool list"):
+        assert not [m for m in msgids if command in m]
+
+
+def test_release_notes_not_translated() -> None:
+    """Every release's notes carry translate="no" (plan T-6)."""
+    root = ET.parse(DATA / f"{APP_ID}.metainfo.xml.in").getroot()
+    notes = root.findall("./releases/release/description")
+    assert notes and all(n.get("translate") == "no" for n in notes)
+
+
+def test_policy_texts_in_the_domain() -> None:
+    """Every description and message of the policy is looked up in the
+    app's domain at run time."""
+    root = ET.parse(DATA / f"{APP_ID}.policy").getroot()
+    texts = root.findall("./action/description") + root.findall("./action/message")
+    assert texts and all(t.get("gettext-domain") == DOMAIN for t in texts)
+
+
+# -- the catalogues --------------------------------------------------------
+
+
+def test_catalogues_compile(pseudo_po: Path, tmp_path: Path) -> None:
+    """msgfmt -c accepts every catalogue."""
+    msgfmt = _tool("msgfmt")
+    for po in catalogues(pseudo_po):
+        subprocess.run([msgfmt, "-c", "-o", str(tmp_path / "out.mo"), str(po)], check=True)
+
+
+def test_placeholders_kept(pseudo_po: Path) -> None:
+    """Each translation has exactly its source's placeholders: {name} for
+    Python, $(name) for polkit."""
+    for po in catalogues(pseudo_po):
+        for entry in potools.parse(po)[1:]:
+            for index, text in entry.msgstr.items():
+                if not text:
+                    continue
+                source = entry.msgid if index == 0 or entry.msgid_plural is None else entry.msgid_plural
+                assert potools.placeholders(text) == potools.placeholders(source), (po.name, entry.msgid)
+
+
+def test_placeholder_check_bites() -> None:
+    """A dropped or renamed placeholder is seen."""
+    assert potools.placeholders("{drive} went away") != potools.placeholders("{disco} se fue")
+    assert potools.placeholders("x: $(cmdline_short)") != potools.placeholders("x")
+
+
+def test_plural_forms(pseudo_po: Path) -> None:
+    """Each catalogue states its plural forms, and every plural entry has
+    that many translations."""
+    for po in catalogues(pseudo_po):
+        entries = potools.parse(po)
+        header = entries[0].msgstr[0]
+        match = re.search(r"^Plural-Forms: nplurals=(\d+); plural=[^;]+;", header, re.MULTILINE)
+        assert match, po.name
+        n = int(match.group(1))
+        for entry in entries[1:]:
+            if entry.msgid_plural is not None:
+                assert sorted(entry.msgstr) == list(range(n)), (po.name, entry.msgid)
+
+
+# -- built with a catalogue --------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def merged(pseudo_po: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The desktop file and the metainfo merged with the pseudo catalogue,
+    as make i18n merges them."""
+    msgfmt = _tool("msgfmt")
+    out = tmp_path_factory.mktemp("merged")
+    keys = ["--keyword=", "--keyword=GenericName", "--keyword=Comment", "--keyword=Keywords"]
+    for suffix, mode in ((".desktop", ["--desktop", *keys]), (".metainfo.xml", ["--xml"])):
+        subprocess.run(
+            [
+                msgfmt,
+                *mode,
+                "--template",
+                str(DATA / f"{APP_ID}{suffix}.in"),
+                "-d",
+                str(pseudo_po),
+                "-o",
+                str(out / f"{APP_ID}{suffix}"),
+            ],
+            check=True,
+        )
+    return out
+
+
+def test_desktop_merged(merged: Path) -> None:
+    """The merged desktop file is valid and carries the translations; Name
+    stays the product's."""
+    desktop = merged / f"{APP_ID}.desktop"
+    subprocess.run([_tool("desktop-file-validate"), str(desktop)], check=True)
+    text = desktop.read_text(encoding="utf-8")
+    assert "Comment[es]=XX See the state" in text and "GenericName[es]=XX Backups" in text
+    assert not re.search(r"^Name\[", text, re.MULTILINE)
+
+
+def test_metainfo_merged(merged: Path) -> None:
+    """The merged metainfo is valid and translates its summary, not its
+    name or release notes."""
+    metainfo = merged / f"{APP_ID}.metainfo.xml"
+    subprocess.run([_tool("appstreamcli"), "validate", "--no-net", str(metainfo)], check=True)
+    root = ET.parse(metainfo).getroot()
+    lang = "{http://www.w3.org/XML/1998/namespace}lang"
+    assert [s.text for s in root.findall("summary") if s.get(lang) == "es"] == [
+        "XX See the state of your zark backups and backup drives"
+    ]
+    assert not [n for n in root.findall("name") if n.get(lang)]
+    assert not [p for p in root.iterfind("./releases/release/description/p") if p.get(lang)]
+
+
+# -- the app in Spanish ------------------------------------------------------
+
+
+@pytest.fixture
+def spanish(pseudo_po: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """The pseudo catalogue installed as es under a locale directory, the
+    environment of a Spanish session, and the domain bound as main binds it;
+    everything put back after."""
+    msgfmt = _tool("msgfmt")
+    target = tmp_path / "locale" / "es" / "LC_MESSAGES"
+    target.mkdir(parents=True)
+    subprocess.run([msgfmt, "-o", str(target / f"{DOMAIN}.mo"), str(pseudo_po / "es.po")], check=True)
+    for name in ("LANGUAGE", "LC_ALL", "LC_MESSAGES"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("LANG", "es_ES.UTF-8")
+    monkeypatch.setattr(i18n, "_translation", gettext.NullTranslations())
+    saved = locale.setlocale(locale.LC_ALL)
+    i18n.setup(tmp_path / "locale")
+    yield
+    locale.setlocale(locale.LC_ALL, saved)
+
+
+@pytest.mark.usefixtures("spanish")
+def test_texts_in_spanish() -> None:
+    """The catalogue's texts, placeholders filled; English without one."""
+    assert i18n._("This Computer") == "XX This Computer"
+    assert i18n.ngettext("{n} day", "{n} days", 3).format(n=3) == "XX 3 days"
+
+
+def test_english_without_setup() -> None:
+    """Until main binds the domain, the source text."""
+    assert i18n._("This Computer") == "This Computer"
+
+
+@pytest.mark.usefixtures("spanish")
+def test_app_starts_in_spanish() -> None:
+    """The window starts under LANG=es_ES.UTF-8 with the catalogue: the
+    overview in the pseudo-translation, its command literal."""
+    # pylint: disable=import-outside-toplevel
+    import gi
+
+    gi.require_version("Gdk", "4.0")
+    gi.require_version("Gtk", "4.0")
+    from gi.repository import Gdk, Gtk  # noqa: F401  # pylint: disable=unused-import
+
+    # Gtk's import above opens the display.
+    if Gdk.Display.get_default() is None:
+        pytest.skip("no display: run under xvfb-run")
+    from tests.test_window import open_window, texts
+    from zark_app.main import ZarkApp
+
+    app = ZarkApp(watch=False)
+    app.register(None)
+    window = open_window(app, "app:connected")
+    try:
+        shown = texts(window)
+        assert "XX This Computer" in shown and "XX Live figures from zpool list" in shown
+    finally:
+        window.destroy()

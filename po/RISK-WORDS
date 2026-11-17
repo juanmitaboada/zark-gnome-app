@@ -1,0 +1,34 @@
+# Risk words: a msgid with a word that starts with one of these stems (any
+# case) is reviewed by hand before translation (make po-risk); the review is
+# po/RISK-REVIEWED. The same list serves the GNOME Shell extension and the
+# translation glossary. One stem per line.
+eras
+destroy
+wip
+clear
+reboot
+purg
+format
+delet
+passphras
+key
+sudo
+zpool
+zfs
+recover
+password
+restart
+forc
+forget
+remov
+reclaim
+prun
+clean
+stop
+exclud
+prepar
+unmount
+unplug
+eject
+kill
+overwrit

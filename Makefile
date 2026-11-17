@@ -18,7 +18,7 @@ I18N := build/i18n
 # The desktop file's translated keys; Name is the product's, kept as is.
 DESKTOP_KEYS := --keyword= --keyword=GenericName --keyword=Comment --keyword=Keywords
 
-.PHONY: test screenshots lint venv pot i18n run dist deb deb-check deb-series deb-all release-guard deb-ppa clean
+.PHONY: test screenshots lint venv pot po-risk i18n run dist deb deb-check deb-series deb-all release-guard deb-ppa clean
 
 ## test: the suite under Xvfb, on the system's Python and PyGObject
 test:
@@ -59,6 +59,10 @@ pot:
 	    --msgid-bugs-address=https://github.com/juanmitaboada/zark-gnome-app/issues \
 	    --files-from=po/POTFILES.in --output=$(POT)
 	sed -i '/^"POT-Creation-Date: /d' $(POT)
+
+## po-risk: the template's msgids that match po/RISK-WORDS, with their review in po/RISK-REVIEWED
+po-risk:
+	$(PYTHON) -I tests/potools.py risk
 
 ## i18n: the catalogues of po/LINGUAS, the desktop file and the metainfo with their translations, in build/i18n
 i18n:
