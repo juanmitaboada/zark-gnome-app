@@ -1,37 +1,33 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.0] - unreleased
 
+- The app in Spanish and in the eight languages closest to it and to
+  English: Brazilian and European Portuguese, French, Italian, Catalan,
+  Galician, German and Dutch. The window, the desktop entry (its
+  description and search words), the AppStream metadata and the
+  administrator's password dialogs (polkit) follow the session's
+  language; month names too. Commands, options and zark's own output stay
+  English in every language, and so do the three lines of Prepare a New
+  Drive on which disk zark takes, with a translated caption under them in
+  the warning style. About credits the translators. Corrections from
+  native speakers are welcome (README, Translations).
+- Prepare a New Drive says what zark does: the disk must be empty, and
+  zark refuses one with partitions or a format it recognizes, leaving it
+  untouched; the caption adds that zark cannot see every kind of data and
+  asks to check the disk's name and size. The polkit texts of prepare and
+  health say that the disk must be empty.
+- A catalogue that cannot be loaded leaves the app in English.
+- For translators and maintainers: the template `po/zark-gnome-app.pot`
+  holds the app's, the desktop file's, the metainfo's and the policy's
+  texts (`make pot`), with notes and contexts where a word is ambiguous;
+  `make i18n` builds the catalogues and merges them, each file's language
+  tags in its reader's form; `make po-risk` lists the msgids that match
+  `po/RISK-WORDS` with their review in `po/RISK-REVIEWED`; the tests check
+  every catalogue against the template, its placeholders, white space and
+  plural forms, and open every state of the app in a pseudo-translation.
 - Tests: zark 2.3.2's reader and status fixtures (`tests/fixtures/zark-2.3.2/`);
-  a fixture's connected drive has its `-part1` link, which zark 2.3.1's reader
-  looks for. CI and the README's Development steps use zark `v2.3.2`.
-- Translations: the three lines of Prepare a New Drive on which disk zark
-  takes and which disks are listed stay English in every language; a
-  translated caption under them, in the warning style, says the same where
-  a catalogue translates it. Commands shown inside a text
-  (`sudo apt install zark`, `zfs get`, `zpool list`) are no longer part of
-  the translatable text. About credits the translators.
-- Prepare a New Drive says that the disk must be empty and that zark
-  refuses one with partitions or a format it recognizes, as zark does,
-  instead of saying that it erases the disk; its caption adds that zark
-  cannot see every kind of data. The polkit texts of prepare and health
-  say that the disk must be empty.
-- Translations are built and installed: the catalogues of `po/LINGUAS` as
-  `/usr/share/locale/<lang>/LC_MESSAGES/zark-gnome-app.mo`, and the
-  desktop file, the metainfo and the polkit policy with their translations
-  merged at build (`make i18n`; polkit reads the policy's `xml:lang`
-  copies, since its run-time lookup in a catalogue lasts only until its
-  first prompt). The template, `po/zark-gnome-app.pot`, holds all four
-  kinds of string (`make pot`), with notes and contexts for translators
-  where a word is ambiguous. Month names come from the catalogue. A
-  catalogue that cannot be loaded leaves the app in English. No language
-  yet.
-- Translation checks: `make po-risk` lists the template's msgids that match
-  `po/RISK-WORDS` with their review in `po/RISK-REVIEWED`, and a test fails
-  on a match not reviewed; the tests compile and load every catalogue,
-  compare it with the template, check its placeholders, white space and
-  plural forms, validate the merged desktop file, metainfo and policy, and
-  open every state of the app in a pseudo-translation.
+  CI and the README's Development steps use zark `v2.3.2`.
 
 ## [1.1.3] - 2026-11-16
 

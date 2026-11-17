@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: zark-gnome-app 1.1.3\n"
+"Project-Id-Version: zark-gnome-app 1.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/juanmitaboada/zark-gnome-app/"
 "issues\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1376,158 +1376,170 @@ msgstr ""
 msgid "Paste"
 msgstr ""
 
-#: zark_app/units.py:24
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:25
 msgctxt "month"
 msgid "January"
 msgstr ""
 
-#: zark_app/units.py:25
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:27
 msgctxt "month"
 msgid "February"
 msgstr ""
 
-#: zark_app/units.py:26
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:29
 msgctxt "month"
 msgid "March"
 msgstr ""
 
-#: zark_app/units.py:27
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:31
 msgctxt "month"
 msgid "April"
 msgstr ""
 
-#: zark_app/units.py:28
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:33
 msgctxt "month"
 msgid "May"
 msgstr ""
 
-#: zark_app/units.py:29
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:35
 msgctxt "month"
 msgid "June"
 msgstr ""
 
-#: zark_app/units.py:30
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:37
 msgctxt "month"
 msgid "July"
 msgstr ""
 
-#: zark_app/units.py:31
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:39
 msgctxt "month"
 msgid "August"
 msgstr ""
 
-#: zark_app/units.py:32
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:41
 msgctxt "month"
 msgid "September"
 msgstr ""
 
-#: zark_app/units.py:33
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:43
 msgctxt "month"
 msgid "October"
 msgstr ""
 
-#: zark_app/units.py:34
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:45
 msgctxt "month"
 msgid "November"
 msgstr ""
 
-#: zark_app/units.py:35
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:47
 msgctxt "month"
 msgid "December"
 msgstr ""
 
 #. TRANSLATORS: a month's short name, in a date such as "13 Nov 2026, 06:15".
-#: zark_app/units.py:39
+#: zark_app/units.py:51
 msgctxt "month, short"
 msgid "Jan"
 msgstr ""
 
-#: zark_app/units.py:40
+#: zark_app/units.py:52
 msgctxt "month, short"
 msgid "Feb"
 msgstr ""
 
-#: zark_app/units.py:41
+#: zark_app/units.py:53
 msgctxt "month, short"
 msgid "Mar"
 msgstr ""
 
-#: zark_app/units.py:42
+#: zark_app/units.py:54
 msgctxt "month, short"
 msgid "Apr"
 msgstr ""
 
-#: zark_app/units.py:43
+#: zark_app/units.py:55
 msgctxt "month, short"
 msgid "May"
 msgstr ""
 
-#: zark_app/units.py:44
+#: zark_app/units.py:56
 msgctxt "month, short"
 msgid "Jun"
 msgstr ""
 
-#: zark_app/units.py:45
+#: zark_app/units.py:57
 msgctxt "month, short"
 msgid "Jul"
 msgstr ""
 
-#: zark_app/units.py:46
+#: zark_app/units.py:58
 msgctxt "month, short"
 msgid "Aug"
 msgstr ""
 
-#: zark_app/units.py:47
+#: zark_app/units.py:59
 msgctxt "month, short"
 msgid "Sep"
 msgstr ""
 
-#: zark_app/units.py:48
+#: zark_app/units.py:60
 msgctxt "month, short"
 msgid "Oct"
 msgstr ""
 
-#: zark_app/units.py:49
+#: zark_app/units.py:61
 msgctxt "month, short"
 msgid "Nov"
 msgstr ""
 
-#: zark_app/units.py:50
+#: zark_app/units.py:62
 msgctxt "month, short"
 msgid "Dec"
 msgstr ""
 
 #. TRANSLATORS: B is the unit symbol of bytes and stays as it is, as s, min and h do elsewhere.
-#: zark_app/units.py:61
+#: zark_app/units.py:73
 #, python-brace-format
 msgid "{n} B"
 msgstr ""
 
 #. TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second; /s stays as it is.
-#: zark_app/units.py:86
+#: zark_app/units.py:98
 #, python-brace-format
 msgid "{size}/s"
 msgstr ""
 
-#: zark_app/units.py:94
+#: zark_app/units.py:106
 msgid "just now"
 msgstr ""
 
-#: zark_app/units.py:97
+#: zark_app/units.py:109
 #, python-brace-format
 msgid "{n} minute ago"
 msgid_plural "{n} minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: zark_app/units.py:100
+#: zark_app/units.py:112
 #, python-brace-format
 msgid "{n} hour ago"
 msgid_plural "{n} hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: zark_app/units.py:102
+#: zark_app/units.py:114
 #, python-brace-format
 msgid "{n} day ago"
 msgid_plural "{n} days ago"
@@ -1535,25 +1547,25 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. TRANSLATORS: s is the unit symbol of seconds and stays as it is.
-#: zark_app/units.py:114
+#: zark_app/units.py:126
 #, python-brace-format
 msgid "{n} s"
 msgstr ""
 
 #. TRANSLATORS: min is the unit symbol of minutes and stays as it is.
-#: zark_app/units.py:118
+#: zark_app/units.py:130
 #, python-brace-format
 msgid "{n} min"
 msgstr ""
 
 #. TRANSLATORS: h and min are unit symbols and stay as they are; keep {m:02d}: minutes with two digits.
-#: zark_app/units.py:120
+#: zark_app/units.py:132
 #, python-brace-format
 msgid "{h} h {m:02d} min"
 msgstr ""
 
 #. TRANSLATORS: a month and its year, as "November 2026".
-#: zark_app/units.py:171
+#: zark_app/units.py:183
 #, python-brace-format
 msgid "{month} {year}"
 msgstr ""

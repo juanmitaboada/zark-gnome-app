@@ -21,17 +21,29 @@ from zark_app.i18n import NC_, _, ngettext, pgettext
 # A1TR-9: month names from the app's catalogue, not the C library's LC_TIME,
 # so a date follows the app's language (as the extension's do).
 _MONTHS = (
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "January"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "February"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "March"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "April"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "May"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "June"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "July"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "August"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "September"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "October"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "November"),
+    # TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
     NC_("month", "December"),
 )
 _SHORT_MONTHS = (
