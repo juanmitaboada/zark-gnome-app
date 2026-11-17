@@ -145,8 +145,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.prepare">
-    <description gettext-domain="zark-gnome-app">Prepare a new backup drive with zark (erases it)</description>
-    <message gettext-domain="zark-gnome-app">Authentication is needed to prepare a backup drive, which erases it: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Prepare an empty disk as a backup drive with zark</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to prepare an empty disk as a backup drive: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
@@ -169,8 +169,8 @@
   </action>
 
   <action id="com.juanmitaboada.Zark.health">
-    <description gettext-domain="zark-gnome-app">Check a drive's health with zark (may erase it)</description>
-    <message gettext-domain="zark-gnome-app">Authentication is needed to check a drive's health, which can erase it: $(cmdline_short)</message>
+    <description gettext-domain="zark-gnome-app">Check a drive's health with zark (its write test needs an empty drive)</description>
+    <message gettext-domain="zark-gnome-app">Authentication is needed to check a drive's health: $(cmdline_short)</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>

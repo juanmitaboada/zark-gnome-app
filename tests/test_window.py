@@ -492,11 +492,22 @@ _DISKS = [("usb-New_Disk_0002-0:0", "New Disk")]
         (
             False,
             0,
-            "The disk you choose is erased completely. Could not check which disks this system uses: "
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first. Could not check which disks this system uses: "
             "zark checks again before it writes.",
         ),
-        (True, 2, "The disk you choose is erased completely. Disks this system uses are not listed."),
-        (True, 0, "The disk you choose is erased completely."),
+        (
+            True,
+            2,
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first. Disks this system uses are not listed.",
+        ),
+        (
+            True,
+            0,
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first.",
+        ),
     ],
 )
 def test_prepare_risk_caption(
@@ -513,7 +524,9 @@ def test_prepare_risk_caption(
     windows.append(window)
     assert dialogs.risk_caption(checked, hidden) == ""
     dialog = dialogs.prepare(window, _DISKS, lambda _d: None, checked, hidden)
-    assert dialog.get_body().startswith("zark erases the disk you choose and makes it a backup drive.")
+    assert dialog.get_body().startswith(
+        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it untouched."
+    )
     assert [type(c) for c in _children(dialog.get_extra_child())] == [Gtk.ListBox]
     dialog.close()
     monkeypatch.setattr(dialogs, "_", lambda msgid: "XX " + msgid)

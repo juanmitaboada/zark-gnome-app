@@ -1,5 +1,6 @@
 # Risk words reviewed (make po-risk): every msgid of the template that
-# matches po/RISK-WORDS, with its score, one per line as <score> "<msgid>".
+# matches po/RISK-WORDS, and every risk caption, with its score, one per line
+# as <score> "<msgid>".
 #   label    the label or title of an action: translated with the glossary's
 #            fixed term (glossary 5b)
 #   caption  a translated risk caption under English lines (BC22-44): it may
@@ -25,9 +26,9 @@ label    "Stop and Close"
 label    "Stop"
 label    "Exclude a Dataset"
 label    "Exclude"
-caption  "The disk you choose is erased completely. Could not check which disks this system uses: zark checks again before it writes."
-caption  "The disk you choose is erased completely. Disks this system uses are not listed."
-caption  "The disk you choose is erased completely."
+caption  "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. Check the disk's name and size first. Could not check which disks this system uses: zark checks again before it writes."
+caption  "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. Check the disk's name and size first. Disks this system uses are not listed."
+caption  "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. Check the disk's name and size first."
 1        "No disk to prepare is connected: plug in an empty drive"
 label    "Prepare a New Drive"
 label    "Prepare..."
@@ -79,9 +80,7 @@ label    "Unmount a backup drive with zark"
 1        "Authentication is needed to unmount a backup drive: $(cmdline_short)"
 label    "Clean up after a stopped zark run"
 1        "Authentication is needed to clean up after a stopped zark run: $(cmdline_short)"
-label    "Prepare a new backup drive with zark (erases it)"
-1        "Authentication is needed to prepare a backup drive, which erases it: $(cmdline_short)"
+label    "Prepare an empty disk as a backup drive with zark"
+1        "Authentication is needed to prepare an empty disk as a backup drive: $(cmdline_short)"
 label    "Erase a backup drive with zark"
 1        "Authentication is needed to erase a backup drive: $(cmdline_short)"
-label    "Check a drive's health with zark (may erase it)"
-1        "Authentication is needed to check a drive's health, which can erase it: $(cmdline_short)"

@@ -28,6 +28,7 @@ PO = ROOT / "po"
 POT = PO / "zark-gnome-app.pot"
 RISK_WORDS = PO / "RISK-WORDS"
 RISK_REVIEWED = PO / "RISK-REVIEWED"
+RISK_CAPTION = "TRANSLATORS: risk caption"
 
 # Python's str.format fields and polkit's $(name): both must reach every
 # translation unchanged.
@@ -135,13 +136,16 @@ def risk_stems(path: Path = RISK_WORDS) -> list[str]:
 
 
 def risk_hits(entries: list[Entry], stems: list[str]) -> list[tuple[Entry, list[str]]]:
-    """The entries whose msgid (or plural) has a word starting with a stem."""
+    """The entries whose msgid (or plural) has a word starting with a stem,
+    and every risk caption (BC22-44), whatever its words."""
     out = []
     for entry in entries:
         if not entry.msgid:
             continue
         text = entry.msgid + "\n" + (entry.msgid_plural or "")
         hit = [s for s in stems if re.search(r"(?<![A-Za-z])" + re.escape(s), text, re.IGNORECASE)]
+        if any(c.startswith(RISK_CAPTION) for c in entry.comments):
+            hit.append("(risk caption)")
         if hit:
             out.append((entry, hit))
     return out

@@ -104,13 +104,22 @@ def test_risk_words_match_stems() -> None:
     assert got == ["Erasing a Drive", "Keyboard", "A cleared pool"]
 
 
+def test_risk_captions_always_reviewed() -> None:
+    """A risk caption is a match whatever its words (BC22-44)."""
+    caption = potools.Entry(msgid="Choose an empty disk", comments=["TRANSLATORS: risk caption, shown under"])
+    assert [e.msgid for e, _s in potools.risk_hits([caption, potools.Entry(msgid="Choose")], ["eras"])] == [
+        "Choose an empty disk"
+    ]
+
+
 def test_kept_out_of_the_template() -> None:
     """The score-2 lines and the commands inside texts never reach a
     translator (glossary 6; plan T-2). The captions repeat two of those
     lines in their own msgids, which is their purpose (BC22-44)."""
     msgids = [e.msgid for e in potools.parse(potools.POT)]
     for line in (
-        "zark erases the disk you choose and makes it a backup drive.",
+        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it "
+        "untouched.",
         "Could not check which disks this system uses: zark checks again before it writes",
         "Disks this system uses are not listed",
     ):

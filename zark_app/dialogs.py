@@ -177,17 +177,24 @@ def risk_caption(checked: bool, hidden: int) -> str:
         msgid = N_(
             # TRANSLATORS: risk caption, shown under English lines that stay
             # untranslated. It may only add caution: never say less than those lines.
-            "The disk you choose is erased completely. Could not check which disks this system uses: "
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first. Could not check which disks this system uses: "
             "zark checks again before it writes."
         )
     elif hidden:
-        # TRANSLATORS: risk caption, shown under English lines that stay
-        # untranslated. It may only add caution: never say less than those lines.
-        msgid = N_("The disk you choose is erased completely. Disks this system uses are not listed.")
+        msgid = N_(
+            # TRANSLATORS: risk caption, shown under English lines that stay
+            # untranslated. It may only add caution: never say less than those lines.
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first. Disks this system uses are not listed."
+        )
     else:
-        # TRANSLATORS: risk caption, shown under English lines that stay
-        # untranslated. It may only add caution: never say less than those lines.
-        msgid = N_("The disk you choose is erased completely.")
+        msgid = N_(
+            # TRANSLATORS: risk caption, shown under English lines that stay
+            # untranslated. It may only add caution: never say less than those lines.
+            "Choose an empty disk: zark refuses one with partitions or data and writes nothing to it. "
+            "Check the disk's name and size first."
+        )
     text = _(msgid)
     return "" if text == msgid else text
 
@@ -224,12 +231,12 @@ def prepare(
     """A2-1: the disk to prepare, from the whole disks under
     ``/dev/disk/by-id`` that are no registered drive and that the system
     does not use (A2E-9; ``hidden`` of them left out, ``checked`` False when
-    that could not be read). zark checks it and asks its own typed
-    confirmation after."""
-    # The three lines on what is erased and which disks are listed stay
-    # English (risk score 2, glossary 6); the caption below carries them.
+    that could not be read). A disk that is not empty is listed too: zark
+    refuses it before writing anything."""
+    # The three lines on which disk zark takes and which disks are listed
+    # stay English (risk score 2, glossary 6); the caption below carries them.
     body = (
-        "zark erases the disk you choose and makes it a backup drive."
+        "The disk you choose must be empty: zark refuses one with partitions or data and leaves it untouched."
         + " "
         + _("It asks you to confirm in the terminal")
         if disks
