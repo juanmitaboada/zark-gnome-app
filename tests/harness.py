@@ -16,7 +16,7 @@ the screenshots and ``dev/run``.
 
 Two kinds of case:
 
-- zark's own, in ``fixtures/zark-2.3.0/<case>/`` with its ``expected.json``:
+- zark's own, in ``fixtures/zark-2.3.2/<case>/`` with its ``expected.json``:
   the clock and the liveness come from it, as zark's fixtures README says;
   no live command answers (the file's figures show, dated).
 - the app's, in ``fixtures/app/<case>/`` with a ``case.json``: the clock,
@@ -41,7 +41,7 @@ from zark_app.reader import Loaded, load
 from zark_app.sources import CommandResult, Sources
 
 HERE = Path(__file__).resolve().parent
-ZARK_CASES = HERE / "fixtures" / "zark-2.3.0"
+ZARK_CASES = HERE / "fixtures" / "zark-2.3.2"
 APP_CASES = HERE / "fixtures" / "app"
 OLD_READER = (
     '"""A reader from before the names this app uses."""\n__all__ = ["SCHEMA_VERSION"]\nSCHEMA_VERSION = 1\n'
@@ -103,8 +103,10 @@ def _by_id(tmp: Path, names: Sequence[str]) -> Path:
     disk = tmp / "disk"
     disk.touch()
     for name in names:
-        # Links, as udev makes them; the commands' checks want a link.
+        # Links, as udev makes them; the commands' checks want a link. zark
+        # 2.3.1's reader takes a drive as connected by its -part1 link.
         (by_id / name).symlink_to(disk)
+        (by_id / f"{name}-part1").symlink_to(disk)
     return by_id
 
 

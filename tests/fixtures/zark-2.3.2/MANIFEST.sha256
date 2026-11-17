@@ -1,4 +1,4 @@
-017e3c6d791c38bfb8c9d993b9da8f25db07cc6f51311ba17bc38e8966288ee6  ./README.md
+9b01023a67bcd4b1ccc1ce30c716c3bf1adeee3fb533a42a3b1151c314b3997a  ./README.md
 d55de7b9badb9797c134503df42de45ad46624f0439f3e4fdfedcde3aa81c10b  ./aborted/expected.json
 d0e4f487d3f674d8761997c52ea35f5cf92de92e779d6709a25f28de870ef31c  ./aborted/var/lib/zark/status.json
 e6028003c1c42812e9103ca98077b20173bc1f01f82d480a40aa8c75fcc3913c  ./boot-ext4/expected.json
@@ -9,6 +9,9 @@ a12c57af4588399274f96fd262430e8b450758e8b8df8bd197363f3c548fa66b  ./drive-conten
 620e4a453fc6d296996c2950b1011a1ebdcbcf6f7d604fe286749500b8096fc3  ./drive-contents-partial/var/lib/zark/status.json
 908007701138f5a45b9ceafb262b793d734c937a52bf3a90b6902849eb6b958d  ./drive-contents/expected.json
 ac69a7213a3880e221e7e82d58ebe3509c9626a8e17eada411844d894d1823e6  ./drive-contents/var/lib/zark/status.json
+e7d2f07c71cac3f06c35d1b23619e1c21600c654e0419e5082bcfef9535c4e5b  ./drive-gone/expected.json
+487495efa877b4c7e0b6db4adf4248ec763283f47f9270a7ec355299e2235149  ./drive-gone/run/zark/progress.json
+d4485b8d6f2254fbfa04876ce67ea0f878edb36c0eeb6c5c428622fc59356c6e  ./drive-gone/var/lib/zark/status.json
 953dbad03de029b23a8f7b321a1345e476292bbb22777beee11df36f737d1c70  ./fullcheck-damage/expected.json
 05a0422471399589ec18643c328534fc3f50bbb9d36205de8db70c418e644922  ./fullcheck-damage/var/lib/zark/status.json
 089e453ef31c97a913faedd4a9f9a8c321fc4ed5dccc1fd30b4a3f52d51d88b9  ./fullcheck-not-finished/expected.json

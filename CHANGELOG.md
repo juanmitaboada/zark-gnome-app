@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- Tests: zark 2.3.2's reader and status fixtures (`tests/fixtures/zark-2.3.2/`);
+  a fixture's connected drive has its `-part1` link, which zark 2.3.1's reader
+  looks for. CI and the README's Development steps use zark `v2.3.2`.
+
 ## [1.1.3] - 2026-11-16
 
 - When a backup's drive goes away during the run (zark 2.3.1's

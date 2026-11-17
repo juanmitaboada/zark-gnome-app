@@ -84,7 +84,7 @@ are welcome as pull requests.
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 \
     xvfb xauth librsvg2-common python3-pytest
-git clone --branch v2.3.0 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
+git clone --branch v2.3.2 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
 make test               # the suite under Xvfb, from the fixtures
 make screenshots        # one PNG per state, in build/screenshots
 make venv lint          # ruff, mypy, pylint at the pinned versions
@@ -93,7 +93,7 @@ make deb                # the .deb on this machine's series
 sudo make deb-all       # the .deb in a clean chroot of each series
 ```
 
-The tests read zark's status file fixtures (`tests/fixtures/zark-2.3.0/`,
+The tests read zark's status file fixtures (`tests/fixtures/zark-2.3.2/`,
 copied unchanged from zark's tag with a sha256 manifest) and the app's own
 (`tests/fixtures/app/`); no test runs `zfs`, `zpool`, pkexec or a command of
 zark's: `tests/fake_pkexec.py` stands in for pkexec in the terminal tests.

@@ -7,10 +7,10 @@ Files: *
 Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
 License: Apache-2.0
 
-Files: tests/fixtures/zark-2.3.0/*
+Files: tests/fixtures/zark-2.3.2/*
 Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
 License: Apache-2.0
-Comment: copied unchanged from zark 2.3.0's tests/fixtures/status/
+Comment: copied unchanged from zark 2.3.2's tests/fixtures/status/
 
 Files: data/com.juanmitaboada.Zark.metainfo.xml
 Copyright: 2026 Juanmi Taboada <juanmi@juanmitaboada.com>
