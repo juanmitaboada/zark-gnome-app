@@ -1564,8 +1564,17 @@ msgstr ""
 msgid "{h} h {m:02d} min"
 msgstr ""
 
+#. TRANSLATORS: a date and time, as "7 Nov 2026, 09:31": {day} is the day of the
+#. month, {month} a month's short name, {year} the year, {time} "09:31" or
+#. "06:15:10". Order them as your language writes a date, as German
+#. "{day}. {month} {year}, {time}".
+#: zark_app/units.py:147
+#, python-brace-format
+msgid "{day} {month} {year}, {time}"
+msgstr ""
+
 #. TRANSLATORS: a month and its year, as "November 2026".
-#: zark_app/units.py:183
+#: zark_app/units.py:194
 #, python-brace-format
 msgid "{month} {year}"
 msgstr ""

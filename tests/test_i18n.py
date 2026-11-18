@@ -530,3 +530,40 @@ def test_every_state_translated() -> None:
         assert "XX Live figures from zpool list" in texts(window)
     finally:
         window.destroy()
+
+
+GERMAN_DATES = r"""msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+msgid "{day} {month} {year}, {time}"
+msgstr "{day}. {month} {year}, {time}"
+
+msgctxt "month, short"
+msgid "Nov"
+msgstr "Nov."
+"""
+
+
+def test_date_order_from_the_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """BC22-50: a language orders a date's parts in its catalogue, as German
+    "7. Nov. 2026"; English is unchanged."""
+    # pylint: disable=import-outside-toplevel
+    from datetime import UTC, datetime
+
+    from zark_app import units
+
+    when = datetime(2026, 11, 7, 8, 31, tzinfo=UTC)
+    point = datetime(2026, 11, 13, 5, 15, 10, tzinfo=UTC)
+    # TZ=Europe/Madrid in the suite.
+    assert units.fmt_date_time(when) == "7 Nov 2026, 09:31"
+    assert units.fmt_date_time_s(point) == "13 Nov 2026, 06:15:10"
+    po = tmp_path / "de.po"
+    po.write_text(GERMAN_DATES, encoding="utf-8")
+    mo = tmp_path / "de.mo"
+    subprocess.run([_tool("msgfmt"), "-c", "-o", str(mo), str(po)], check=True)
+    with mo.open("rb") as stream:
+        monkeypatch.setattr(i18n, "_translation", gettext.GNUTranslations(stream))
+    assert units.fmt_date_time(when) == "7. Nov. 2026, 09:31"
+    assert units.fmt_date_time_s(point) == "13. Nov. 2026, 06:15:10"

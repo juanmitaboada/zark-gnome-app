@@ -3,7 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: zark-gnome-app\n"
-"Report-Msgid-Bugs-To: https://github.com/juanmitaboada/zark-gnome-app/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/juanmitaboada/zark-gnome-app/"
+"issues\n"
 "PO-Revision-Date: 2026-11-18 14:30+0100\n"
 "Last-Translator: Juanmi Taboada <juanmi@juanmitaboada.com>\n"
 "Language-Team: German\n"
@@ -27,178 +28,175 @@ msgstr "Liest die Statusdateien von zark"
 msgid "translator-credits"
 msgstr "Juanmi Taboada <juanmi@juanmitaboada.com>"
 
-#: zark_app/commands.py:121 zark_app/model.py:187
+#: zark_app/commands.py:128 zark_app/model.py:187
 msgid "Backing Up"
 msgstr "Sicherung läuft"
 
-#: zark_app/commands.py:122
+#: zark_app/commands.py:129
 msgid "Refreshing the Status"
 msgstr "Status wird aktualisiert"
 
-#: zark_app/commands.py:123 zark_app/model.py:195
+#: zark_app/commands.py:130 zark_app/model.py:195
 msgid "Looking for Drives"
 msgstr "Laufwerke werden gesucht"
 
-#: zark_app/commands.py:124 zark_app/model.py:189
+#: zark_app/commands.py:131 zark_app/model.py:189
 msgid "Preparing a Drive"
 msgstr "Laufwerk wird vorbereitet"
 
-#: zark_app/commands.py:125
+#: zark_app/commands.py:132
 msgid "Finishing a Registration"
 msgstr "Registrierung wird abgeschlossen"
 
-#: zark_app/commands.py:126
+#: zark_app/commands.py:133
 msgid "Turning On Hourly Checks"
 msgstr "Stündliche Prüfungen werden eingeschaltet"
 
-#: zark_app/commands.py:127
+#: zark_app/commands.py:134
 msgid "Turning Off Hourly Checks"
 msgstr "Stündliche Prüfungen werden ausgeschaltet"
 
-#: zark_app/commands.py:128 zark_app/model.py:198
+#: zark_app/commands.py:135 zark_app/model.py:198
 msgid "Cleaning Up"
 msgstr "Wird aufgeräumt"
 
-#: zark_app/commands.py:129 zark_app/model.py:193
+#: zark_app/commands.py:136 zark_app/model.py:193
 msgid "Mounting a Drive"
 msgstr "Laufwerk wird eingehängt"
 
-#: zark_app/commands.py:130 zark_app/model.py:194
+#: zark_app/commands.py:137 zark_app/model.py:194
 msgid "Unmounting a Drive"
 msgstr "Laufwerk wird ausgehängt"
 
-#: zark_app/commands.py:131 zark_app/model.py:188
+#: zark_app/commands.py:138 zark_app/model.py:188
 msgid "Reclaiming Space"
 msgstr "Speicherplatz wird freigegeben"
 
-#: zark_app/commands.py:132 zark_app/model.py:191
+#: zark_app/commands.py:139 zark_app/model.py:191
 msgid "Checking Health"
 msgstr "Zustand wird geprüft"
 
-#: zark_app/commands.py:133 zark_app/model.py:192
+#: zark_app/commands.py:140 zark_app/model.py:192
 msgid "Verifying a Drive"
 msgstr "Laufwerk wird verifiziert"
 
-#: zark_app/commands.py:134
+#: zark_app/commands.py:141
 msgid "Changing Retention"
 msgstr "Aufbewahrung wird geändert"
 
-#: zark_app/commands.py:135
+#: zark_app/commands.py:142
 msgid "Repairing an Entry"
 msgstr "Eintrag wird repariert"
 
-#: zark_app/commands.py:136
+#: zark_app/commands.py:143
 msgid "Forgetting a Drive"
 msgstr "Laufwerk wird vergessen"
 
-#: zark_app/commands.py:137 zark_app/model.py:190
+#: zark_app/commands.py:144 zark_app/model.py:190
 msgid "Erasing a Drive"
 msgstr "Laufwerk wird gelöscht"
 
-#: zark_app/commands.py:138
+#: zark_app/commands.py:145
 msgid "Excluding a Dataset"
 msgstr "Dataset wird ausgeschlossen"
 
-#: zark_app/commands.py:139
+#: zark_app/commands.py:146
 msgid "Including a Dataset Again"
 msgstr "Dataset wird wieder aufgenommen"
 
-#: zark_app/commands.py:140
+#: zark_app/commands.py:147
 msgid "Listing Exclusions"
 msgstr "Ausschlüsse werden aufgelistet"
 
-#. TRANSLATORS: {title} is a run title such as "Backing Up", {drive} a drive's
-#. name.
-#: zark_app/commands.py:148
+#. TRANSLATORS: {title} is a run title such as "Backing Up", {drive} a drive's name.
+#: zark_app/commands.py:155
 #, python-brace-format
 msgid "{title} to {drive}"
 msgstr "{title} auf {drive}"
 
-#: zark_app/commands.py:154
+#: zark_app/commands.py:161
 #, python-brace-format
 msgid "{name} is not a drive name"
 msgstr "{name} ist kein gültiger Laufwerksname"
 
-#: zark_app/commands.py:162
+#: zark_app/commands.py:169
 #, python-brace-format
 msgid "{name} is not a registered drive"
 msgstr "{name} ist kein registriertes Laufwerk"
 
-#: zark_app/commands.py:169
+#: zark_app/commands.py:176
 #, python-brace-format
 msgid "{name} is not a disk name"
 msgstr "{name} ist kein gültiger Datenträgername"
 
-#: zark_app/commands.py:172
+#: zark_app/commands.py:179
 #, python-brace-format
 msgid "{name} is not connected"
 msgstr "{name} ist nicht angeschlossen"
 
-#: zark_app/commands.py:180
+#: zark_app/commands.py:187
 #, python-brace-format
 msgid "{name} has no disk name in the status file"
 msgstr "{name} hat keinen Datenträgernamen in der Statusdatei"
 
-#: zark_app/commands.py:187
+#: zark_app/commands.py:194
 #, python-brace-format
 msgid "{what} must be a whole number from {lo} to {hi}"
 msgstr "{what} muss eine ganze Zahl von {lo} bis {hi} sein"
 
-#. TRANSLATORS: the retention window (days), named in an error such as "The
-#. window must be 1 to 365".
-#: zark_app/commands.py:195
+#. TRANSLATORS: the retention window (days), named in an error such as "The window must be 1 to 365".
+#: zark_app/commands.py:202
 msgid "The window"
 msgstr "Das Fenster"
 
-#: zark_app/commands.py:196
+#: zark_app/commands.py:203
 msgid "The maximum age"
 msgstr "Das Höchstalter"
 
-#. TRANSLATORS: the retention margin (percent of the drive left free), named in
-#. an error.
-#: zark_app/commands.py:198
+#. TRANSLATORS: the retention margin (percent of the drive left free), named in an error.
+#: zark_app/commands.py:205
 msgid "The margin"
 msgstr "Der Puffer"
 
-#: zark_app/commands.py:200
+#: zark_app/commands.py:207
 msgid "The maximum age must be longer than the window, or no limit"
 msgstr "Das Höchstalter muss länger als das Fenster sein oder unbegrenzt"
 
-#: zark_app/commands.py:237
+#: zark_app/commands.py:244
 #, python-brace-format
 msgid "{name} is not waiting for its registration"
 msgstr "{name} wartet nicht auf seine Registrierung"
 
-#: zark_app/commands.py:245
+#: zark_app/commands.py:252
 msgid "No retention values"
 msgstr "Keine Aufbewahrungswerte"
 
-#: zark_app/commands.py:252
+#: zark_app/commands.py:259
 #, python-brace-format
 msgid "{name} is a registered backup drive"
 msgstr "{name} ist ein registriertes Sicherungslaufwerk"
 
-#: zark_app/commands.py:254
+#: zark_app/commands.py:261
 #, python-brace-format
 msgid "{name} is not a whole disk"
 msgstr "{name} ist kein ganzer Datenträger"
 
-#: zark_app/commands.py:259
+#: zark_app/commands.py:266
 #, python-brace-format
 msgid "{arg} is not a dataset and a word"
 msgstr "{arg} ist kein Dataset mit einem Wort"
 
-#: zark_app/commands.py:261
+#: zark_app/commands.py:268
 #, python-brace-format
 msgid "{dataset} is not a dataset of this computer"
 msgstr "{dataset} ist kein Dataset dieses Rechners"
 
-#: zark_app/commands.py:263
+#: zark_app/commands.py:270
 #, python-brace-format
 msgid "{dataset} is not excluded"
 msgstr "{dataset} ist nicht ausgeschlossen"
 
-#: zark_app/commands.py:266
+#: zark_app/commands.py:273
 #, python-brace-format
 msgid "Unknown operation {op}"
 msgstr "Unbekannte Operation {op}"
@@ -227,8 +225,7 @@ msgstr "zark stoppt den laufenden Befehl und räumt auf, bevor es endet"
 msgid "Keep Running"
 msgstr "Weiterlaufen lassen"
 
-#. TRANSLATORS: the button that stops the running zark command and closes the
-#. window.
+#. TRANSLATORS: the button that stops the running zark command and closes the window.
 #: zark_app/dialogs.py:62
 msgid "Stop and Close"
 msgstr "Stoppen und schließen"
@@ -466,8 +463,7 @@ msgstr "Abgebrochen"
 msgid "Interrupted"
 msgstr "Unterbrochen"
 
-#. TRANSLATORS: Clean: a drive check's result, nothing wrong found (an
-#. adjective).
+#. TRANSLATORS: Clean: a drive check's result, nothing wrong found (an adjective).
 #: zark_app/model.py:233
 msgctxt "drive check"
 msgid "Clean"
@@ -753,8 +749,7 @@ msgstr "Status von {age}"
 msgid "{done} sent"
 msgstr "{done} gesendet"
 
-#. TRANSLATORS: zark asks before ejecting the drive after a backup, with a
-#. countdown.
+#. TRANSLATORS: zark asks before ejecting the drive after a backup, with a countdown.
 #: zark_app/model.py:937
 msgid "Ask with a countdown"
 msgstr "Mit Countdown fragen"
@@ -916,8 +911,7 @@ msgstr[1] "{n} unvollständig"
 msgid "all whole"
 msgstr "alle lückenlos"
 
-#. TRANSLATORS: {what} is a list such as "4 points, all whole"; {size} the
-#. space only these points hold.
+#. TRANSLATORS: {what} is a list such as "4 points, all whole"; {size} the space only these points hold.
 #: zark_app/pages/drive.py:184
 #, python-brace-format
 msgid "{what} - held alone {size}"
@@ -942,8 +936,7 @@ msgstr "innerhalb des Fensters"
 msgid "incomplete"
 msgstr "unvollständig"
 
-#. TRANSLATORS: a backup point's state, lower case in a list: it holds every
-#. dataset.
+#. TRANSLATORS: a backup point's state, lower case in a list: it holds every dataset.
 #: zark_app/pages/drive.py:203
 msgid "whole"
 msgstr "lückenlos"
@@ -959,8 +952,8 @@ msgstr "Wiederherstellungspunkte"
 
 #: zark_app/pages/drive.py:230
 msgid ""
-"Each month shows what it holds alone; removing several months frees more than"
-" their sum"
+"Each month shows what it holds alone; removing several months frees more "
+"than their sum"
 msgstr ""
 "Jeder Monat zeigt, was er exklusiv enthält; das Entfernen mehrerer Monate "
 "gibt mehr frei als ihre Summe"
@@ -973,14 +966,12 @@ msgstr "Größte Datasets"
 msgid "Other Snapshots"
 msgstr "Andere Snapshots"
 
-#. TRANSLATORS: a kind of snapshot on the drive: the intermediate ones between
-#. two backup points.
+#. TRANSLATORS: a kind of snapshot on the drive: the intermediate ones between two backup points.
 #: zark_app/pages/drive.py:252
 msgid "Intermediate"
 msgstr "Zwischen-Snapshots"
 
-#. TRANSLATORS: a kind of snapshot on the drive: the others, neither backup
-#. points nor intermediate.
+#. TRANSLATORS: a kind of snapshot on the drive: the others, neither backup points nor intermediate.
 #: zark_app/pages/drive.py:254
 msgid "Other"
 msgstr "Andere"
@@ -1248,8 +1239,8 @@ msgstr "Noch kein Status"
 #: zark_app/pages/states.py:48
 msgid "zark has not written its status file. Refresh it, or run a first backup"
 msgstr ""
-"zark hat seine Statusdatei noch nicht geschrieben. Aktualisieren Sie sie oder"
-" führen Sie eine erste Sicherung aus"
+"zark hat seine Statusdatei noch nicht geschrieben. Aktualisieren Sie sie "
+"oder führen Sie eine erste Sicherung aus"
 
 #: zark_app/pages/states.py:56
 msgid "No Backup Drives Yet"
@@ -1278,8 +1269,7 @@ msgstr "GNOME fragt zuerst nach dem Passwort des Administrators"
 msgid "Done"
 msgstr "Fertig"
 
-#. TRANSLATORS: a zark command's result; {title} is the command's title, such
-#. as "Backing Up".
+#. TRANSLATORS: a zark command's result; {title} is the command's title, such as "Backing Up".
 #: zark_app/runner.py:91
 #, python-brace-format
 msgid "{title} failed"
@@ -1420,160 +1410,170 @@ msgstr "Kopieren"
 msgid "Paste"
 msgstr "Einfügen"
 
-#: zark_app/units.py:24
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:25
 msgctxt "month"
 msgid "January"
 msgstr "Januar"
 
-#: zark_app/units.py:25
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:27
 msgctxt "month"
 msgid "February"
 msgstr "Februar"
 
-#: zark_app/units.py:26
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:29
 msgctxt "month"
 msgid "March"
 msgstr "März"
 
-#: zark_app/units.py:27
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:31
 msgctxt "month"
 msgid "April"
 msgstr "April"
 
-#: zark_app/units.py:28
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:33
 msgctxt "month"
 msgid "May"
 msgstr "Mai"
 
-#: zark_app/units.py:29
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:35
 msgctxt "month"
 msgid "June"
 msgstr "Juni"
 
-#: zark_app/units.py:30
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:37
 msgctxt "month"
 msgid "July"
 msgstr "Juli"
 
-#: zark_app/units.py:31
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:39
 msgctxt "month"
 msgid "August"
 msgstr "August"
 
-#: zark_app/units.py:32
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:41
 msgctxt "month"
 msgid "September"
 msgstr "September"
 
-#: zark_app/units.py:33
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:43
 msgctxt "month"
 msgid "October"
 msgstr "Oktober"
 
-#: zark_app/units.py:34
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:45
 msgctxt "month"
 msgid "November"
 msgstr "November"
 
-#: zark_app/units.py:35
+#. TRANSLATORS: a month's full name; it starts a row's title, as in "Noviembre de 2026": capitalize it.
+#: zark_app/units.py:47
 msgctxt "month"
 msgid "December"
 msgstr "Dezember"
 
 #. TRANSLATORS: a month's short name, in a date such as "13 Nov 2026, 06:15".
-#: zark_app/units.py:39
+#: zark_app/units.py:51
 msgctxt "month, short"
 msgid "Jan"
 msgstr "Jan"
 
-#: zark_app/units.py:40
+#: zark_app/units.py:52
 msgctxt "month, short"
 msgid "Feb"
 msgstr "Feb"
 
-#: zark_app/units.py:41
+#: zark_app/units.py:53
 msgctxt "month, short"
 msgid "Mar"
 msgstr "Mär"
 
-#: zark_app/units.py:42
+#: zark_app/units.py:54
 msgctxt "month, short"
 msgid "Apr"
 msgstr "Apr"
 
-#: zark_app/units.py:43
+#: zark_app/units.py:55
 msgctxt "month, short"
 msgid "May"
 msgstr "Mai"
 
-#: zark_app/units.py:44
+#: zark_app/units.py:56
 msgctxt "month, short"
 msgid "Jun"
 msgstr "Jun"
 
-#: zark_app/units.py:45
+#: zark_app/units.py:57
 msgctxt "month, short"
 msgid "Jul"
 msgstr "Jul"
 
-#: zark_app/units.py:46
+#: zark_app/units.py:58
 msgctxt "month, short"
 msgid "Aug"
 msgstr "Aug"
 
-#: zark_app/units.py:47
+#: zark_app/units.py:59
 msgctxt "month, short"
 msgid "Sep"
 msgstr "Sep"
 
-#: zark_app/units.py:48
+#: zark_app/units.py:60
 msgctxt "month, short"
 msgid "Oct"
 msgstr "Okt"
 
-#: zark_app/units.py:49
+#: zark_app/units.py:61
 msgctxt "month, short"
 msgid "Nov"
 msgstr "Nov"
 
-#: zark_app/units.py:50
+#: zark_app/units.py:62
 msgctxt "month, short"
 msgid "Dec"
 msgstr "Dez"
 
-#. TRANSLATORS: B is the unit symbol of bytes and stays as it is, as s, min and
-#. h do elsewhere.
-#: zark_app/units.py:61
+#. TRANSLATORS: B is the unit symbol of bytes and stays as it is, as s, min and h do elsewhere.
+#: zark_app/units.py:73
 #, python-brace-format
 msgid "{n} B"
 msgstr "{n} B"
 
-#. TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second; /s
-#. stays as it is.
-#: zark_app/units.py:86
+#. TRANSLATORS: {size} is a size such as "12.0 MiB": a rate per second; /s stays as it is.
+#: zark_app/units.py:98
 #, python-brace-format
 msgid "{size}/s"
 msgstr "{size}/s"
 
-#: zark_app/units.py:94
+#: zark_app/units.py:106
 msgid "just now"
 msgstr "gerade eben"
 
-#: zark_app/units.py:97
+#: zark_app/units.py:109
 #, python-brace-format
 msgid "{n} minute ago"
 msgid_plural "{n} minutes ago"
 msgstr[0] "vor {n} Minute"
 msgstr[1] "vor {n} Minuten"
 
-#: zark_app/units.py:100
+#: zark_app/units.py:112
 #, python-brace-format
 msgid "{n} hour ago"
 msgid_plural "{n} hours ago"
 msgstr[0] "vor {n} Stunde"
 msgstr[1] "vor {n} Stunden"
 
-#: zark_app/units.py:102
+#: zark_app/units.py:114
 #, python-brace-format
 msgid "{n} day ago"
 msgid_plural "{n} days ago"
@@ -1581,26 +1581,34 @@ msgstr[0] "vor {n} Tag"
 msgstr[1] "vor {n} Tagen"
 
 #. TRANSLATORS: s is the unit symbol of seconds and stays as it is.
-#: zark_app/units.py:114
+#: zark_app/units.py:126
 #, python-brace-format
 msgid "{n} s"
 msgstr "{n} s"
 
 #. TRANSLATORS: min is the unit symbol of minutes and stays as it is.
-#: zark_app/units.py:118
+#: zark_app/units.py:130
 #, python-brace-format
 msgid "{n} min"
 msgstr "{n} min"
 
-#. TRANSLATORS: h and min are unit symbols and stay as they are; keep {m:02d}:
-#. minutes with two digits.
-#: zark_app/units.py:120
+#. TRANSLATORS: h and min are unit symbols and stay as they are; keep {m:02d}: minutes with two digits.
+#: zark_app/units.py:132
 #, python-brace-format
 msgid "{h} h {m:02d} min"
 msgstr "{h} h {m:02d} min"
 
+#. TRANSLATORS: a date and time, as "7 Nov 2026, 09:31": {day} is the day of the
+#. month, {month} a month's short name, {year} the year, {time} "09:31" or
+#. "06:15:10". Order them as your language writes a date, as German
+#. "{day}. {month} {year}, {time}".
+#: zark_app/units.py:147
+#, python-brace-format
+msgid "{day} {month} {year}, {time}"
+msgstr ""
+
 #. TRANSLATORS: a month and its year, as "November 2026".
-#: zark_app/units.py:171
+#: zark_app/units.py:194
 #, python-brace-format
 msgid "{month} {year}"
 msgstr "{month} {year}"
@@ -1671,8 +1679,7 @@ msgstr "Wird gestoppt..."
 msgid "Stop..."
 msgstr "Stoppen..."
 
-#. TRANSLATORS: data sent: a backup's data has all been sent, lower case after
-#. a comma.
+#. TRANSLATORS: data sent: a backup's data has all been sent, lower case after a comma.
 #: zark_app/window.py:599
 msgid "data sent"
 msgstr "Daten gesendet"
@@ -1687,8 +1694,7 @@ msgstr "Sicherungen"
 msgid "See the state of your zark backups and backup drives"
 msgstr "Den Zustand Ihrer zark-Sicherungen und Sicherungslaufwerke ansehen"
 
-#. TRANSLATORS: search words, separated by ; and ending in ;; keep zfs, add
-#. your language's words.
+#. TRANSLATORS: search words, separated by ; and ending in ;; keep zfs, add your language's words.
 #: data/com.juanmitaboada.Zark.desktop.in:14
 msgid "backup;restore;zfs;drive;snapshot;"
 msgstr "Sicherung;Backup;Wiederherstellung;zfs;Laufwerk;Snapshot;"
@@ -1714,8 +1720,8 @@ msgid ""
 "administrator's password through pkexec, in a terminal inside the window "
 "where zark asks its questions as it always does."
 msgstr ""
-"Sie führt die Operationen von zark aus: Jede ist ein zark-Befehl, der mit dem"
-" Passwort des Administrators über pkexec in einem Terminal innerhalb des "
+"Sie führt die Operationen von zark aus: Jede ist ein zark-Befehl, der mit "
+"dem Passwort des Administrators über pkexec in einem Terminal innerhalb des "
 "Fensters läuft, wo zark wie gewohnt seine Fragen stellt."
 
 #: data/com.juanmitaboada.Zark.policy.in:16

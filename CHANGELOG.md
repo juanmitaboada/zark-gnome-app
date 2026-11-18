@@ -8,6 +8,8 @@
   disk's own (`ata-`, `nvme-`) before its enclosure's (`usb-`). A
   registered drive is left out under every name it has, not only the
   registered one.
+- A date's order comes from the translation, so a language can write it
+  as it does (German "7. Nov. 2026, 09:31"); English is unchanged.
 
 ## [1.2.0] - 2026-11-18
 

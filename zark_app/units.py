@@ -137,16 +137,27 @@ def local(when: datetime) -> datetime:
     return when.astimezone()
 
 
+def _fmt_date(t: datetime, time: str) -> str:
+    # BC22-50: the order of a date's parts is the catalogue's, not the code's.
+    return _(
+        # TRANSLATORS: a date and time, as "7 Nov 2026, 09:31": {day} is the day of the
+        # month, {month} a month's short name, {year} the year, {time} "09:31" or
+        # "06:15:10". Order them as your language writes a date, as German
+        # "{day}. {month} {year}, {time}".
+        "{day} {month} {year}, {time}"
+    ).format(day=t.day, month=pgettext(*_SHORT_MONTHS[t.month - 1]), year=t.year, time=time)
+
+
 def fmt_date_time(when: datetime) -> str:
     """``7 Nov 2026, 09:31`` in local time."""
     t = local(when)
-    return f"{t.day} {pgettext(*_SHORT_MONTHS[t.month - 1])} {t.strftime('%Y, %H:%M')}"
+    return _fmt_date(t, t.strftime("%H:%M"))
 
 
 def fmt_date_time_s(when: datetime) -> str:
     """``13 Nov 2026, 06:15:10`` in local time: a backup point's time."""
     t = local(when)
-    return f"{t.day} {pgettext(*_SHORT_MONTHS[t.month - 1])} {t.strftime('%Y, %H:%M:%S')}"
+    return _fmt_date(t, t.strftime("%H:%M:%S"))
 
 
 # A point's name holds its time in UTC: zark_2026-11-13_05:15:10Z.
