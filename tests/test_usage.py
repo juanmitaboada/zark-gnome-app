@@ -101,7 +101,7 @@ def test_bpool_empty_parts_and_root() -> None:
 
 def test_free_stays_at_zero_and_no_share_is_no_row() -> None:
     """A full pool still lists Free; a dataset that holds nothing of its own
-    (a parent of others) is not a row."""
+    (a parent of others) is a row of neither list."""
     mod, doc = _status()
     pool = doc["source_pools"][1]
     pool["space"]["available_bytes"] = 0
@@ -112,7 +112,45 @@ def test_free_stays_at_zero_and_no_share_is_no_row() -> None:
     assert view is not None
     assert ("free", "0 B") in [(p.id, p.size) for p in view.legend]
     assert "BOOT" not in [r.name for r in view.by_size]
+    assert "BOOT" not in [r.name for r in view.by_snapshots]
     assert view.note.startswith("Snapshots: what removing all") and "2 of 3 datasets" in view.note
+
+
+def test_other_datasets_count_their_snapshots() -> None:
+    """Other datasets is their data and their snapshots (A13R-6)."""
+    mod, doc = _status()
+    pool = doc["source_pools"][1]
+    root = next(d for d in pool["datasets"] if d["name"] == "bpool")
+    root["usedbysnapshots_bytes"] = 1024**2
+    view = usage.usage_view(mod, pool, NOW)
+    assert view is not None
+    other = next(p for p in view.segments if p.id == "other")
+    # The pool root (96 KiB of its own) is the only other dataset.
+    assert other.bytes == 96 * 1024 + 1024**2
+
+
+def test_metadata_never_negative() -> None:
+    """Shares above used_bytes (counted a moment apart) leave no negative part."""
+    mod, doc = _status()
+    pool = doc["source_pools"][1]
+    pool["space"]["used_bytes"] = 1024
+    view = usage.usage_view(mod, pool, NOW)
+    assert view is not None
+    assert next(p for p in view.segments if p.id == "metadata").bytes == 0
+
+
+def test_percent_rounds_as_the_extension() -> None:
+    """Math.round(snapshots / used * 100): 29 of 200 is 14, as in JavaScript
+    (14.499999999999998), not 15 (A13R-5)."""
+    mod, _ = _status()
+    pool = {
+        "name": "tank",
+        "space": {"used_bytes": 200, "available_bytes": 0, "pool_free_bytes": 0},
+        "datasets": [{"name": "tank", "usedbydataset_bytes": 171, "usedbysnapshots_bytes": 29}],
+    }
+    view = usage.usage_view(mod, pool, NOW)
+    assert view is not None
+    assert view.snapshots == "Snapshots hold 29 B, 14% of the space in use"
 
 
 def test_not_listed() -> None:

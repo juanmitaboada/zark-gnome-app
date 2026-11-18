@@ -445,10 +445,19 @@ def test_mounted_drive_buttons(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     assert window.ops.run is None
 
 
-def test_drive_gone_dialog(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+def test_drive_gone_dialog(app: ZarkApp, windows: list[ZarkWindow], monkeypatch: pytest.MonkeyPatch) -> None:
     """A backup's drive gone (no GNOME Shell on the bus here): one alert on
     the window, its drive and time, zark's hint selectable; no second one
     when the window refreshes."""
+    focused: list[bool] = []
+    unselect = dialogs._unselect_on_first_focus  # pylint: disable=protected-access
+
+    def watched(label: Gtk.Label) -> None:
+        # Recorded before the fix's own handler: whether the label ever had the focus.
+        label.connect("notify::has-focus", lambda w, _p: focused.append(w.has_focus()))
+        unselect(label)
+
+    monkeypatch.setattr(dialogs, "_unselect_on_first_focus", watched)
     window = open_window(app, "app:running-drive-gone")
     windows.append(window)
     dialog = window.get_visible_dialog()
@@ -457,8 +466,10 @@ def test_drive_gone_dialog(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     assert dialog.get_body().startswith("Since ")
     hint = dialog.get_extra_child()
     assert isinstance(hint, Gtk.Label) and hint.get_selectable()
-    # G2: it opens with nothing selected, though it has the focus.
+    # G2: GTK selects all of it when it takes the focus (libadwaita 1.5 leaves
+    # the focus there, 1.9 moves it on to OK); it opens with nothing selected.
     settle(80)
+    assert True in focused and hint.get_focusable()
     assert not hint.get_selection_bounds()[0]
     assert hint.get_label().startswith("black's drive went away.") and "--force --force" in hint.get_label()
     assert dialog.get_close_response() == "ok"
@@ -623,12 +634,20 @@ def test_this_computer_pools_expand(app: ZarkApp, windows: list[ZarkWindow]) -> 
     target = reclaim[0].get_action_target_value()
     assert target is not None and target.unpack() == ("prune", "")
     rpool.set_expanded(True)
-    sort = next(b for b in _buttons(rpool) if "Snapshots" in texts(b))
+    toggles = [b for b in _buttons(rpool) if isinstance(b, Gtk.ToggleButton)]
+    # A13R-3: the active order is a pressed toggle, the other not.
+    assert [(texts(b)[0], b.get_active()) for b in toggles] == [("Data", True), ("Snapshots", False)]
+    sort = toggles[1]
+    sort.grab_focus()
     sort.emit("clicked")
     settle()
     assert window.pool_sort == {"rpool": "snapshots"}
     rpool = _expanders(window.content_view)[0]
     assert rpool.get_expanded()
+    # A13R-2: the focus stays on the pressed order in the new page.
+    focus = window.get_focus()
+    assert isinstance(focus, Gtk.ToggleButton) and focus.get_active() and texts(focus)[0] == "Snapshots"
+    assert focus.is_ancestor(rpool)
     shown = texts(rpool)
     # Sorted by snapshots: var/log (614 MiB) is listed, libvirt (none) is not.
     assert any(t.endswith("</span>var/log") for t in shown)

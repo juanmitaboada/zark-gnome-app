@@ -10,6 +10,8 @@
   when zark measured it. Reclaim Space... there runs `zark prune`, whose
   first question offers to clean this computer's snapshots. A pool whose
   datasets zark could not list says so and still offers Reclaim Space....
+  The column titles that sort the datasets are toggle buttons, the pressed
+  one the order in use, and keep the keyboard focus after sorting.
 - Prepare a New Drive lists a disk once: a disk behind a USB bridge has
   two names (its own and its enclosure's) and showed twice. The name shown
   and passed to `zark prepare` is the one zark registers it under, the
@@ -25,6 +27,8 @@
   selected and copied.
 - Prepare a New Drive: "It asks you to confirm in the terminal." ends with
   a full stop.
+- The package depends on `gir1.2-graphene-1.0`, whose typelib the app now
+  imports (already installed with `gir1.2-gtk-4.0`).
 - Tests: CI and the README's Development steps use zark `v2.3.3` (its
   status fixtures are 2.3.2's, unchanged). `make screenshots` also draws
   the Overview with rpool's row open, and draws in another language with

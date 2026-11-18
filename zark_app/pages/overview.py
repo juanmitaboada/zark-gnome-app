@@ -164,16 +164,39 @@ def _plain_row(child: Gtk.Widget) -> Adw.PreferencesRow:
     return row
 
 
-def _sort_button(title: str, on: bool, pick: Callable[[], None]) -> Gtk.Button:
+def _sort_button(title: str, on: bool, pick: Callable[[], None]) -> Gtk.ToggleButton:
+    """A column title that sorts the table: a toggle button, pressed for the
+    active order, so a screen reader says which one is (A13R-3)."""
     box = Gtk.Box(spacing=2, halign=Gtk.Align.END)
     box.append(Gtk.Label(label=title))
     if on:
         box.append(Gtk.Image.new_from_icon_name("pan-down-symbolic"))
-    button = Gtk.Button(child=box, halign=Gtk.Align.END)
+    button = Gtk.ToggleButton(child=box, halign=Gtk.Align.END, active=on)
     button.add_css_class("flat")
-    button.add_css_class("heading" if on else "dim-label")
-    button.connect("clicked", lambda _b: pick())
+    if not on:
+        button.add_css_class("dim-label")
+    button.connect("toggled", lambda b: pick() if b.get_active() else None)
     return button
+
+
+def _descendants(widget: Gtk.Widget) -> list[Gtk.Widget]:
+    out: list[Gtk.Widget] = []
+    child = widget.get_first_child()
+    while child is not None:
+        out.append(child)
+        out.extend(_descendants(child))
+        child = child.get_next_sibling()
+    return out
+
+
+def sort_button(widget: Gtk.Widget, pool: str) -> Gtk.ToggleButton | None:
+    """The pressed sort button of ``pool``'s table under ``widget``."""
+    for row in _descendants(widget):
+        if isinstance(row, Adw.ExpanderRow) and row.get_title() == pool:
+            return next(
+                (b for b in _descendants(row) if isinstance(b, Gtk.ToggleButton) and b.get_active()), None
+            )
+    return None
 
 
 def _name_label(row: DatasetRow) -> Gtk.Label:
@@ -199,8 +222,11 @@ def _table(usage: UsageView, sort: str, pick: Callable[[str], None]) -> Gtk.Grid
         # TRANSLATORS: a column title: the space a dataset's snapshots take
         ("snapshots", _("Snapshots")),
     )
-    for index, (key, title) in enumerate(columns, start=1):
-        grid.attach(_sort_button(title, key == sort, functools.partial(pick, key)), index, 0, 1, 1)
+    buttons = [_sort_button(title, key == sort, functools.partial(pick, key)) for key, title in columns]
+    # One group: one order always pressed; pressing the other sorts by it.
+    buttons[1].set_group(buttons[0])
+    for index, button in enumerate(buttons, start=1):
+        grid.attach(button, index, 0, 1, 1)
     rows = usage.by_snapshots if sort == "snapshots" else usage.by_size
     for index, row in enumerate(rows, start=1):
         grid.attach(_name_label(row), 0, index, 1, 1)
@@ -250,16 +276,18 @@ def _computer(snapshot: Snapshot, sorts: Mapping[str, str], on_sort: Sort) -> Ad
             return ""
         return _("measured {age}").format(age=fmt_since(pool.measured_at, snapshot.now))
 
-    for pool in snapshot.pools:
+    for pool in (*snapshot.pools, *([snapshot.boot] if snapshot.boot is not None else [])):
+        if not pool.source:
+            # /boot's ext4 partition: its figures only.
+            row = Adw.ActionRow()
+            _pool_row(pool, label, row)
+            group.add(row)
+            continue
         expander = Adw.ExpanderRow()
         _pool_row(pool, label, expander)
         for child in pool_details(pool, sorts.get(pool.name, "size"), on_sort):
             expander.add_row(child)
         group.add(expander)
-    if snapshot.boot is not None:
-        row = Adw.ActionRow()
-        _pool_row(snapshot.boot, label, row)
-        group.add(row)
     return group
 
 

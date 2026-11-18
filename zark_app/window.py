@@ -353,6 +353,10 @@ class ZarkWindow(Adw.ApplicationWindow):
         """Sort ``pool``'s datasets table by ``key`` and draw the page again."""
         self.pool_sort[pool] = key
         self._content()
+        # The page is drawn anew: the focus goes to the button just pressed (A13R-2).
+        button = overview.sort_button(self.content_view, pool)
+        if button is not None:
+            button.grab_focus()
 
     def select_index(self, n: int) -> None:
         """Ctrl+1 to Ctrl+9: Overview, then the drives in order."""

@@ -156,6 +156,20 @@ def _tree(tmp_path: Path, links: dict[str, str]) -> Path:
         ({"scsi-SOnly_0004": "sdd"}, {}, ["scsi-SOnly_0004"]),
         # nvme-eui. is weak although it starts with nvme-.
         ({"nvme-eui.0001": "nvme0n1", "nvme-Disk_0005": "nvme0n1"}, {}, ["nvme-Disk_0005"]),
+        ({"nvme-eui.0001": "nvme0n1", "usb-Case-0:0": "nvme0n1"}, {}, ["usb-Case-0:0"]),
+        # A registered name the picker never offers still hides its device.
+        (
+            {"wwn-0x5000000000000003": "sdk", "ata-New_0011": "sdk"},
+            {"black": {"drive_id": "wwn-0x5000000000000003"}},
+            [],
+        ),
+        # "-part" inside a name is no partition (zark's -part<N>$, A13R-4).
+        (
+            {"usb-Multi-partner_0001-0:0": "sdl", "ata-Multi_0012": "sdl"},
+            {"black": {"drive_id": "usb-Multi-partner_0001-0:0"}},
+            [],
+        ),
+        ({"usb-Multi-partner_0001-0:0": "sdl"}, {}, ["usb-Multi-partner_0001-0:0"]),
         # Two disks, each in its own case.
         (
             {"ata-A_0006": "sde", "usb-Case_A-0:0": "sde", "ata-B_0007": "sdf", "usb-Case_B-0:0": "sdf"},

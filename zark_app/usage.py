@@ -17,6 +17,7 @@ with the most in snapshots. The same figures and words as zark's GNOME Shell
 extension (``lib/usage.js`` and ``lib/view.js``: ``poolUsage``,
 ``usageView``, ``datasetRow``). No GTK here."""
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
@@ -173,8 +174,9 @@ def usage_view(  # pylint: disable=too-many-locals
     parts = tuple(Part(s, figures[s], _label(s), fmt_bytes(figures[s])) for s in SEGMENTS)
     # Empty parts say nothing (bpool has no user data); Free stays, even at zero.
     legend = tuple(p for p in parts if p.bytes > 0 or p.id == "free")
-    # Math.round, as the extension: halves up.
-    percent = int(snapshots * 100 / used + 0.5) if used > 0 else 0
+    # Math.round(snapshots / used * 100), as the extension: divided first, so
+    # an exact half rounds as it does there (A13R-5).
+    percent = math.floor(snapshots / used * 100 + 0.5) if used > 0 else 0
     by_size = sorted(entries, key=lambda d: int(mod.own_share(d)), reverse=True)[:LISTED]
     by_snapshots = sorted(entries, key=lambda d: _int(d.get("usedbysnapshots_bytes")), reverse=True)[:LISTED]
     size_rows = tuple(dataset_row(d) for d in by_size if int(mod.own_share(d)) > 0)

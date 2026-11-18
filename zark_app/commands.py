@@ -81,6 +81,8 @@ DISK_PREFIXES = ("usb-", "ata-", "nvme-", "scsi-")
 OWN_PREFIXES = ("ata-", "nvme-", "mmc-", "virtio-")
 RANK_PREFIXES = ("usb-", "ata-", "nvme-", "mmc-", "virtio-", "dm-", "md-", "")
 WEAK_PREFIXES = ("wwn-", "scsi-", "nvme-eui.", "nvme-nvme.")
+# A partition's by-id name, as zark tells one (lib/identity.py _PART_SUFFIX_RE).
+PART_RE = re.compile(r"-part\d+$")
 
 
 class CommandError(ValueError):
@@ -257,7 +259,7 @@ def build(  # pylint: disable=too-many-return-statements,too-many-branches
         known = {str(e.get("drive_id")) for e in ctx.drives.values()}
         if arg in known:
             raise CommandError(_("{name} is a registered backup drive").format(name=arg))
-        if "-part" in arg or not arg.startswith(DISK_PREFIXES):
+        if PART_RE.search(arg) or not arg.startswith(DISK_PREFIXES):
             raise CommandError(_("{name} is not a whole disk").format(name=arg))
         return Command(op, ("prepare", _device(ctx, arg)), _title(op))
     if op in ("exclude-add", "exclude-remove"):
@@ -299,8 +301,11 @@ def disk_candidates(
 ) -> list[str]:
     """Whole disks under ``by_id`` for Prepare, one name per device (A13):
     the bus prefixes of :data:`DISK_PREFIXES`, no partitions, under
-    :func:`zark_disk_name`'s choice. A device one of whose names is a
-    registered drive's ``drive_id`` is left out (A13-4)."""
+    :func:`zark_disk_name`'s choice among the offered prefixes (zark ranks
+    every name, so a device that also has an ``mmc-``, ``virtio-`` or
+    ``ieee1394-`` name may be registered under that one; A13R-7). A device
+    one of whose names is a registered drive's ``drive_id`` is left out
+    (A13-4)."""
     known = {str(e.get("drive_id")) for e in drives.values()}
     try:
         names = sorted(p.name for p in by_id.iterdir())
@@ -308,7 +313,7 @@ def disk_candidates(
         return []
     devices: dict[str, list[str]] = {}
     for n in names:
-        if "-part" not in n:
+        if not PART_RE.search(n):
             devices.setdefault(resolve(str(by_id / n)), []).append(n)
     out = []
     for group in devices.values():

@@ -956,6 +956,7 @@ def eject_words(autoeject: object) -> str:
 def size_line(used: int | None, size: int | None, pct: int | None) -> str:
     """``412 GiB used of 1.79 TiB (23 %)``."""
     if used is None or size is None:
+        # TRANSLATORS: said of a pool whose figures zark could not read
         return _("Could not be read")
     pct_text = f" ({pct} %)" if pct is not None else ""
     return _("{used} used of {size}").format(used=fmt_bytes(used), size=fmt_bytes(size)) + pct_text
