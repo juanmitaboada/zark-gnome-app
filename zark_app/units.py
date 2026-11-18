@@ -119,6 +119,21 @@ def fmt_since(when: datetime, now: datetime) -> str:
     return fmt_ago((now - when).total_seconds())
 
 
+def fmt_when(when: datetime, now: datetime) -> str:
+    """A moment in local time relative to today, as the extension's
+    ``formatWhen``: ``today 09:18``, ``yesterday 23:50``, ``24 Oct 09:18``."""
+    t = local(when)
+    time = t.strftime("%H:%M")
+    days = (local(now).date() - t.date()).days
+    if days == 0:
+        # TRANSLATORS: a moment; {time} is "09:18"; it fills {when} in other texts
+        return _("today {time}").format(time=time)
+    if days == 1:
+        # TRANSLATORS: a moment; {time} is "09:18"; it fills {when} in other texts
+        return _("yesterday {time}").format(time=time)
+    return _("{day} {month} {time}").format(day=t.day, month=pgettext(*_SHORT_MONTHS[t.month - 1]), time=time)
+
+
 def fmt_duration(seconds: int) -> str:
     """A duration: ``45 s``, ``17 min``, ``2 h 05 min``."""
     if seconds < 60:

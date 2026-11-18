@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- This Computer shows what fills each pool, as zark's GNOME Shell
+  extension does: open a pool's row for a bar of its space (user data and
+  snapshots, the system and its snapshots, other datasets, pool metadata,
+  free, reserved by ZFS) with its legend, how much the snapshots hold, the
+  twelve largest datasets or the twelve with the most in snapshots, and
+  when zark measured it. Reclaim Space... there runs `zark prune`, whose
+  first question offers to clean this computer's snapshots. A pool whose
+  datasets zark could not list says so and still offers Reclaim Space....
 - Prepare a New Drive lists a disk once: a disk behind a USB bridge has
   two names (its own and its enclosure's) and showed twice. The name shown
   and passed to `zark prepare` is the one zark registers it under, the
@@ -10,6 +18,8 @@
   registered one.
 - A date's order comes from the translation, so a language can write it
   as it does (German "7. Nov. 2026, 09:31"); English is unchanged.
+- Tests: CI and the README's Development steps use zark `v2.3.3` (its
+  status fixtures are 2.3.2's, unchanged).
 
 ## [1.2.0] - 2026-11-18
 

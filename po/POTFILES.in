@@ -14,6 +14,7 @@ zark_app/pages/terminal.py
 zark_app/runner.py
 zark_app/shortcuts.py
 zark_app/units.py
+zark_app/usage.py
 zark_app/window.py
 zark_app/widgets.py
 data/com.juanmitaboada.Zark.desktop.in

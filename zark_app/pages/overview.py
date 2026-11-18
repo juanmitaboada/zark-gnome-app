@@ -13,18 +13,37 @@
 # limitations under the License.
 """The Overview (design 2.1, ``main-window.svg``)."""
 
-from collections.abc import Callable
+import functools
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gdk, GLib, Graphene, Gsk, Gtk, Pango
 
 from zark_app import compat
 from zark_app.i18n import _
-from zark_app.model import DriveView, PendingView, PoolView, Snapshot, size_line
+from zark_app.model import Action, DriveView, PendingView, PoolView, Snapshot, size_line
 from zark_app.pages import states
 from zark_app.units import fmt_since
+from zark_app.usage import DatasetRow, Part, UsageView
 from zark_app.widgets import action_button, level_bar, level_icon, mounted_buttons
 
 Select = Callable[[str], None]
+# A pool's table is sorted by "size" or "snapshots"; the window keeps the choice.
+Sort = Callable[[str, str], None]
+
+# The parts' colours, the extension's (its stylesheets, light and dark alike).
+COLOURS = {
+    "user-data": "#3584e4",
+    "user-snapshots": "#99c1f1",
+    "system-data": "#9141ac",
+    "system-snapshots": "#dc8add",
+    "other": "#b5835a",
+    "metadata": "#9a9996",
+    "free": "rgba(127,127,127,0.25)",
+    "reserved": "rgba(127,127,127,0.6)",
+}
+BAR_HEIGHT = 12
+SWATCH = 10
 
 
 def drive_icon(drive: DriveView) -> Gtk.Widget:
@@ -47,8 +66,10 @@ def drive_icon(drive: DriveView) -> Gtk.Widget:
     return image
 
 
-def _pool_row(pool: PoolView, now_label: Callable[[PoolView], str]) -> Adw.ActionRow:
-    row = Adw.ActionRow(title=pool.name, subtitle=size_line(pool.used, pool.size, pool.pct))
+def _pool_row(pool: PoolView, now_label: Callable[[PoolView], str], row: Any) -> None:
+    """A pool's row (an action or expander row): its figures, age, level and bar."""
+    row.set_title(pool.name)
+    row.set_subtitle(size_line(pool.used, pool.size, pool.pct))
     row.add_prefix(Gtk.Image.new_from_icon_name("drive-harddisk-system-symbolic"))
     extra = now_label(pool)
     if extra:
@@ -66,10 +87,152 @@ def _pool_row(pool: PoolView, now_label: Callable[[PoolView], str]) -> Adw.Actio
         row.add_suffix(level_icon(pool.level))
     if pool.pct is not None:
         row.add_suffix(level_bar(pool.pct / 100, pool.level))
+
+
+def _rgba(spec: str) -> Gdk.RGBA:
+    colour = Gdk.RGBA()
+    colour.parse(spec)
+    return colour
+
+
+class ColourBar(Gtk.Widget):
+    """Parts side by side in their colours, a rounded track around them;
+    drawn with GTK's own snapshot (no cairo bindings). The legend says the
+    figures in words, so the bar is not read out."""
+
+    def __init__(self, parts: Sequence[tuple[str, int]], width: int = -1, height: int = BAR_HEIGHT) -> None:
+        super().__init__(accessible_role=Gtk.AccessibleRole.PRESENTATION)
+        self.parts = [(_rgba(COLOURS[part]), size) for part, size in parts]
+        self.set_size_request(width, height)
+        self.round = width < 0
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:  # pylint: disable=arguments-differ
+        """Draw the parts left to right, each as wide as its share."""
+        width, height = self.get_width(), self.get_height()
+        total = sum(size for _c, size in self.parts)
+        if width <= 0 or height <= 0 or total <= 0:
+            return
+        radius = height / 2 if self.round else 0.0
+        bounds = Graphene.Rect().init(0, 0, width, height)
+        clip = Gsk.RoundedRect()
+        clip.init_from_rect(bounds, radius)
+        snapshot.push_rounded_clip(clip)
+        x = 0.0
+        for colour, size in self.parts:
+            span = width * size / total
+            if span > 0:
+                snapshot.append_color(colour, Graphene.Rect().init(x, 0, span, height))
+                x += span
+        snapshot.pop()
+
+
+def _legend(parts: Sequence[Part]) -> Gtk.FlowBox:
+    """Swatch, part and size; two columns where there is room."""
+    box = Gtk.FlowBox(
+        selection_mode=Gtk.SelectionMode.NONE,
+        homogeneous=True,
+        min_children_per_line=1,
+        max_children_per_line=2,
+        column_spacing=24,
+        row_spacing=4,
+    )
+    for part in parts:
+        line = Gtk.Box(spacing=8)
+        swatch = ColourBar([(part.id, 1)], SWATCH, SWATCH)
+        swatch.set_valign(Gtk.Align.CENTER)
+        line.append(swatch)
+        line.append(Gtk.Label(label=part.label, xalign=0.0, hexpand=True))
+        size = Gtk.Label(label=part.size, xalign=1.0)
+        size.add_css_class("numeric")
+        line.append(size)
+        box.append(Gtk.FlowBoxChild(child=line, focusable=False))
+    return box
+
+
+def _plain_row(child: Gtk.Widget) -> Adw.PreferencesRow:
+    child.set_margin_top(12)
+    child.set_margin_bottom(12)
+    child.set_margin_start(12)
+    child.set_margin_end(12)
+    row = Adw.PreferencesRow(activatable=False, focusable=False)
+    row.set_child(child)
     return row
 
 
-def _computer(snapshot: Snapshot) -> Adw.PreferencesGroup:
+def _sort_button(title: str, on: bool, pick: Callable[[], None]) -> Gtk.Button:
+    box = Gtk.Box(spacing=2, halign=Gtk.Align.END)
+    box.append(Gtk.Label(label=title))
+    if on:
+        box.append(Gtk.Image.new_from_icon_name("pan-down-symbolic"))
+    button = Gtk.Button(child=box, halign=Gtk.Align.END)
+    button.add_css_class("flat")
+    button.add_css_class("heading" if on else "dim-label")
+    button.connect("clicked", lambda _b: pick())
+    return button
+
+
+def _name_label(row: DatasetRow) -> Gtk.Label:
+    label = Gtk.Label(xalign=0.0, hexpand=True, ellipsize=Pango.EllipsizeMode.START)
+    if row.prefix:
+        # The shared part dimmed, as the extension, so the rest stands out.
+        prefix = GLib.markup_escape_text(row.prefix)
+        label.set_markup(f'<span alpha="55%">{prefix}</span>{GLib.markup_escape_text(row.name)}')
+    else:
+        label.set_label(row.name)
+    label.set_tooltip_text(row.prefix + row.name)
+    return label
+
+
+def _table(usage: UsageView, sort: str, pick: Callable[[str], None]) -> Gtk.Grid:
+    grid = Gtk.Grid(column_spacing=18, row_spacing=4)
+    head = Gtk.Label(label=_("Dataset"), xalign=0.0, hexpand=True)
+    head.add_css_class("dim-label")
+    grid.attach(head, 0, 0, 1, 1)
+    columns = (
+        # TRANSLATORS: a column title: the space a dataset's own data takes
+        ("size", _("Data")),
+        # TRANSLATORS: a column title: the space a dataset's snapshots take
+        ("snapshots", _("Snapshots")),
+    )
+    for index, (key, title) in enumerate(columns, start=1):
+        grid.attach(_sort_button(title, key == sort, functools.partial(pick, key)), index, 0, 1, 1)
+    rows = usage.by_snapshots if sort == "snapshots" else usage.by_size
+    for index, row in enumerate(rows, start=1):
+        grid.attach(_name_label(row), 0, index, 1, 1)
+        for column, text in ((1, row.data), (2, row.snapshots)):
+            cell = Gtk.Label(label=text, xalign=1.0, margin_end=12)
+            cell.add_css_class("numeric")
+            grid.attach(cell, column, index, 1, 1)
+    return grid
+
+
+def _reclaim() -> Gtk.Button:
+    # zark prune's first question offers origin (the closing map's row).
+    return action_button(Action(_("Reclaim Space..."), "prune"))
+
+
+def pool_details(pool: PoolView, sort: str, on_sort: Sort) -> list[Gtk.Widget]:
+    """A source pool's expanded rows (A13): the parts of its space, what its
+    snapshots hold with Reclaim Space, its datasets and the note."""
+    usage = pool.usage
+    if usage is None:
+        line = Adw.ActionRow(title=_("zark could not list this pool's datasets: the notices below say why"))
+        line.add_suffix(_reclaim())
+        return [line]
+    parts = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    parts.append(ColourBar([(p.id, p.bytes) for p in usage.segments]))
+    parts.append(_legend(usage.legend))
+    snapshots = Adw.ActionRow(title=usage.snapshots)
+    snapshots.add_suffix(_reclaim())
+    table = _table(usage, sort, lambda key: on_sort(pool.name, key))
+    note = Gtk.Label(label=usage.note, xalign=0.0, wrap=True)
+    note.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+    note.add_css_class("dim-label")
+    note.add_css_class("caption")
+    return [_plain_row(parts), snapshots, _plain_row(table), _plain_row(note)]
+
+
+def _computer(snapshot: Snapshot, sorts: Mapping[str, str], on_sort: Sort) -> Adw.PreferencesGroup:
     group = Adw.PreferencesGroup(title=_("This Computer"))
     group.set_description(
         _("Live figures from {command}").format(command="zpool list")
@@ -83,9 +246,15 @@ def _computer(snapshot: Snapshot) -> Adw.PreferencesGroup:
         return _("measured {age}").format(age=fmt_since(pool.measured_at, snapshot.now))
 
     for pool in snapshot.pools:
-        group.add(_pool_row(pool, label))
+        expander = Adw.ExpanderRow()
+        _pool_row(pool, label, expander)
+        for child in pool_details(pool, sorts.get(pool.name, "size"), on_sort):
+            expander.add_row(child)
+        group.add(expander)
     if snapshot.boot is not None:
-        group.add(_pool_row(snapshot.boot, label))
+        row = Adw.ActionRow()
+        _pool_row(snapshot.boot, label, row)
+        group.add(row)
     return group
 
 
@@ -139,12 +308,18 @@ def _notices(snapshot: Snapshot) -> Adw.PreferencesGroup | None:
     return group
 
 
-def build(snapshot: Snapshot, select: Select) -> Gtk.Widget:
-    """The Overview, or the "No Status Yet" page."""
+def build(
+    snapshot: Snapshot,
+    select: Select,
+    sorts: Mapping[str, str] | None = None,
+    on_sort: Sort | None = None,
+) -> Gtk.Widget:
+    """The Overview, or the "No Status Yet" page. ``sorts`` holds each
+    pool's table order, which ``on_sort`` changes."""
     if snapshot.page == "no_status":
         return states.no_status()
     page = Adw.PreferencesPage()
-    page.add(_computer(snapshot))
+    page.add(_computer(snapshot, sorts or {}, on_sort or (lambda _p, _k: None)))
     drives = _drives(snapshot, select)
     if isinstance(drives, Adw.PreferencesGroup):
         page.add(drives)

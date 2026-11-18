@@ -36,6 +36,7 @@ from zark_app.live import Exclusion, Live
 from zark_app.reader import Loaded
 from zark_app.sources import MOUNT_ROOT, REGISTRY_PATH, Sources
 from zark_app.units import fmt_bytes, fmt_since, zark_release
+from zark_app.usage import UsageView, usage_view
 
 Doc = Mapping[str, Any]
 Level = Literal["ok", "warning", "critical"]
@@ -65,6 +66,11 @@ class PoolView:
     level: Level
     live: bool
     measured_at: datetime | None
+    # A source pool's row expands (A13); /boot's does not.
+    source: bool = False
+    # Its parts, largest datasets and note; None when zark could not read the
+    # pool or list its datasets.
+    usage: UsageView | None = None
 
 
 @dataclass(frozen=True)
@@ -348,14 +354,18 @@ class _Ctx:
 
 def _pool_view(ctx: _Ctx, entry: Doc, thresholds: Doc) -> PoolView:
     name = str(entry.get("name", "?"))
+    # The parts and datasets come from the status file, live figures or not.
+    usage = usage_view(ctx.mod, entry, ctx.now)
     live = ctx.live.pools.get(name) if ctx.live.pools is not None else None
     if live is not None:
         level = _level(ctx.mod.capacity_level(live.capacity, thresholds))
-        return PoolView(name, live.allocated, live.size, live.capacity, level, True, ctx.live.measured_at)
+        return PoolView(
+            name, live.allocated, live.size, live.capacity, level, True, ctx.live.measured_at, True, usage
+        )
     space = opt_obj(entry.get("space"))
     level = _level(entry.get("level"))
     if space is None:
-        return PoolView(name, None, None, None, level, False, None)
+        return PoolView(name, None, None, None, level, False, None, True, usage)
     return PoolView(
         name,
         _int(space.get("pool_alloc_bytes")),
@@ -364,6 +374,8 @@ def _pool_view(ctx: _Ctx, entry: Doc, thresholds: Doc) -> PoolView:
         level,
         False,
         ctx.mod.parse_timestamp(space.get("measured_at")),
+        True,
+        usage,
     )
 
 

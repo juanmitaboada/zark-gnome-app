@@ -99,7 +99,7 @@ reads wrong, please open an issue or a pull request on the `.po` file.
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-vte-3.91 \
     xvfb xauth librsvg2-common python3-pytest gettext desktop-file-utils appstream
-git clone --branch v2.3.2 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
+git clone --branch v2.3.3 https://github.com/juanmitaboada/zark ../zark   # the tag CI uses (ZARK_REF)
 make test               # the suite under Xvfb, from the fixtures
 make screenshots        # one PNG per state, in build/screenshots
 make venv lint          # ruff, mypy, pylint at the pinned versions

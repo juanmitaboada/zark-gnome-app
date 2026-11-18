@@ -559,3 +559,89 @@ def test_prepare_no_disk_no_caption(
     assert dialog.get_extra_child() is None
     dialog.close()
     settle()
+
+
+def _expanders(widget: Gtk.Widget) -> list[Adw.ExpanderRow]:
+    out = []
+    child = widget.get_first_child()
+    while child is not None:
+        if isinstance(child, Adw.ExpanderRow):
+            out.append(child)
+        out.extend(_expanders(child))
+        child = child.get_next_sibling()
+    return out
+
+
+def _buttons(widget: Gtk.Widget) -> list[Gtk.Button]:
+    out = []
+    child = widget.get_first_child()
+    while child is not None:
+        if isinstance(child, Gtk.Button):
+            out.append(child)
+        out.extend(_buttons(child))
+        child = child.get_next_sibling()
+    return out
+
+
+def test_this_computer_pools_expand(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A13: each source pool's row expands into its parts, what its
+    snapshots hold with Reclaim Space (zark prune, no drive), its datasets
+    and the note; the open row and the table's order survive a redraw."""
+    window = open_window(app, "app:connected")
+    windows.append(window)
+    rows = _expanders(window.content_view)
+    assert [r.get_title() for r in rows] == ["rpool", "bpool"]
+    rpool = rows[0]
+    assert rpool.get_subtitle().startswith("840 GiB used of 936 GiB (89 %)")
+    shown = texts(rpool)
+    for text in (
+        "User data",
+        "Pool metadata",
+        "Reserved by ZFS",
+        "Snapshots hold 142 GiB, 17% of the space in use",
+        "Dataset",
+        "Data",
+        "Snapshots",
+        "var/lib/libvirt",
+        "12 of 26 datasets; measured today 10:58 by zark.",
+    ):
+        assert any(text in t for t in shown), text
+    reclaim = [b for b in _buttons(rpool) if b.get_label() == "Reclaim Space..."]
+    assert len(reclaim) == 1
+    assert reclaim[0].get_action_name() == "win.run"
+    target = reclaim[0].get_action_target_value()
+    assert target is not None and target.unpack() == ("prune", "")
+    rpool.set_expanded(True)
+    sort = next(b for b in _buttons(rpool) if "Snapshots" in texts(b))
+    sort.emit("clicked")
+    settle()
+    assert window.pool_sort == {"rpool": "snapshots"}
+    rpool = _expanders(window.content_view)[0]
+    assert rpool.get_expanded()
+    shown = texts(rpool)
+    # Sorted by snapshots: var/log (614 MiB) is listed, libvirt (none) is not.
+    assert any(t.endswith("</span>var/log") for t in shown)
+    assert not any(t.endswith("</span>var/lib/libvirt") for t in shown)
+
+
+def test_pool_not_listed(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """A pool whose datasets zark could not list: one line, and Reclaim Space."""
+    window = open_window(app, "app:connected")
+    windows.append(window)
+    snap = window.snapshot
+    assert snap is not None
+    from dataclasses import replace  # pylint: disable=import-outside-toplevel
+
+    pool = replace(snap.pools[0], usage=None)
+    rows = overview.pool_details(pool, "size", lambda _p, _k: None)
+    assert len(rows) == 1
+    assert texts(rows[0])[0] == "zark could not list this pool's datasets: the notices below say why"
+    assert [b.get_label() for b in _buttons(rows[0])] == ["Reclaim Space..."]
+
+
+def test_boot_row_does_not_expand(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """An ext4 /boot keeps its plain row."""
+    window = open_window(app, "zark:boot-ext4")
+    windows.append(window)
+    assert [r.get_title() for r in _expanders(window.content_view)] == ["rpool"]
+    assert "/boot" in texts(window.content_view)

@@ -104,6 +104,8 @@ class ZarkWindow(Adw.ApplicationWindow):
         self._shown_key: str | None = None
         self._sent_runs: set[model.RunKey] = set()
         self._totals: dict[model.RunKey, int | None] = {}
+        # Each source pool's table order on the Overview (A13), across redraws.
+        self.pool_sort: dict[str, str] = {}
         self.gone = False
         self.drive_gone = DriveGoneAlert(self._drive_gone, sources.session_bus or session_bus)
         self.ops = Operations(self)
@@ -347,6 +349,11 @@ class ZarkWindow(Adw.ApplicationWindow):
                 return
             index += 1
 
+    def sort_pool(self, pool: str, key: str) -> None:
+        """Sort ``pool``'s datasets table by ``key`` and draw the page again."""
+        self.pool_sort[pool] = key
+        self._content()
+
     def select_index(self, n: int) -> None:
         """Ctrl+1 to Ctrl+9: Overview, then the drives in order."""
         snap = self.snapshot
@@ -425,7 +432,7 @@ class ZarkWindow(Adw.ApplicationWindow):
                 exclusions.build(snap),
                 [action_button(exclusions.header_action())],
             )
-        return _("Overview"), updated, overview.build(snap, self.select), []
+        return _("Overview"), updated, overview.build(snap, self.select, self.pool_sort, self.sort_pool), []
 
     def _drive_header(self, drive: DriveView) -> list[Gtk.Widget]:
         busy = self.ops.busy()

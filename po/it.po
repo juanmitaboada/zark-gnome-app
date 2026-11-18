@@ -28,7 +28,7 @@ msgstr "Legge i file di stato di zark"
 msgid "translator-credits"
 msgstr "Juanmi Taboada <juanmi@juanmitaboada.com>"
 
-#: zark_app/commands.py:128 zark_app/model.py:187
+#: zark_app/commands.py:128 zark_app/model.py:193
 msgid "Backing Up"
 msgstr "Backup in corso"
 
@@ -36,11 +36,11 @@ msgstr "Backup in corso"
 msgid "Refreshing the Status"
 msgstr "Aggiornamento dello stato"
 
-#: zark_app/commands.py:130 zark_app/model.py:195
+#: zark_app/commands.py:130 zark_app/model.py:201
 msgid "Looking for Drives"
 msgstr "Ricerca dei dischi"
 
-#: zark_app/commands.py:131 zark_app/model.py:189
+#: zark_app/commands.py:131 zark_app/model.py:195
 msgid "Preparing a Drive"
 msgstr "Preparazione di un disco"
 
@@ -56,27 +56,27 @@ msgstr "Attivazione dei controlli orari"
 msgid "Turning Off Hourly Checks"
 msgstr "Disattivazione dei controlli orari"
 
-#: zark_app/commands.py:135 zark_app/model.py:198
+#: zark_app/commands.py:135 zark_app/model.py:204
 msgid "Cleaning Up"
 msgstr "Pulizia"
 
-#: zark_app/commands.py:136 zark_app/model.py:193
+#: zark_app/commands.py:136 zark_app/model.py:199
 msgid "Mounting a Drive"
 msgstr "Montaggio di un disco"
 
-#: zark_app/commands.py:137 zark_app/model.py:194
+#: zark_app/commands.py:137 zark_app/model.py:200
 msgid "Unmounting a Drive"
 msgstr "Smontaggio di un disco"
 
-#: zark_app/commands.py:138 zark_app/model.py:188
+#: zark_app/commands.py:138 zark_app/model.py:194
 msgid "Reclaiming Space"
 msgstr "Liberazione di spazio"
 
-#: zark_app/commands.py:139 zark_app/model.py:191
+#: zark_app/commands.py:139 zark_app/model.py:197
 msgid "Checking Health"
 msgstr "Controllo dello stato del disco"
 
-#: zark_app/commands.py:140 zark_app/model.py:192
+#: zark_app/commands.py:140 zark_app/model.py:198
 msgid "Verifying a Drive"
 msgstr "Verifica di un disco"
 
@@ -92,7 +92,7 @@ msgstr "Riparazione di una voce"
 msgid "Forgetting a Drive"
 msgstr "Dimenticare un disco"
 
-#: zark_app/commands.py:144 zark_app/model.py:190
+#: zark_app/commands.py:144 zark_app/model.py:196
 msgid "Erasing a Drive"
 msgstr "Cancellazione di un disco"
 
@@ -282,7 +282,7 @@ msgstr "Escludi un dataset"
 msgid "Exclude"
 msgstr "Escludi"
 
-#: zark_app/dialogs.py:166
+#: zark_app/dialogs.py:166 zark_app/pages/overview.py:188
 msgid "Dataset"
 msgstr "Dataset"
 
@@ -375,289 +375,289 @@ msgstr "Dalle {time}."
 msgid "OK"
 msgstr "OK"
 
-#: zark_app/model.py:196
+#: zark_app/model.py:202
 msgid "Changing the Registry"
 msgstr "Modifica del registro"
 
-#: zark_app/model.py:197
+#: zark_app/model.py:203
 msgid "Changing Exclusions"
 msgstr "Modifica delle esclusioni"
 
-#: zark_app/model.py:199
+#: zark_app/model.py:205
 msgid "Recovering"
 msgstr "Ripristino del sistema"
 
-#: zark_app/model.py:200
+#: zark_app/model.py:206
 msgid "Setting Up zark"
 msgstr "Configurazione di zark"
 
-#: zark_app/model.py:201
+#: zark_app/model.py:207
 msgid "Testing zark"
 msgstr "Test di zark"
 
-#: zark_app/model.py:207
+#: zark_app/model.py:213
 #, python-brace-format
 msgid "Backing Up to {drive}"
 msgstr "Backup in corso su {drive}"
 
-#: zark_app/model.py:208
+#: zark_app/model.py:214
 #, python-brace-format
 msgid "Reclaiming Space on {drive}"
 msgstr "Liberazione di spazio su {drive}"
 
-#: zark_app/model.py:209
+#: zark_app/model.py:215
 #, python-brace-format
 msgid "Preparing {drive}"
 msgstr "Preparazione di {drive}"
 
-#: zark_app/model.py:210
+#: zark_app/model.py:216
 #, python-brace-format
 msgid "Erasing {drive}"
 msgstr "Cancellazione di {drive}"
 
-#: zark_app/model.py:211
+#: zark_app/model.py:217
 #, python-brace-format
 msgid "Checking the Health of {drive}"
 msgstr "Controllo dello stato di {drive}"
 
-#: zark_app/model.py:212
+#: zark_app/model.py:218
 #, python-brace-format
 msgid "Verifying {drive}"
 msgstr "Verifica di {drive}"
 
-#: zark_app/model.py:213
+#: zark_app/model.py:219
 #, python-brace-format
 msgid "Mounting {drive}"
 msgstr "Montaggio di {drive}"
 
-#: zark_app/model.py:214
+#: zark_app/model.py:220
 #, python-brace-format
 msgid "Unmounting {drive}"
 msgstr "Smontaggio di {drive}"
 
 #. TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
-#: zark_app/model.py:219
+#: zark_app/model.py:225
 msgid "Completed"
 msgstr "Completata"
 
 #. TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
-#: zark_app/model.py:221
+#: zark_app/model.py:227
 msgid "Incomplete"
 msgstr "Incompleta"
 
 #. TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
-#: zark_app/model.py:223
+#: zark_app/model.py:229
 msgid "Not verified"
 msgstr "Non verificata"
 
 #. TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
-#: zark_app/model.py:225
+#: zark_app/model.py:231
 msgid "Aborted"
 msgstr "Annullata"
 
 #. TRANSLATORS: a backup's result (a backup, feminine in Spanish: "copia").
-#: zark_app/model.py:227
+#: zark_app/model.py:233
 msgid "Interrupted"
 msgstr "Interrotta"
 
 #. TRANSLATORS: Clean: a drive check's result, nothing wrong found (an adjective).
-#: zark_app/model.py:233
+#: zark_app/model.py:239
 msgctxt "drive check"
 msgid "Clean"
 msgstr "Nessun danno"
 
-#: zark_app/model.py:234
+#: zark_app/model.py:240
 msgctxt "drive check"
 msgid "Damage found"
 msgstr "Danni rilevati"
 
-#: zark_app/model.py:235
+#: zark_app/model.py:241
 msgctxt "drive check"
 msgid "Not finished"
 msgstr "Non terminato"
 
-#: zark_app/model.py:236
+#: zark_app/model.py:242
 msgctxt "drive check"
 msgid "Failed"
 msgstr "Non riuscito"
 
-#: zark_app/model.py:240
+#: zark_app/model.py:246
 msgctxt "notice title"
 msgid "/boot Space"
 msgstr "Spazio in /boot"
 
 #. TRANSLATORS: the title of a notice about how old the last backups are.
-#: zark_app/model.py:242
+#: zark_app/model.py:248
 msgctxt "notice title"
 msgid "Backups"
 msgstr "Backup"
 
-#: zark_app/model.py:243
+#: zark_app/model.py:249
 msgctxt "notice title"
 msgid "No Anchor"
 msgstr "Nessun ancoraggio"
 
-#: zark_app/model.py:244
+#: zark_app/model.py:250
 msgctxt "notice title"
 msgid "Could Not Read"
 msgstr "Impossibile leggere"
 
-#: zark_app/model.py:245
+#: zark_app/model.py:251
 msgctxt "notice title"
 msgid "Leftover Snapshots"
 msgstr "Snapshot residui"
 
-#: zark_app/model.py:246
+#: zark_app/model.py:252
 msgctxt "notice title"
 msgid "Drive Check"
 msgstr "Controllo del disco"
 
-#: zark_app/model.py:247
+#: zark_app/model.py:253
 msgctxt "notice title"
 msgid "Self-Test"
 msgstr "Autodiagnosi"
 
-#: zark_app/model.py:248
+#: zark_app/model.py:254
 msgctxt "notice title"
 msgid "Upgrade Risk"
 msgstr "Rischio nell'aggiornamento"
 
-#: zark_app/model.py:259 zark_app/runner.py:101
+#: zark_app/model.py:265 zark_app/runner.py:101
 msgid "zark Is Busy"
 msgstr "zark è occupato"
 
-#: zark_app/model.py:275 zark_app/model.py:604 zark_app/widgets.py:60
+#: zark_app/model.py:281 zark_app/model.py:616 zark_app/widgets.py:60
 #: zark_app/widgets.py:62
 msgid "Unmount"
 msgstr "Smonta"
 
-#: zark_app/model.py:275
+#: zark_app/model.py:281
 msgid "Browse Files"
 msgstr "Sfoglia i file"
 
-#: zark_app/model.py:279 zark_app/model.py:520
+#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:211
 msgid "Reclaim Space..."
 msgstr "Libera spazio..."
 
-#: zark_app/model.py:280
+#: zark_app/model.py:286
 msgid "Check Health..."
 msgstr "Controlla lo stato del disco..."
 
-#: zark_app/model.py:281
+#: zark_app/model.py:287
 msgid "Verify Drive..."
 msgstr "Verifica il disco..."
 
-#: zark_app/model.py:282
+#: zark_app/model.py:288
 msgid "Retention..."
 msgstr "Conservazione..."
 
-#: zark_app/model.py:285
+#: zark_app/model.py:291
 msgid "Repair Entry"
 msgstr "Ripara la voce"
 
-#: zark_app/model.py:286
+#: zark_app/model.py:292
 msgid "Forget Drive..."
 msgstr "Dimentica il disco..."
 
-#: zark_app/model.py:287
+#: zark_app/model.py:293
 msgid "Erase Drive..."
 msgstr "Cancella il disco..."
 
-#: zark_app/model.py:295
+#: zark_app/model.py:301
 msgid "Turn Off Hourly Checks"
 msgstr "Disattiva i controlli orari"
 
-#: zark_app/model.py:297
+#: zark_app/model.py:303
 msgid "Turn On Hourly Checks"
 msgstr "Attiva i controlli orari"
 
-#: zark_app/model.py:301 zark_app/pages/states.py:49
+#: zark_app/model.py:307 zark_app/pages/states.py:49
 msgid "Refresh Status"
 msgstr "Aggiorna lo stato"
 
-#: zark_app/model.py:302
+#: zark_app/model.py:308
 msgid "Look for Drives..."
 msgstr "Cerca dischi..."
 
-#: zark_app/model.py:303 zark_app/pages/states.py:58
+#: zark_app/model.py:309 zark_app/pages/states.py:58
 msgid "Prepare a New Drive..."
 msgstr "Prepara un nuovo disco..."
 
-#: zark_app/model.py:305
+#: zark_app/model.py:311
 msgid "Clean Up After a Stopped Run..."
 msgstr "Pulisci dopo un'esecuzione fermata..."
 
-#: zark_app/model.py:422 zark_app/window.py:435
+#: zark_app/model.py:434 zark_app/window.py:442
 msgid "Back Up"
 msgstr "Esegui backup"
 
-#: zark_app/model.py:425
+#: zark_app/model.py:437
 msgid "Backing up now"
 msgstr "Backup in corso ora"
 
-#: zark_app/model.py:425
+#: zark_app/model.py:437
 msgid "In use by zark now"
 msgstr "In uso da zark ora"
 
-#: zark_app/model.py:426 zark_app/window.py:294
+#: zark_app/model.py:438 zark_app/window.py:296
 msgid "Waiting for your answer"
 msgstr "In attesa di una risposta"
 
-#: zark_app/model.py:431
+#: zark_app/model.py:443
 msgid "Mounted for browsing"
 msgstr "Montato per la consultazione"
 
-#: zark_app/model.py:432
+#: zark_app/model.py:444
 msgid "Mounted"
 msgstr "Montato"
 
-#: zark_app/model.py:436
+#: zark_app/model.py:448
 msgid "Last run incomplete"
 msgstr "Ultima esecuzione incompleta"
 
-#: zark_app/model.py:437
+#: zark_app/model.py:449
 msgid "Last run not verified"
 msgstr "Ultima esecuzione non verificata"
 
-#: zark_app/model.py:438
+#: zark_app/model.py:450
 msgid "Last run interrupted"
 msgstr "Ultima esecuzione interrotta"
 
-#: zark_app/model.py:453
+#: zark_app/model.py:465
 #, python-brace-format
 msgid "Connected - last backup {age}"
 msgstr "Collegato - ultimo backup {age}"
 
-#: zark_app/model.py:453
+#: zark_app/model.py:465
 msgid "Connected - no backup yet"
 msgstr "Collegato - ancora nessun backup"
 
-#: zark_app/model.py:454
+#: zark_app/model.py:466
 msgid "Connected"
 msgstr "Collegato"
 
-#: zark_app/model.py:455
+#: zark_app/model.py:467
 #, python-brace-format
 msgid "Not connected - last backup {age}"
 msgstr "Non collegato - ultimo backup {age}"
 
-#: zark_app/model.py:455 zark_app/pages/drive.py:68
+#: zark_app/model.py:467 zark_app/pages/drive.py:68
 msgid "No backup yet"
 msgstr "Ancora nessun backup"
 
-#: zark_app/model.py:456
+#: zark_app/model.py:468
 msgid "Not connected"
 msgstr "Non collegato"
 
-#: zark_app/model.py:521
+#: zark_app/model.py:533
 msgid "Notice"
 msgstr "Avviso"
 
-#: zark_app/model.py:535
+#: zark_app/model.py:547
 msgid "Finish Registration..."
 msgstr "Completa la registrazione..."
 
-#: zark_app/model.py:551
+#: zark_app/model.py:563
 #, python-brace-format
 msgid ""
 "The status file was written by zark {writer} from {where}, not the installed "
@@ -666,7 +666,7 @@ msgstr ""
 "Il file di stato è stato scritto da zark {writer} da {where}, non dalla "
 "versione installata {installed}"
 
-#: zark_app/model.py:556
+#: zark_app/model.py:568
 #, python-brace-format
 msgid ""
 "The status file was written by zark {writer}, not the installed {installed}"
@@ -674,7 +674,7 @@ msgstr ""
 "Il file di stato è stato scritto da zark {writer}, non dalla versione "
 "installata {installed}"
 
-#: zark_app/model.py:569
+#: zark_app/model.py:581
 msgid ""
 "The status file is from a newer zark than the installed one: update zark to "
 "read it"
@@ -682,35 +682,35 @@ msgstr ""
 "Il file di stato proviene da uno zark più recente di quello installato: "
 "aggiornare zark per leggerlo"
 
-#: zark_app/model.py:573
+#: zark_app/model.py:585
 #, python-brace-format
 msgid "The status file could not be read ({error})"
 msgstr "Impossibile leggere il file di stato ({error})"
 
-#: zark_app/model.py:574 zark_app/model.py:614
+#: zark_app/model.py:586 zark_app/model.py:626
 msgid "Refresh"
 msgstr "Aggiorna"
 
-#: zark_app/model.py:577
+#: zark_app/model.py:589
 msgid "zark's progress file could not be read"
 msgstr "Impossibile leggere il file di avanzamento di zark"
 
-#: zark_app/model.py:582
+#: zark_app/model.py:594
 #, python-brace-format
 msgid "{command} to {drive}"
 msgstr "{command} su {drive}"
 
 #. TRANSLATORS: {what} is zark's own description of what was left, in English.
-#: zark_app/model.py:585
+#: zark_app/model.py:597
 #, python-brace-format
 msgid "A zark run ended without cleaning up ({what})"
 msgstr "Un'esecuzione di zark è terminata senza fare pulizia ({what})"
 
-#: zark_app/model.py:586
+#: zark_app/model.py:598
 msgid "Clean Up..."
 msgstr "Pulisci..."
 
-#: zark_app/model.py:593
+#: zark_app/model.py:605
 #, python-brace-format
 msgid ""
 "{drive} was disconnected during the run: zark records the result when it ends"
@@ -718,7 +718,7 @@ msgstr ""
 "{drive} è stato scollegato durante l'esecuzione: zark registra il risultato "
 "quando termina"
 
-#: zark_app/model.py:601
+#: zark_app/model.py:613
 #, python-brace-format
 msgid ""
 "{drive} is mounted for browsing: kernel, GRUB and ZFS updates are blocked "
@@ -727,46 +727,46 @@ msgstr ""
 "{drive} è montato per la consultazione: gli aggiornamenti di kernel, GRUB e "
 "ZFS sono bloccati finché non viene smontato"
 
-#: zark_app/model.py:611
+#: zark_app/model.py:623
 #, python-brace-format
 msgid "Status from {age}: the hourly checks are off"
 msgstr "Stato di {age}: i controlli orari sono disattivati"
 
-#: zark_app/model.py:612
+#: zark_app/model.py:624
 msgid "Turn On..."
 msgstr "Attiva..."
 
-#: zark_app/model.py:614
+#: zark_app/model.py:626
 #, python-brace-format
 msgid "Status from {age}"
 msgstr "Stato di {age}"
 
-#: zark_app/model.py:674 zark_app/pages/run.py:39
+#: zark_app/model.py:686 zark_app/pages/run.py:39
 #, python-brace-format
 msgid "{done} sent"
 msgstr "{done} inviati"
 
 #. TRANSLATORS: zark asks before ejecting the drive after a backup, with a countdown.
-#: zark_app/model.py:937
+#: zark_app/model.py:949
 msgid "Ask with a countdown"
 msgstr "Chiede con un conto alla rovescia"
 
 #. TRANSLATORS: zark asks before ejecting the drive after a backup.
-#: zark_app/model.py:940
+#: zark_app/model.py:952
 msgid "Ask"
 msgstr "Chiede"
 
-#: zark_app/model.py:947
+#: zark_app/model.py:959
 msgid "Could not be read"
 msgstr "Impossibile leggere"
 
-#: zark_app/model.py:949
+#: zark_app/model.py:961
 #, python-brace-format
 msgid "{used} used of {size}"
 msgstr "{used} usati di {size}"
 
-#: zark_app/operations.py:92 zark_app/operations.py:144 zark_app/window.py:437
-#: zark_app/window.py:575
+#: zark_app/operations.py:92 zark_app/operations.py:144 zark_app/window.py:444
+#: zark_app/window.py:582
 msgid "zark is busy"
 msgstr "zark è occupato"
 
@@ -845,7 +845,8 @@ msgctxt "space"
 msgid "Free"
 msgstr "Libero"
 
-#: zark_app/pages/drive.py:131
+#. TRANSLATORS: ZFS is a name; space the file system keeps for itself
+#: zark_app/pages/drive.py:131 zark_app/usage.py:53
 msgid "Reserved by ZFS"
 msgstr "Riservato da ZFS"
 
@@ -1056,43 +1057,58 @@ msgid "Exclude..."
 msgstr "Escludi..."
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:60
+#: zark_app/pages/overview.py:81
 msgid "critical"
 msgstr "critico"
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:63
+#: zark_app/pages/overview.py:84
 msgid "warning"
 msgstr "avviso"
 
-#: zark_app/pages/overview.py:73
+#. TRANSLATORS: a column title: the space a dataset's own data takes
+#: zark_app/pages/overview.py:193 zark_app/pages/run.py:29
+#: zark_app/pages/run.py:42
+msgid "Data"
+msgstr "Dati"
+
+#. TRANSLATORS: a column title: the space a dataset's snapshots take
+#: zark_app/pages/overview.py:195
+msgid "Snapshots"
+msgstr ""
+
+#: zark_app/pages/overview.py:219
+msgid "zark could not list this pool's datasets: the notices below say why"
+msgstr ""
+
+#: zark_app/pages/overview.py:236
 msgid "This Computer"
 msgstr "Questo computer"
 
-#: zark_app/pages/overview.py:75
+#: zark_app/pages/overview.py:238
 #, python-brace-format
 msgid "Live figures from {command}"
 msgstr "Valori in tempo reale da {command}"
 
-#: zark_app/pages/overview.py:77
+#: zark_app/pages/overview.py:240
 msgid "Figures from zark's status file"
 msgstr "Valori dal file di stato di zark"
 
-#: zark_app/pages/overview.py:83
+#: zark_app/pages/overview.py:246
 #, python-brace-format
 msgid "measured {age}"
 msgstr "misurato {age}"
 
-#: zark_app/pages/overview.py:109
+#: zark_app/pages/overview.py:278
 msgid "Prepared, not read back yet (apt was running)"
 msgstr "Preparato, non ancora riletto (apt era in esecuzione)"
 
-#: zark_app/pages/overview.py:120 zark_app/shortcuts.py:43
-#: zark_app/window.py:161
+#: zark_app/pages/overview.py:289 zark_app/shortcuts.py:43
+#: zark_app/window.py:163
 msgid "Backup Drives"
 msgstr "Dischi di backup"
 
-#: zark_app/pages/overview.py:132
+#: zark_app/pages/overview.py:301
 msgid "Notices"
 msgstr "Avvisi"
 
@@ -1115,10 +1131,6 @@ msgstr "zark dice"
 #: zark_app/pages/pending.py:33
 msgid "Read it back and register it"
 msgstr "Rileggilo e registralo"
-
-#: zark_app/pages/run.py:29 zark_app/pages/run.py:42
-msgid "Data"
-msgstr "Dati"
 
 #: zark_app/pages/run.py:29
 msgid "All data sent"
@@ -1170,7 +1182,7 @@ msgstr "Tempo rimanente"
 msgid "Started {time}, running for {duration}"
 msgstr "Avviato alle {time}, in esecuzione da {duration}"
 
-#: zark_app/pages/run.py:89 zark_app/window.py:595
+#: zark_app/pages/run.py:89 zark_app/window.py:602
 #, python-brace-format
 msgid "Step {i} of {n}"
 msgstr "Passo {i} di {n}"
@@ -1261,7 +1273,7 @@ msgid "GNOME asks for the administrator's password first"
 msgstr "GNOME chiede prima la password dell'amministratore"
 
 #. TRANSLATORS: a zark command's result: it ended well.
-#: zark_app/runner.py:88 zark_app/window.py:472
+#: zark_app/runner.py:88 zark_app/window.py:479
 msgid "Done"
 msgstr "Fatto"
 
@@ -1345,7 +1357,7 @@ msgstr "Output di zark"
 msgid "General"
 msgstr "Generale"
 
-#: zark_app/shortcuts.py:27 zark_app/window.py:270
+#: zark_app/shortcuts.py:27 zark_app/window.py:272
 msgid "Keyboard Shortcuts"
 msgstr "Scorciatoie da tastiera"
 
@@ -1369,8 +1381,8 @@ msgstr "Esci"
 msgid "Navigation"
 msgstr "Navigazione"
 
-#: zark_app/shortcuts.py:37 zark_app/window.py:143 zark_app/window.py:148
-#: zark_app/window.py:296 zark_app/window.py:428
+#: zark_app/shortcuts.py:37 zark_app/window.py:145 zark_app/window.py:150
+#: zark_app/window.py:298 zark_app/window.py:435
 msgid "Overview"
 msgstr "Panoramica"
 
@@ -1576,20 +1588,37 @@ msgid_plural "{n} days ago"
 msgstr[0] "{n} giorno fa"
 msgstr[1] "{n} giorni fa"
 
+#. TRANSLATORS: a moment; {time} is "09:18"; it fills {when} in other texts
+#: zark_app/units.py:130
+#, python-brace-format
+msgid "today {time}"
+msgstr ""
+
+#. TRANSLATORS: a moment; {time} is "09:18"; it fills {when} in other texts
+#: zark_app/units.py:133
+#, python-brace-format
+msgid "yesterday {time}"
+msgstr ""
+
+#: zark_app/units.py:134
+#, python-brace-format
+msgid "{day} {month} {time}"
+msgstr ""
+
 #. TRANSLATORS: s is the unit symbol of seconds and stays as it is.
-#: zark_app/units.py:126
+#: zark_app/units.py:141
 #, python-brace-format
 msgid "{n} s"
 msgstr "{n} s"
 
 #. TRANSLATORS: min is the unit symbol of minutes and stays as it is.
-#: zark_app/units.py:130
+#: zark_app/units.py:145
 #, python-brace-format
 msgid "{n} min"
 msgstr "{n} min"
 
 #. TRANSLATORS: h and min are unit symbols and stay as they are; keep {m:02d}: minutes with two digits.
-#: zark_app/units.py:132
+#: zark_app/units.py:147
 #, python-brace-format
 msgid "{h} h {m:02d} min"
 msgstr "{h} h {m:02d} min"
@@ -1598,85 +1627,132 @@ msgstr "{h} h {m:02d} min"
 #. month, {month} a month's short name, {year} the year, {time} "09:31" or
 #. "06:15:10". Order them as your language writes a date, as German
 #. "{day}. {month} {year}, {time}".
-#: zark_app/units.py:147
+#: zark_app/units.py:162
 #, python-brace-format
 msgid "{day} {month} {year}, {time}"
 msgstr ""
 
 #. TRANSLATORS: a month and its year, as "November 2026".
-#: zark_app/units.py:194
+#: zark_app/units.py:209
 #, python-brace-format
 msgid "{month} {year}"
 msgstr "{month} {year}"
 
-#: zark_app/window.py:128 zark_app/window.py:129
+#: zark_app/usage.py:43
+msgid "User data"
+msgstr ""
+
+#: zark_app/usage.py:44
+msgid "User snapshots"
+msgstr ""
+
+#. TRANSLATORS: the system's data (the root and boot datasets), a part of a pool's usage bar
+#: zark_app/usage.py:46
+msgid "System"
+msgstr ""
+
+#: zark_app/usage.py:47
+msgid "System snapshots"
+msgstr ""
+
+#: zark_app/usage.py:48
+msgid "Other datasets"
+msgstr ""
+
+#: zark_app/usage.py:49
+msgid "Pool metadata"
+msgstr ""
+
+#. TRANSLATORS: free space, a part of a usage bar
+#: zark_app/usage.py:51
+msgctxt "free space"
+msgid "Free"
+msgstr ""
+
+#: zark_app/usage.py:183
+#, python-brace-format
+msgid ""
+"Snapshots: what removing all of a dataset's snapshots would free. {shown} of "
+"{n} dataset; measured {when} by zark."
+msgid_plural ""
+"Snapshots: what removing all of a dataset's snapshots would free. {shown} of "
+"{n} datasets; measured {when} by zark."
+msgstr[0] ""
+msgstr[1] ""
+
+#: zark_app/usage.py:192
+#, python-format, python-brace-format
+msgid "Snapshots hold {size}, {percent}% of the space in use"
+msgstr ""
+
+#: zark_app/window.py:130 zark_app/window.py:131
 msgid "Main Menu"
 msgstr "Menu principale"
 
-#: zark_app/window.py:161
+#: zark_app/window.py:163
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: zark_app/window.py:271
+#: zark_app/window.py:273
 msgid "About zark"
 msgstr "Informazioni su zark"
 
 #. TRANSLATORS: the state of the app's own zark command.
-#: zark_app/window.py:284
+#: zark_app/window.py:286
 msgid "Stopping"
 msgstr "Arresto in corso"
 
 #. TRANSLATORS: the state of the app's own zark command.
-#: zark_app/window.py:287
+#: zark_app/window.py:289
 msgid "Ended"
 msgstr "Terminato"
 
 #. TRANSLATORS: the state of the app's own zark command.
-#: zark_app/window.py:290
+#: zark_app/window.py:292
 msgid "Running"
 msgstr "In esecuzione"
 
-#: zark_app/window.py:306 zark_app/window.py:420
+#: zark_app/window.py:308 zark_app/window.py:427
 msgid "Not read back yet"
 msgstr "Non ancora riletto"
 
-#: zark_app/window.py:310 zark_app/window.py:423
+#: zark_app/window.py:312 zark_app/window.py:430
 msgid "Exclusions"
 msgstr "Esclusioni"
 
-#: zark_app/window.py:395
+#: zark_app/window.py:402
 #, python-brace-format
 msgid "Status updated {age}"
 msgstr "Stato aggiornato {age}"
 
-#: zark_app/window.py:439 zark_app/window.py:492
+#: zark_app/window.py:446 zark_app/window.py:499
 #, python-brace-format
 msgid "Unmount {drive} first"
 msgstr "Smontare prima {drive}"
 
-#: zark_app/window.py:441
+#: zark_app/window.py:448
 #, python-brace-format
 msgid "Connect {drive} to back up"
 msgstr "Collegare {drive} per eseguire il backup"
 
-#: zark_app/window.py:446 zark_app/widgets.py:62
+#: zark_app/window.py:453 zark_app/widgets.py:62
 msgid "Open in Files"
 msgstr "Apri in File"
 
-#: zark_app/window.py:458 zark_app/window.py:459
+#: zark_app/window.py:465 zark_app/window.py:466
 msgid "Drive Menu"
 msgstr "Menu del disco"
 
-#: zark_app/window.py:476
+#: zark_app/window.py:483
 msgid "Stopping..."
 msgstr "Arresto in corso..."
 
-#: zark_app/window.py:476
+#: zark_app/window.py:483
 msgid "Stop..."
 msgstr "Ferma..."
 
 #. TRANSLATORS: data sent: a backup's data has all been sent, lower case after a comma.
-#: zark_app/window.py:599
+#: zark_app/window.py:606
 msgid "data sent"
 msgstr "dati inviati"
 
