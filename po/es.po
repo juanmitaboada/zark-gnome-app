@@ -347,7 +347,7 @@ msgstr ""
 
 #: zark_app/dialogs.py:268
 msgid "It asks you to confirm in the terminal."
-msgstr ""
+msgstr "Le pedirá confirmación en la terminal."
 
 #: zark_app/dialogs.py:270
 msgid "No disk to prepare is connected: plug in an empty drive"
@@ -1074,11 +1074,13 @@ msgstr "Datos"
 #. TRANSLATORS: a column title: the space a dataset's snapshots take
 #: zark_app/pages/overview.py:223
 msgid "Snapshots"
-msgstr ""
+msgstr "Instantáneas"
 
 #: zark_app/pages/overview.py:250
 msgid "zark could not list this pool's datasets: the notices below say why"
 msgstr ""
+"zark no pudo listar los datasets de este pool: los avisos de abajo explican "
+"el motivo"
 
 #: zark_app/pages/overview.py:267
 msgid "This Computer"
@@ -1590,18 +1592,18 @@ msgstr[1] "hace {n} días"
 #: zark_app/units.py:130
 #, python-brace-format
 msgid "today {time}"
-msgstr ""
+msgstr "hoy {time}"
 
 #. TRANSLATORS: a moment; {time} is "09:18"; it fills {when} in other texts
 #: zark_app/units.py:133
 #, python-brace-format
 msgid "yesterday {time}"
-msgstr ""
+msgstr "ayer {time}"
 
 #: zark_app/units.py:134
 #, python-brace-format
 msgid "{day} {month} {time}"
-msgstr ""
+msgstr "{day} {month} {time}"
 
 #. TRANSLATORS: s is the unit symbol of seconds and stays as it is.
 #: zark_app/units.py:141
@@ -1628,7 +1630,7 @@ msgstr "{h} h {m:02d} min"
 #: zark_app/units.py:162
 #, python-brace-format
 msgid "{day} {month} {year}, {time}"
-msgstr ""
+msgstr "{day} {month} {year}, {time}"
 
 #. TRANSLATORS: a month and its year, as "November 2026".
 #: zark_app/units.py:209
@@ -1638,34 +1640,34 @@ msgstr "{month} de {year}"
 
 #: zark_app/usage.py:44
 msgid "User data"
-msgstr ""
+msgstr "Datos de usuario"
 
 #: zark_app/usage.py:45
 msgid "User snapshots"
-msgstr ""
+msgstr "Instantáneas de usuario"
 
 #. TRANSLATORS: the system's data (the root and boot datasets), a part of a pool's usage bar
 #: zark_app/usage.py:47
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: zark_app/usage.py:48
 msgid "System snapshots"
-msgstr ""
+msgstr "Instantáneas del sistema"
 
 #: zark_app/usage.py:49
 msgid "Other datasets"
-msgstr ""
+msgstr "Otros datasets"
 
 #: zark_app/usage.py:50
 msgid "Pool metadata"
-msgstr ""
+msgstr "Metadatos del pool"
 
 #. TRANSLATORS: free space, a part of a usage bar
 #: zark_app/usage.py:52
 msgctxt "free space"
 msgid "Free"
-msgstr ""
+msgstr "Libre"
 
 #: zark_app/usage.py:185
 #, python-brace-format
@@ -1676,12 +1678,16 @@ msgid_plural ""
 "Snapshots: what removing all of a dataset's snapshots would free. {shown} of "
 "{n} datasets; measured {when} by zark."
 msgstr[0] ""
+"Instantáneas: lo que liberaría eliminar todas las instantáneas de un "
+"dataset. {shown} de {n} dataset; medido {when} por zark."
 msgstr[1] ""
+"Instantáneas: lo que liberaría eliminar todas las instantáneas de un "
+"dataset. {shown} de {n} datasets; medido {when} por zark."
 
 #: zark_app/usage.py:198
 #, no-python-format, python-brace-format
 msgid "Snapshots hold {size}, {percent}% of the space in use"
-msgstr ""
+msgstr "Las instantáneas ocupan {size}, el {percent} % del espacio usado"
 
 #: zark_app/window.py:130 zark_app/window.py:131
 msgid "Main Menu"
