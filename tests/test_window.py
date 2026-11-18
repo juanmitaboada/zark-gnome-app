@@ -694,3 +694,61 @@ def test_connected_icon_falls_back(app: ZarkApp, windows: list[ZarkWindow]) -> N
     assert names.index("emblem-ok-symbolic") < names.index("object-select-symbolic")
     theme = Gtk.IconTheme.get_for_display(window.get_display())
     assert theme.has_icon("object-select-symbolic")
+
+
+def _focus_name(widget: Gtk.Widget | None) -> str:
+    """A focused widget as the test names it: its type and its first text."""
+    if widget is None:
+        return "nothing"
+    words = texts(widget)
+    return f"{type(widget).__name__} {words[0] if words else ''}".strip()
+
+
+def test_keyboard_walks_a_pool_row(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """Carmen's check of 1.3.0: from rpool's open row, Tab (GTK's own focus
+    chain, as the key) reaches every focusable part, the two sort titles
+    among them, and goes on past the table to bpool; Shift+Tab walks back to
+    rpool. Every row of the list takes the focus, or GtkListBox ends the
+    chain at it, and the legend's flow box takes none."""
+    window = open_window(app, "app:connected", width=1000)
+    windows.append(window)
+    rpool = _expanders(window.content_view)[0]
+    rpool.set_expanded(True)
+    settle()
+    header = next(r for r in _descendants_all(rpool) if isinstance(r, Gtk.ListBoxRow) and r.get_focusable())
+    assert header.grab_focus()
+    walked = []
+    for _ in range(8):
+        window.child_focus(Gtk.DirectionType.TAB_FORWARD)
+        settle(5)
+        walked.append(_focus_name(window.get_focus()))
+    assert [w.split(" ", 1)[0] for w in walked] == [
+        "PreferencesRow",
+        "ActionRow",
+        "Button",
+        "PreferencesRow",
+        "ToggleButton",
+        "ToggleButton",
+        "PreferencesRow",
+        "ActionRow",
+    ]
+    assert walked[2] == "Button Reclaim Space..."
+    assert walked[4:6] == ["ToggleButton Data", "ToggleButton Snapshots"]
+    assert walked[7] == "ActionRow bpool"
+    back = []
+    for _ in range(8):
+        window.child_focus(Gtk.DirectionType.TAB_BACKWARD)
+        settle(5)
+        back.append(_focus_name(window.get_focus()))
+    assert back[1:3] == ["ToggleButton Snapshots", "ToggleButton Data"]
+    assert back[-1] == "ActionRow rpool"
+
+
+def _descendants_all(widget: Gtk.Widget) -> list[Gtk.Widget]:
+    out = []
+    child = widget.get_first_child()
+    while child is not None:
+        out.append(child)
+        out.extend(_descendants_all(child))
+        child = child.get_next_sibling()
+    return out

@@ -11,7 +11,8 @@
   first question offers to clean this computer's snapshots. A pool whose
   datasets zark could not list says so and still offers Reclaim Space....
   The column titles that sort the datasets are toggle buttons, the pressed
-  one the order in use, and keep the keyboard focus after sorting.
+  one the order in use, and keep the keyboard focus after sorting; Tab,
+  Shift+Tab and the arrow keys walk an open row's parts.
 - Prepare a New Drive lists a disk once: a disk behind a USB bridge has
   two names (its own and its enclosure's) and showed twice. The name shown
   and passed to `zark prepare` is the one zark registers it under, the

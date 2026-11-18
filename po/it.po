@@ -282,7 +282,7 @@ msgstr "Escludi un dataset"
 msgid "Exclude"
 msgstr "Escludi"
 
-#: zark_app/dialogs.py:166 zark_app/pages/overview.py:216
+#: zark_app/dialogs.py:166 zark_app/pages/overview.py:222
 msgid "Dataset"
 msgstr "Dataset"
 
@@ -535,7 +535,7 @@ msgstr "Smonta"
 msgid "Browse Files"
 msgstr "Sfoglia i file"
 
-#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:242
+#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:248
 msgid "Reclaim Space..."
 msgstr "Libera spazio..."
 
@@ -1068,50 +1068,50 @@ msgid "warning"
 msgstr "avviso"
 
 #. TRANSLATORS: a column title: the space a dataset's own data takes
-#: zark_app/pages/overview.py:221 zark_app/pages/run.py:29
+#: zark_app/pages/overview.py:227 zark_app/pages/run.py:29
 #: zark_app/pages/run.py:42
 msgid "Data"
 msgstr "Dati"
 
 #. TRANSLATORS: a column title: the space a dataset's snapshots take
-#: zark_app/pages/overview.py:223
+#: zark_app/pages/overview.py:229
 msgid "Snapshots"
 msgstr "Snapshot"
 
-#: zark_app/pages/overview.py:250
+#: zark_app/pages/overview.py:256
 msgid "zark could not list this pool's datasets: the notices below say why"
 msgstr ""
 "zark non ha potuto elencare i dataset di questo pool: gli avvisi qui sotto "
 "spiegano il motivo"
 
-#: zark_app/pages/overview.py:267
+#: zark_app/pages/overview.py:273
 msgid "This Computer"
 msgstr "Questo computer"
 
-#: zark_app/pages/overview.py:269
+#: zark_app/pages/overview.py:275
 #, python-brace-format
 msgid "Live figures from {command}"
 msgstr "Valori in tempo reale da {command}"
 
-#: zark_app/pages/overview.py:271
+#: zark_app/pages/overview.py:277
 msgid "Figures from zark's status file"
 msgstr "Valori dal file di stato di zark"
 
-#: zark_app/pages/overview.py:277
+#: zark_app/pages/overview.py:283
 #, python-brace-format
 msgid "measured {age}"
 msgstr "misurato {age}"
 
-#: zark_app/pages/overview.py:311
+#: zark_app/pages/overview.py:317
 msgid "Prepared, not read back yet (apt was running)"
 msgstr "Preparato, non ancora riletto (apt era in esecuzione)"
 
-#: zark_app/pages/overview.py:322 zark_app/shortcuts.py:43
+#: zark_app/pages/overview.py:328 zark_app/shortcuts.py:43
 #: zark_app/window.py:163
 msgid "Backup Drives"
 msgstr "Dischi di backup"
 
-#: zark_app/pages/overview.py:334
+#: zark_app/pages/overview.py:340
 msgid "Notices"
 msgstr "Avvisi"
 

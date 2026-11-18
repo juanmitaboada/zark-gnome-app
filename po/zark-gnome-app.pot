@@ -286,7 +286,7 @@ msgstr ""
 msgid "Exclude"
 msgstr ""
 
-#: zark_app/dialogs.py:166 zark_app/pages/overview.py:216
+#: zark_app/dialogs.py:166 zark_app/pages/overview.py:222
 msgid "Dataset"
 msgstr ""
 
@@ -528,7 +528,7 @@ msgstr ""
 msgid "Browse Files"
 msgstr ""
 
-#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:242
+#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:248
 msgid "Reclaim Space..."
 msgstr ""
 
@@ -1048,48 +1048,48 @@ msgid "warning"
 msgstr ""
 
 #. TRANSLATORS: a column title: the space a dataset's own data takes
-#: zark_app/pages/overview.py:221 zark_app/pages/run.py:29
+#: zark_app/pages/overview.py:227 zark_app/pages/run.py:29
 #: zark_app/pages/run.py:42
 msgid "Data"
 msgstr ""
 
 #. TRANSLATORS: a column title: the space a dataset's snapshots take
-#: zark_app/pages/overview.py:223
+#: zark_app/pages/overview.py:229
 msgid "Snapshots"
 msgstr ""
 
-#: zark_app/pages/overview.py:250
+#: zark_app/pages/overview.py:256
 msgid "zark could not list this pool's datasets: the notices below say why"
 msgstr ""
 
-#: zark_app/pages/overview.py:267
+#: zark_app/pages/overview.py:273
 msgid "This Computer"
 msgstr ""
 
-#: zark_app/pages/overview.py:269
+#: zark_app/pages/overview.py:275
 #, python-brace-format
 msgid "Live figures from {command}"
 msgstr ""
 
-#: zark_app/pages/overview.py:271
+#: zark_app/pages/overview.py:277
 msgid "Figures from zark's status file"
 msgstr ""
 
-#: zark_app/pages/overview.py:277
+#: zark_app/pages/overview.py:283
 #, python-brace-format
 msgid "measured {age}"
 msgstr ""
 
-#: zark_app/pages/overview.py:311
+#: zark_app/pages/overview.py:317
 msgid "Prepared, not read back yet (apt was running)"
 msgstr ""
 
-#: zark_app/pages/overview.py:322 zark_app/shortcuts.py:43
+#: zark_app/pages/overview.py:328 zark_app/shortcuts.py:43
 #: zark_app/window.py:163
 msgid "Backup Drives"
 msgstr ""
 
-#: zark_app/pages/overview.py:334
+#: zark_app/pages/overview.py:340
 msgid "Notices"
 msgstr ""
 

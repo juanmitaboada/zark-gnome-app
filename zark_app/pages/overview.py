@@ -140,6 +140,9 @@ def _legend(parts: Sequence[Part]) -> Gtk.FlowBox:
         max_children_per_line=2,
         column_spacing=24,
         row_spacing=4,
+        # Nothing in it to focus: a flow box whose children take no focus
+        # would otherwise hold Tab on the row (gtk_flow_box_focus).
+        can_focus=False,
     )
     for part in parts:
         line = Gtk.Box(spacing=8)
@@ -159,7 +162,10 @@ def _plain_row(child: Gtk.Widget) -> Adw.PreferencesRow:
     child.set_margin_bottom(12)
     child.set_margin_start(12)
     child.set_margin_end(12)
-    row = Adw.PreferencesRow(activatable=False, focusable=False)
+    # Focusable, as every row of a list box: GtkListBox moves the keyboard
+    # focus to the next row only, so a row that takes none ends the chain
+    # there (gtk_list_box_focus); Tab then goes on into the row's child.
+    row = Adw.PreferencesRow(activatable=False)
     row.set_child(child)
     return row
 
