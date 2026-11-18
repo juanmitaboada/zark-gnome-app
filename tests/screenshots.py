@@ -20,6 +20,7 @@ for stable pixels:
 Each PNG is named ``<kind>-<case>[-<page>]-<width>-<style>.png``.
 """
 
+import os
 import sys
 import time
 from collections.abc import Callable
@@ -37,15 +38,18 @@ gi.require_version("Vte", "3.91")
 from gi.repository import Adw, GLib, Graphene, Gtk  # noqa: E402
 
 from tests.harness import Case, any_case  # noqa: E402
+from zark_app import i18n  # noqa: E402
 
 FAKE = str(Path(__file__).resolve().parent / "fake_pkexec.py")
 from zark_app.main import ZarkApp  # noqa: E402
 from zark_app.window import ZarkWindow  # noqa: E402
 
 # (case, page selected, by-id names connected) for zark's cases; the app's
-# cases carry their own by-id.
+# cases carry their own by-id. "overview+<pool>" is the Overview with that
+# pool's row open (A13).
 SHOTS: list[tuple[str, str]] = [
     ("app:connected", "overview"),
+    ("app:connected", "overview+rpool"),
     ("app:connected", "drive:black"),
     ("app:connected", "drive:blue"),
     ("app:pending", "overview"),
@@ -155,6 +159,21 @@ def sheet(dialog: Gtk.Widget | None) -> Gtk.Widget | None:
     return dialog
 
 
+def open_pool(window: ZarkWindow, pool: str) -> None:
+    """Open ``pool``'s row on the Overview."""
+    todo: list[Gtk.Widget] = [window.content_view]
+    while todo:
+        widget = todo.pop()
+        if isinstance(widget, Adw.ExpanderRow) and widget.get_title() == pool:
+            widget.set_expanded(True)
+            return
+        child = widget.get_first_child()
+        while child is not None:
+            todo.append(child)
+            child = child.get_next_sibling()
+    raise RuntimeError(f"no row for {pool}")
+
+
 def window_for(app: ZarkApp, case: Case, width: int, height: int) -> ZarkWindow:
     """A window on ``case`` at the given size."""
     window = ZarkWindow(app, case.sources, case.loaded, watch=False)
@@ -247,9 +266,30 @@ def dialog_shots(app: ZarkApp, out: Path, style: str) -> int:
     return 2
 
 
+def shot(app: ZarkApp, out: Path, state: tuple[str, str], size: tuple[int, int], dark: bool) -> None:
+    """One state of ``SHOTS`` at one size, to ``<case>[-<page>][-<pool>]-<width>-<style>.png``."""
+    name, spec = state
+    page, _, pool = spec.partition("+")
+    window = window_for(app, any_case(name), *size)
+    window.select(page)
+    settle()
+    if pool:
+        open_pool(window, pool)
+        settle()
+    tail = "" if page == "overview" else "-" + page.replace(":", "-")
+    tail += f"-{pool}" if pool else ""
+    style = "dark" if dark else "light"
+    render(window, out / f"{name.replace(':', '-')}{tail}-{size[0]}-{style}.png")
+    window.destroy()
+
+
 def main(out: Path) -> int:
     """Render every shot."""
     out.mkdir(parents=True, exist_ok=True)
+    # The shots in another language: ZARK_LOCALEDIR=build/i18n/locale after
+    # make i18n, with LANGUAGE=es (say). English otherwise.
+    if os.environ.get("ZARK_LOCALEDIR"):
+        i18n.setup(Path(os.environ["ZARK_LOCALEDIR"]))
     app = ZarkApp(watch=False)
     app.register(None)
     # GNOME's default title bar buttons; GTK's own default adds two more.
@@ -260,16 +300,9 @@ def main(out: Path) -> int:
     count = 0
     for dark in (False, True):
         manager.set_color_scheme(Adw.ColorScheme.FORCE_DARK if dark else Adw.ColorScheme.FORCE_LIGHT)
-        for name, page in SHOTS:
-            for width, height in SIZES:
-                case = any_case(name)
-                window = window_for(app, case, width, height)
-                window.select(page)
-                settle()
-                tail = "" if page == "overview" else "-" + page.replace(":", "-")
-                style = "dark" if dark else "light"
-                render(window, out / f"{name.replace(':', '-')}{tail}-{width}-{style}.png")
-                window.destroy()
+        for state in SHOTS:
+            for size in SIZES:
+                shot(app, out, state, size, dark)
                 count += 1
         count += run_shots(app, out, "dark" if dark else "light")
         count += dialog_shots(app, out, "dark" if dark else "light")

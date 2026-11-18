@@ -514,7 +514,7 @@ def test_every_state_translated() -> None:
     english: list[tuple[str, str]] = []
     translated = 0
     for name, page in SHOTS:
-        window = open_window(app, name, page)
+        window = open_window(app, name, page.partition("+")[0])
         try:
             for text in texts(window):
                 if text.startswith("XX "):

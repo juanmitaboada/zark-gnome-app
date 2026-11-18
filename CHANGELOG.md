@@ -26,7 +26,9 @@
 - Prepare a New Drive: "It asks you to confirm in the terminal." ends with
   a full stop.
 - Tests: CI and the README's Development steps use zark `v2.3.3` (its
-  status fixtures are 2.3.2's, unchanged).
+  status fixtures are 2.3.2's, unchanged). `make screenshots` also draws
+  the Overview with rpool's row open, and draws in another language with
+  `ZARK_LOCALEDIR` set after `make i18n`.
 
 ## [1.2.0] - 2026-11-18
 
