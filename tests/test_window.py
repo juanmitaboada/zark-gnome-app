@@ -28,7 +28,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 # pylint: disable=wrong-import-position
-from gi.repository import Adw, Gdk, Gtk, Pango  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, Gtk, Pango  # noqa: E402
 
 from tests.harness import any_case  # noqa: E402
 from tests.screenshots import settle  # noqa: E402
@@ -457,6 +457,9 @@ def test_drive_gone_dialog(app: ZarkApp, windows: list[ZarkWindow]) -> None:
     assert dialog.get_body().startswith("Since ")
     hint = dialog.get_extra_child()
     assert isinstance(hint, Gtk.Label) and hint.get_selectable()
+    # G2: it opens with nothing selected, though it has the focus.
+    settle(80)
+    assert not hint.get_selection_bounds()[0]
     assert hint.get_label().startswith("black's drive went away.") and "--force --force" in hint.get_label()
     assert dialog.get_close_response() == "ok"
     dialog.close()
@@ -526,9 +529,17 @@ def test_prepare_risk_caption(
     windows.append(window)
     assert dialogs.risk_caption(checked, hidden) == ""
     dialog = dialogs.prepare(window, _DISKS, lambda _d: None, checked, hidden)
-    assert dialog.get_body().startswith(
+    assert dialog.get_body() == (
         "The disk you choose must be empty: zark refuses one with partitions or a format it recognizes, "
-        "and leaves it untouched."
+        "and leaves it untouched. It asks you to confirm in the terminal."
+        + {
+            (
+                False,
+                0,
+            ): "\n\nCould not check which disks this system uses: zark checks again before it writes",
+            (True, 2): "\n\nDisks this system uses are not listed",
+            (True, 0): "",
+        }[(checked, hidden)]
     )
     assert [type(c) for c in _children(dialog.get_extra_child())] == [Gtk.ListBox]
     dialog.close()
@@ -645,3 +656,22 @@ def test_boot_row_does_not_expand(app: ZarkApp, windows: list[ZarkWindow]) -> No
     windows.append(window)
     assert [r.get_title() for r in _expanders(window.content_view)] == ["rpool"]
     assert "/boot" in texts(window.content_view)
+
+
+def test_connected_icon_falls_back(app: ZarkApp, windows: list[ZarkWindow]) -> None:
+    """G2: a connected drive's icon is the theme's emblem, else GTK's own
+    check mark, never the missing-icon placeholder."""
+    window = open_window(app, "app:connected")
+    windows.append(window)
+    snap = window.snapshot
+    assert snap is not None
+    black = next(d for d in snap.drives if d.name == "black")
+    image = overview.drive_icon(black)
+    assert isinstance(image, Gtk.Image)
+    gicon = image.get_gicon()
+    assert isinstance(gicon, Gio.ThemedIcon)
+    names = gicon.get_names()
+    # GIO adds each symbolic name's plain form after it; the order stays.
+    assert names.index("emblem-ok-symbolic") < names.index("object-select-symbolic")
+    theme = Gtk.IconTheme.get_for_display(window.get_display())
+    assert theme.has_icon("object-select-symbolic")

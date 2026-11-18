@@ -20,7 +20,7 @@ a backup's drive gone."""
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
-from gi.repository import Adw, Gtk, Pango
+from gi.repository import Adw, GLib, Gtk, Pango
 
 from zark_app.commands import MARGIN, MAX_AGE, WINDOW, CommandError, Retention, retention_words
 from zark_app.i18n import N_, _, pgettext
@@ -265,7 +265,7 @@ def prepare(
     # stay English (risk score 2, glossary 6); the caption below carries them.
     body = (
         "The disk you choose must be empty: zark refuses one with partitions or a format it recognizes, "
-        "and leaves it untouched." + " " + _("It asks you to confirm in the terminal")
+        "and leaves it untouched." + " " + _("It asks you to confirm in the terminal.")
         if disks
         else _("No disk to prepare is connected: plug in an empty drive")
     )
@@ -315,6 +315,26 @@ def drive_gone(parent: Gtk.Widget, drive: str, gone: DriveGone) -> Adw.AlertDial
     if gone.hint:
         hint = Gtk.Label(label=gone.hint, wrap=True, selectable=True, xalign=0.0)
         hint.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        _unselect_on_first_focus(hint)
         dialog.set_extra_child(hint)
     dialog.present(parent)
     return dialog
+
+
+def _unselect_on_first_focus(label: Gtk.Label) -> None:
+    """The dialog gives its first focus to the selectable label, and GTK
+    then selects all of it (gtk_label_grab_focus, gtk-label-select-on-focus):
+    the hint opened fully selected (G2). Clear that once, after GTK's own
+    selection; the label stays selectable and reachable with Tab."""
+    handler = [0]
+
+    def clear() -> bool:
+        label.select_region(0, 0)
+        return False
+
+    def focused(_label: Gtk.Label, _param: object) -> None:
+        if label.has_focus():
+            label.disconnect(handler[0])
+            GLib.idle_add(clear)
+
+    handler[0] = label.connect("notify::has-focus", focused)

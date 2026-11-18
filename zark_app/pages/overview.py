@@ -17,7 +17,7 @@ import functools
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
-from gi.repository import Adw, Gdk, GLib, Graphene, Gsk, Gtk, Pango
+from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gsk, Gtk, Pango
 
 from zark_app import compat
 from zark_app.i18n import _
@@ -42,6 +42,8 @@ COLOURS = {
     "free": "rgba(127,127,127,0.25)",
     "reserved": "rgba(127,127,127,0.6)",
 }
+# A connected drive: the theme's emblem, else GTK's own check mark.
+CONNECTED_ICONS = ["emblem-ok-symbolic", "object-select-symbolic"]
 BAR_HEIGHT = 12
 SWATCH = 10
 
@@ -52,10 +54,13 @@ def drive_icon(drive: DriveView) -> Gtk.Widget:
         return compat.spinner()
     names = {
         "attention": "dialog-error-symbolic" if drive.level == "error" else "dialog-warning-symbolic",
-        "connected": "emblem-ok-symbolic",
         "disconnected": "drive-harddisk-symbolic",
     }
-    image = Gtk.Image.new_from_icon_name(names[drive.state])
+    if drive.state == "connected":
+        # Adwaita 50 has no emblem-ok-symbolic (G2); GTK ships object-select-symbolic itself.
+        image = Gtk.Image.new_from_gicon(Gio.ThemedIcon.new_from_names(CONNECTED_ICONS))
+    else:
+        image = Gtk.Image.new_from_icon_name(names[drive.state])
     if drive.state == "attention":
         # A2E-4: red for a run cut short or not read back, amber otherwise.
         image.add_css_class("error" if drive.level == "error" else "warning")

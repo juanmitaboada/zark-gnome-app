@@ -286,7 +286,7 @@ msgstr ""
 msgid "Exclude"
 msgstr ""
 
-#: zark_app/dialogs.py:166 zark_app/pages/overview.py:188
+#: zark_app/dialogs.py:166 zark_app/pages/overview.py:193
 msgid "Dataset"
 msgstr ""
 
@@ -339,7 +339,7 @@ msgid ""
 msgstr ""
 
 #: zark_app/dialogs.py:268
-msgid "It asks you to confirm in the terminal"
+msgid "It asks you to confirm in the terminal."
 msgstr ""
 
 #: zark_app/dialogs.py:270
@@ -528,7 +528,7 @@ msgstr ""
 msgid "Browse Files"
 msgstr ""
 
-#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:211
+#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:216
 msgid "Reclaim Space..."
 msgstr ""
 
@@ -1037,58 +1037,58 @@ msgid "Exclude..."
 msgstr ""
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:81
+#: zark_app/pages/overview.py:86
 msgid "critical"
 msgstr ""
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:84
+#: zark_app/pages/overview.py:89
 msgid "warning"
 msgstr ""
 
 #. TRANSLATORS: a column title: the space a dataset's own data takes
-#: zark_app/pages/overview.py:193 zark_app/pages/run.py:29
+#: zark_app/pages/overview.py:198 zark_app/pages/run.py:29
 #: zark_app/pages/run.py:42
 msgid "Data"
 msgstr ""
 
 #. TRANSLATORS: a column title: the space a dataset's snapshots take
-#: zark_app/pages/overview.py:195
+#: zark_app/pages/overview.py:200
 msgid "Snapshots"
 msgstr ""
 
-#: zark_app/pages/overview.py:219
+#: zark_app/pages/overview.py:224
 msgid "zark could not list this pool's datasets: the notices below say why"
 msgstr ""
 
-#: zark_app/pages/overview.py:236
+#: zark_app/pages/overview.py:241
 msgid "This Computer"
 msgstr ""
 
-#: zark_app/pages/overview.py:238
+#: zark_app/pages/overview.py:243
 #, python-brace-format
 msgid "Live figures from {command}"
 msgstr ""
 
-#: zark_app/pages/overview.py:240
+#: zark_app/pages/overview.py:245
 msgid "Figures from zark's status file"
 msgstr ""
 
-#: zark_app/pages/overview.py:246
+#: zark_app/pages/overview.py:251
 #, python-brace-format
 msgid "measured {age}"
 msgstr ""
 
-#: zark_app/pages/overview.py:278
+#: zark_app/pages/overview.py:283
 msgid "Prepared, not read back yet (apt was running)"
 msgstr ""
 
-#: zark_app/pages/overview.py:289 zark_app/shortcuts.py:43
+#: zark_app/pages/overview.py:294 zark_app/shortcuts.py:43
 #: zark_app/window.py:163
 msgid "Backup Drives"
 msgstr ""
 
-#: zark_app/pages/overview.py:301
+#: zark_app/pages/overview.py:306
 msgid "Notices"
 msgstr ""
 

@@ -282,7 +282,7 @@ msgstr "Dataset ausschließen"
 msgid "Exclude"
 msgstr "Ausschließen"
 
-#: zark_app/dialogs.py:166 zark_app/pages/overview.py:188
+#: zark_app/dialogs.py:166 zark_app/pages/overview.py:193
 msgid "Dataset"
 msgstr "Dataset"
 
@@ -347,8 +347,8 @@ msgstr ""
 "Prüfen Sie zuerst Namen und Größe des Datenträgers."
 
 #: zark_app/dialogs.py:268
-msgid "It asks you to confirm in the terminal"
-msgstr "Es bittet im Terminal um Bestätigung"
+msgid "It asks you to confirm in the terminal."
+msgstr ""
 
 #: zark_app/dialogs.py:270
 msgid "No disk to prepare is connected: plug in an empty drive"
@@ -538,7 +538,7 @@ msgstr "Aushängen"
 msgid "Browse Files"
 msgstr "Dateien durchsuchen"
 
-#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:211
+#: zark_app/model.py:285 zark_app/model.py:532 zark_app/pages/overview.py:216
 msgid "Reclaim Space..."
 msgstr "Speicherplatz freigeben..."
 
@@ -1062,58 +1062,58 @@ msgid "Exclude..."
 msgstr "Ausschließen..."
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:81
+#: zark_app/pages/overview.py:86
 msgid "critical"
 msgstr "kritisch"
 
 #. TRANSLATORS: how full a pool is, lower case after a comma in its line.
-#: zark_app/pages/overview.py:84
+#: zark_app/pages/overview.py:89
 msgid "warning"
 msgstr "Warnung"
 
 #. TRANSLATORS: a column title: the space a dataset's own data takes
-#: zark_app/pages/overview.py:193 zark_app/pages/run.py:29
+#: zark_app/pages/overview.py:198 zark_app/pages/run.py:29
 #: zark_app/pages/run.py:42
 msgid "Data"
 msgstr "Daten"
 
 #. TRANSLATORS: a column title: the space a dataset's snapshots take
-#: zark_app/pages/overview.py:195
+#: zark_app/pages/overview.py:200
 msgid "Snapshots"
 msgstr ""
 
-#: zark_app/pages/overview.py:219
+#: zark_app/pages/overview.py:224
 msgid "zark could not list this pool's datasets: the notices below say why"
 msgstr ""
 
-#: zark_app/pages/overview.py:236
+#: zark_app/pages/overview.py:241
 msgid "This Computer"
 msgstr "Dieser Rechner"
 
-#: zark_app/pages/overview.py:238
+#: zark_app/pages/overview.py:243
 #, python-brace-format
 msgid "Live figures from {command}"
 msgstr "Live-Zahlen von {command}"
 
-#: zark_app/pages/overview.py:240
+#: zark_app/pages/overview.py:245
 msgid "Figures from zark's status file"
 msgstr "Zahlen aus der Statusdatei von zark"
 
-#: zark_app/pages/overview.py:246
+#: zark_app/pages/overview.py:251
 #, python-brace-format
 msgid "measured {age}"
 msgstr "gemessen {age}"
 
-#: zark_app/pages/overview.py:278
+#: zark_app/pages/overview.py:283
 msgid "Prepared, not read back yet (apt was running)"
 msgstr "Vorbereitet, noch nicht zurückgelesen (apt lief)"
 
-#: zark_app/pages/overview.py:289 zark_app/shortcuts.py:43
+#: zark_app/pages/overview.py:294 zark_app/shortcuts.py:43
 #: zark_app/window.py:163
 msgid "Backup Drives"
 msgstr "Sicherungslaufwerke"
 
-#: zark_app/pages/overview.py:301
+#: zark_app/pages/overview.py:306
 msgid "Notices"
 msgstr "Hinweise"
 
@@ -1962,3 +1962,6 @@ msgid "Authentication is needed to check a drive's health: $(cmdline_short)"
 msgstr ""
 "Zum Prüfen des Zustands eines Laufwerks ist eine Authentifizierung nötig: "
 "$(cmdline_short)"
+
+#~ msgid "It asks you to confirm in the terminal"
+#~ msgstr "Es bittet im Terminal um Bestätigung"

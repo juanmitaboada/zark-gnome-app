@@ -18,6 +18,13 @@
   registered one.
 - A date's order comes from the translation, so a language can write it
   as it does (German "7. Nov. 2026, 09:31"); English is unchanged.
+- A connected drive's icon is never the missing-icon placeholder: with
+  plain Adwaita (no `emblem-ok-symbolic` since its version 50) it is
+  GTK's own check mark.
+- The drive-gone dialog opens with zark's hint unselected; it can still be
+  selected and copied.
+- Prepare a New Drive: "It asks you to confirm in the terminal." ends with
+  a full stop.
 - Tests: CI and the README's Development steps use zark `v2.3.3` (its
   status fixtures are 2.3.2's, unchanged).
 
