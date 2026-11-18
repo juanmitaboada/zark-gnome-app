@@ -28,7 +28,8 @@
 - Tests: CI and the README's Development steps use zark `v2.3.3` (its
   status fixtures are 2.3.2's, unchanged). `make screenshots` also draws
   the Overview with rpool's row open, and draws in another language with
-  `ZARK_LOCALEDIR` set after `make i18n`.
+  `ZARK_LOCALEDIR` set after `make i18n`. A test refuses a msgid that
+  xgettext would flag as printf-style (`python-format`).
 
 ## [1.2.0] - 2026-11-18
 

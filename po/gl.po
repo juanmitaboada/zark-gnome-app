@@ -1675,8 +1675,8 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: zark_app/usage.py:192
-#, python-format, python-brace-format
+#: zark_app/usage.py:196
+#, no-python-format, python-brace-format
 msgid "Snapshots hold {size}, {percent}% of the space in use"
 msgstr ""
 

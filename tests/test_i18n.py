@@ -106,6 +106,15 @@ def test_no_white_space_at_the_ends() -> None:
     assert not bad
 
 
+def test_no_printf_formats() -> None:
+    """BC22-65: the app formats with {} only. A "%" before a letter or a
+    space ("17% of") makes xgettext flag a msgid python-format, and msgfmt -c
+    then refuses a translation without a matching "%" directive; such a
+    msgid needs "xgettext: no-python-format" above it."""
+    flagged = [e.msgid for e in potools.parse(potools.POT)[1:] if "python-format" in e.flags]
+    assert not flagged
+
+
 def test_contexts() -> None:
     """The words with more than one meaning carry a context (A1TR-3)."""
     contexts = {(e.msgctxt, e.msgid) for e in potools.parse(potools.POT) if e.msgctxt}

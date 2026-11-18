@@ -189,9 +189,12 @@ def usage_view(  # pylint: disable=too-many-locals
     return UsageView(
         segments=parts,
         legend=legend,
-        snapshots=_("Snapshots hold {size}, {percent}% of the space in use").format(
-            size=fmt_bytes(snapshots), percent=percent
-        ),
+        snapshots=_(
+            # "% o" is no printf directive: without this, xgettext flags the msgid
+            # python-format and msgfmt -c wants a "%" in every translation (BC22-65).
+            # xgettext: no-python-format
+            "Snapshots hold {size}, {percent}% of the space in use"
+        ).format(size=fmt_bytes(snapshots), percent=percent),
         by_size=size_rows,
         by_snapshots=tuple(dataset_row(d) for d in by_snapshots if int(mod.own_share(d)) > 0),
         dataset_count=len(entries),
