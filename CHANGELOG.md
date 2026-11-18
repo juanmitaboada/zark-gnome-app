@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.0] - 2026-11-18
 
 - This Computer shows what fills each pool, as zark's GNOME Shell
   extension does: open a pool's row for a bar of its space (user data and
@@ -27,6 +27,8 @@
   selected and copied.
 - Prepare a New Drive: "It asks you to confirm in the terminal." ends with
   a full stop.
+- The new texts are translated in the nine languages, the parts of a
+  pool's space in the same words as zark's GNOME Shell extension.
 - The package depends on `gir1.2-graphene-1.0`, whose typelib the app now
   imports (already installed with `gir1.2-gtk-4.0`).
 - Tests: CI and the README's Development steps use zark `v2.3.3` (its

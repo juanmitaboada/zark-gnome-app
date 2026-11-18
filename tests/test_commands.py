@@ -198,6 +198,19 @@ def test_disk_candidates_one_per_device(
     assert commands.disk_candidates(_tree(tmp_path, links), drives) == expected
 
 
+def test_prepare_takes_a_part_inside_a_name(tmp_path: Path) -> None:
+    """A13R-10: build's whole-disk check is zark's -part<N>$ too: a name with
+    "-part" inside is a disk; its -part1 link is still refused."""
+    disk = tmp_path / "sdl"
+    disk.touch()
+    by_id = _tree(tmp_path, {"usb-Multi-partner_0001-0:0": "sdl", "usb-Multi-partner_0001-0:0-part1": "sdl"})
+    ctx = Context(drives={}, by_id=by_id)
+    command = build("prepare", "usb-Multi-partner_0001-0:0", ctx)
+    assert command.words == ("prepare", "/dev/disk/by-id/usb-Multi-partner_0001-0:0")
+    with pytest.raises(CommandError):
+        build("prepare", "usb-Multi-partner_0001-0:0-part1", ctx)
+
+
 def test_zark_disk_name_matches_zark() -> None:
     """The rule as zark's lib/identity.py at v2.3.3: registry_names'
     drive_id, which is disk_id when the disk has its own name and

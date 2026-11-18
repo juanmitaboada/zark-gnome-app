@@ -1,3 +1,18 @@
+zark-gnome-app (1.3.0-1) stable; urgency=medium
+
+  * This Computer: each source pool's row opens on its space in parts,
+    what its snapshots hold, its largest datasets and those with the most
+    in snapshots, and Reclaim Space (zark prune), as zark's GNOME Shell
+    extension shows them.
+  * Prepare a New Drive lists a disk once, under the name zark registers
+    it by; a registered drive is left out under every name it has.
+  * Dates in each language's order; the new texts in the nine languages.
+  * The connected drive's icon falls back to GTK's check mark; the
+    drive-gone hint opens unselected.
+  * Depends: gir1.2-graphene-1.0. Tests against zark 2.3.3's reader.
+
+ -- Juanmi Taboada <juanmi@juanmitaboada.com>  Wed, 18 Nov 2026 23:32:08 +0100
+
 zark-gnome-app (1.2.0-1) stable; urgency=medium
 
   * Translations: Spanish and wave 2 (pt_BR, pt, fr, it, ca, gl, de, nl)

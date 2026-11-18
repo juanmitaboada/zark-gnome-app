@@ -17,6 +17,6 @@ an embedded terminal (A2).
 """
 
 APP_ID = "com.juanmitaboada.Zark"
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 WEBSITE = "https://github.com/juanmitaboada/zark-gnome-app"
 ISSUES = "https://github.com/juanmitaboada/zark-gnome-app/issues"
