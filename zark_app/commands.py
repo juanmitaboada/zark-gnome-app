@@ -21,8 +21,9 @@ status file, ``/dev/disk/by-id`` or ``zfs list`` before the spawn. zark
 checks everything again. No GTK here.
 """
 
+import os
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -74,6 +75,12 @@ MAX_AGE = (0, 36500)
 MARGIN = (0, 50)
 # Whole-disk names under /dev/disk/by-id the Prepare picker offers.
 DISK_PREFIXES = ("usb-", "ata-", "nvme-", "scsi-")
+# zark's ranks of a disk's by-id names (lib/identity.py at v2.3.3): its own
+# name (_DISK_PREFIXES) before any other (registry_names, M16-1); otherwise
+# preferred_by_id's order (_BY_ID_RANK), weak names (_BY_ID_WEAK) last.
+OWN_PREFIXES = ("ata-", "nvme-", "mmc-", "virtio-")
+RANK_PREFIXES = ("usb-", "ata-", "nvme-", "mmc-", "virtio-", "dm-", "md-", "")
+WEAK_PREFIXES = ("wwn-", "scsi-", "nvme-eui.", "nvme-nvme.")
 
 
 class CommandError(ValueError):
@@ -276,19 +283,39 @@ def argv(command: Command, prefix: Sequence[str] = PKEXEC_PREFIX, zark: str = ZA
     return [*prefix, zark, *command.words]
 
 
-def disk_candidates(by_id: Path, drives: Mapping[str, Mapping[str, Any]]) -> list[str]:
-    """Whole disks under ``by_id`` for Prepare: no partitions, no
-    registered drive, the bus prefixes of :data:`DISK_PREFIXES`."""
+def zark_disk_name(names: Sequence[str]) -> str:
+    """The name zark registers a disk under, of its by-id ``names``: the
+    disk's own (``ata-``, ``nvme-``) before its enclosure's (``usb-``), as
+    zark's ``registry_names``; with no own name, ``preferred_by_id``'s."""
+    own = [n for n in names if n.startswith(OWN_PREFIXES) and not n.startswith(WEAK_PREFIXES)]
+    if own:
+        return min(own, key=lambda n: (next(i for i, p in enumerate(OWN_PREFIXES) if n.startswith(p)), n))
+    pool = [n for n in names if not n.startswith(WEAK_PREFIXES)] or list(names)
+    return min(pool, key=lambda n: (next(i for i, p in enumerate(RANK_PREFIXES) if n.startswith(p)), n))
+
+
+def disk_candidates(
+    by_id: Path, drives: Mapping[str, Mapping[str, Any]], resolve: Callable[[str], str] = os.path.realpath
+) -> list[str]:
+    """Whole disks under ``by_id`` for Prepare, one name per device (A13):
+    the bus prefixes of :data:`DISK_PREFIXES`, no partitions, under
+    :func:`zark_disk_name`'s choice. A device one of whose names is a
+    registered drive's ``drive_id`` is left out (A13-4)."""
     known = {str(e.get("drive_id")) for e in drives.values()}
     try:
         names = sorted(p.name for p in by_id.iterdir())
     except OSError:
         return []
-    return [
-        n
-        for n in names
-        if n.startswith(DISK_PREFIXES) and "-part" not in n and n not in known and DEVICE_RE.fullmatch(n)
-    ]
+    devices: dict[str, list[str]] = {}
+    for n in names:
+        if "-part" not in n:
+            devices.setdefault(resolve(str(by_id / n)), []).append(n)
+    out = []
+    for group in devices.values():
+        offered = [n for n in group if n.startswith(DISK_PREFIXES) and DEVICE_RE.fullmatch(n)]
+        if offered and not known.intersection(group):
+            out.append(zark_disk_name(offered))
+    return sorted(out)
 
 
 def disk_label(by_id: Path, name: str, sys_block: Path = Path("/sys/class/block")) -> str:

@@ -32,175 +32,175 @@ msgstr ""
 msgid "translator-credits"
 msgstr ""
 
-#: zark_app/commands.py:121 zark_app/model.py:187
+#: zark_app/commands.py:128 zark_app/model.py:187
 msgid "Backing Up"
 msgstr ""
 
-#: zark_app/commands.py:122
+#: zark_app/commands.py:129
 msgid "Refreshing the Status"
 msgstr ""
 
-#: zark_app/commands.py:123 zark_app/model.py:195
+#: zark_app/commands.py:130 zark_app/model.py:195
 msgid "Looking for Drives"
 msgstr ""
 
-#: zark_app/commands.py:124 zark_app/model.py:189
+#: zark_app/commands.py:131 zark_app/model.py:189
 msgid "Preparing a Drive"
 msgstr ""
 
-#: zark_app/commands.py:125
+#: zark_app/commands.py:132
 msgid "Finishing a Registration"
 msgstr ""
 
-#: zark_app/commands.py:126
+#: zark_app/commands.py:133
 msgid "Turning On Hourly Checks"
 msgstr ""
 
-#: zark_app/commands.py:127
+#: zark_app/commands.py:134
 msgid "Turning Off Hourly Checks"
 msgstr ""
 
-#: zark_app/commands.py:128 zark_app/model.py:198
+#: zark_app/commands.py:135 zark_app/model.py:198
 msgid "Cleaning Up"
 msgstr ""
 
-#: zark_app/commands.py:129 zark_app/model.py:193
+#: zark_app/commands.py:136 zark_app/model.py:193
 msgid "Mounting a Drive"
 msgstr ""
 
-#: zark_app/commands.py:130 zark_app/model.py:194
+#: zark_app/commands.py:137 zark_app/model.py:194
 msgid "Unmounting a Drive"
 msgstr ""
 
-#: zark_app/commands.py:131 zark_app/model.py:188
+#: zark_app/commands.py:138 zark_app/model.py:188
 msgid "Reclaiming Space"
 msgstr ""
 
-#: zark_app/commands.py:132 zark_app/model.py:191
+#: zark_app/commands.py:139 zark_app/model.py:191
 msgid "Checking Health"
 msgstr ""
 
-#: zark_app/commands.py:133 zark_app/model.py:192
+#: zark_app/commands.py:140 zark_app/model.py:192
 msgid "Verifying a Drive"
 msgstr ""
 
-#: zark_app/commands.py:134
+#: zark_app/commands.py:141
 msgid "Changing Retention"
 msgstr ""
 
-#: zark_app/commands.py:135
+#: zark_app/commands.py:142
 msgid "Repairing an Entry"
 msgstr ""
 
-#: zark_app/commands.py:136
+#: zark_app/commands.py:143
 msgid "Forgetting a Drive"
 msgstr ""
 
-#: zark_app/commands.py:137 zark_app/model.py:190
+#: zark_app/commands.py:144 zark_app/model.py:190
 msgid "Erasing a Drive"
 msgstr ""
 
-#: zark_app/commands.py:138
+#: zark_app/commands.py:145
 msgid "Excluding a Dataset"
 msgstr ""
 
-#: zark_app/commands.py:139
+#: zark_app/commands.py:146
 msgid "Including a Dataset Again"
 msgstr ""
 
-#: zark_app/commands.py:140
+#: zark_app/commands.py:147
 msgid "Listing Exclusions"
 msgstr ""
 
 #. TRANSLATORS: {title} is a run title such as "Backing Up", {drive} a drive's name.
-#: zark_app/commands.py:148
+#: zark_app/commands.py:155
 #, python-brace-format
 msgid "{title} to {drive}"
 msgstr ""
 
-#: zark_app/commands.py:154
+#: zark_app/commands.py:161
 #, python-brace-format
 msgid "{name} is not a drive name"
 msgstr ""
 
-#: zark_app/commands.py:162
+#: zark_app/commands.py:169
 #, python-brace-format
 msgid "{name} is not a registered drive"
 msgstr ""
 
-#: zark_app/commands.py:169
+#: zark_app/commands.py:176
 #, python-brace-format
 msgid "{name} is not a disk name"
 msgstr ""
 
-#: zark_app/commands.py:172
+#: zark_app/commands.py:179
 #, python-brace-format
 msgid "{name} is not connected"
 msgstr ""
 
-#: zark_app/commands.py:180
+#: zark_app/commands.py:187
 #, python-brace-format
 msgid "{name} has no disk name in the status file"
 msgstr ""
 
-#: zark_app/commands.py:187
+#: zark_app/commands.py:194
 #, python-brace-format
 msgid "{what} must be a whole number from {lo} to {hi}"
 msgstr ""
 
 #. TRANSLATORS: the retention window (days), named in an error such as "The window must be 1 to 365".
-#: zark_app/commands.py:195
+#: zark_app/commands.py:202
 msgid "The window"
 msgstr ""
 
-#: zark_app/commands.py:196
+#: zark_app/commands.py:203
 msgid "The maximum age"
 msgstr ""
 
 #. TRANSLATORS: the retention margin (percent of the drive left free), named in an error.
-#: zark_app/commands.py:198
+#: zark_app/commands.py:205
 msgid "The margin"
 msgstr ""
 
-#: zark_app/commands.py:200
+#: zark_app/commands.py:207
 msgid "The maximum age must be longer than the window, or no limit"
 msgstr ""
 
-#: zark_app/commands.py:237
+#: zark_app/commands.py:244
 #, python-brace-format
 msgid "{name} is not waiting for its registration"
 msgstr ""
 
-#: zark_app/commands.py:245
-msgid "No retention values"
-msgstr ""
-
 #: zark_app/commands.py:252
-#, python-brace-format
-msgid "{name} is a registered backup drive"
-msgstr ""
-
-#: zark_app/commands.py:254
-#, python-brace-format
-msgid "{name} is not a whole disk"
+msgid "No retention values"
 msgstr ""
 
 #: zark_app/commands.py:259
 #, python-brace-format
-msgid "{arg} is not a dataset and a word"
+msgid "{name} is a registered backup drive"
 msgstr ""
 
 #: zark_app/commands.py:261
 #, python-brace-format
+msgid "{name} is not a whole disk"
+msgstr ""
+
+#: zark_app/commands.py:266
+#, python-brace-format
+msgid "{arg} is not a dataset and a word"
+msgstr ""
+
+#: zark_app/commands.py:268
+#, python-brace-format
 msgid "{dataset} is not a dataset of this computer"
 msgstr ""
 
-#: zark_app/commands.py:263
+#: zark_app/commands.py:270
 #, python-brace-format
 msgid "{dataset} is not excluded"
 msgstr ""
 
-#: zark_app/commands.py:266
+#: zark_app/commands.py:273
 #, python-brace-format
 msgid "Unknown operation {op}"
 msgstr ""

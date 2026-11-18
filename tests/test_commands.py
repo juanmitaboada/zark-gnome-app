@@ -34,10 +34,12 @@ def ctx(tmp_path: Path) -> Context:
     by_id.mkdir()
     disk = tmp_path / "sdz"
     disk.touch()
+    new = tmp_path / "sdy"
+    new.touch()
     (by_id / BLACK_ID).symlink_to(disk)
-    (by_id / "usb-New_Disk_0001-0:0").symlink_to(disk)
-    (by_id / "usb-New_Disk_0001-0:0-part1").symlink_to(disk)
-    (by_id / "wwn-0x5000000000000001").symlink_to(disk)
+    (by_id / "usb-New_Disk_0001-0:0").symlink_to(new)
+    (by_id / "usb-New_Disk_0001-0:0-part1").symlink_to(new)
+    (by_id / "wwn-0x5000000000000001").symlink_to(new)
     return Context(
         drives={"black": {"drive_id": BLACK_ID}, "blue": {"drive_id": "usb-Blue_0002-0:0"}},
         pending=frozenset({"spare"}),
@@ -129,6 +131,66 @@ def test_refused(ctx: Context, op: str, arg: str) -> None:
 def test_disk_candidates(ctx: Context) -> None:
     """Whole disks, not registered, with a bus prefix."""
     assert commands.disk_candidates(ctx.by_id, ctx.drives) == ["usb-New_Disk_0001-0:0"]
+
+
+def _tree(tmp_path: Path, links: dict[str, str]) -> Path:
+    """A by-id directory: each name a link to its device, which need not exist."""
+    by_id = tmp_path / "by-id"
+    by_id.mkdir()
+    for name, device in links.items():
+        (by_id / name).symlink_to(tmp_path / device)
+    return by_id
+
+
+@pytest.mark.parametrize(
+    ("links", "drives", "expected"),
+    [
+        # A disk behind a USB bridge: once, under its own name (M16-1).
+        (
+            {"ata-SAMSUNG_HM501II_0001": "sdb", "usb-Seagate_Case_0002-0:0": "sdb"},
+            {},
+            ["ata-SAMSUNG_HM501II_0001"],
+        ),
+        # No own name: the enclosure's before a weak one.
+        ({"usb-Stick_0003-0:0": "sdc", "scsi-SStick_0003": "sdc"}, {}, ["usb-Stick_0003-0:0"]),
+        ({"scsi-SOnly_0004": "sdd"}, {}, ["scsi-SOnly_0004"]),
+        # nvme-eui. is weak although it starts with nvme-.
+        ({"nvme-eui.0001": "nvme0n1", "nvme-Disk_0005": "nvme0n1"}, {}, ["nvme-Disk_0005"]),
+        # Two disks, each in its own case.
+        (
+            {"ata-A_0006": "sde", "usb-Case_A-0:0": "sde", "ata-B_0007": "sdf", "usb-Case_B-0:0": "sdf"},
+            {},
+            ["ata-A_0006", "ata-B_0007"],
+        ),
+        # A registered drive is left out under its other names too (A13-4).
+        (
+            {"ata-Black_0008": "sdg", "usb-Black_Case-0:0": "sdg", "ata-New_0009": "sdh"},
+            {"black": {"drive_id": "ata-Black_0008"}},
+            ["ata-New_0009"],
+        ),
+        (
+            {"ata-Black_0008": "sdg", "usb-Black_Case-0:0": "sdg"},
+            {"black": {"drive_id": "usb-Black_Case-0:0"}},
+            [],
+        ),
+        # Partitions and names of no offered bus are never listed.
+        ({"ata-X_0010-part1": "sdi1", "wwn-0x5000000000000002": "sdj"}, {}, []),
+    ],
+)
+def test_disk_candidates_one_per_device(
+    tmp_path: Path, links: dict[str, str], drives: dict[str, dict[str, str]], expected: list[str]
+) -> None:
+    """One entry per device, under the name zark registers it by."""
+    assert commands.disk_candidates(_tree(tmp_path, links), drives) == expected
+
+
+def test_zark_disk_name_matches_zark() -> None:
+    """The rule as zark's lib/identity.py at v2.3.3: registry_names'
+    drive_id, which is disk_id when the disk has its own name and
+    preferred_by_id otherwise."""
+    assert commands.zark_disk_name(["usb-C-0:0", "ata-D", "nvme-E"]) == "ata-D"
+    assert commands.zark_disk_name(["usb-C-0:0", "scsi-SD", "wwn-0x1"]) == "usb-C-0:0"
+    assert commands.zark_disk_name(["wwn-0x1", "scsi-SD"]) == "scsi-SD"
 
 
 def test_only_commands_builds_pkexec() -> None:

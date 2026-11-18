@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+- Prepare a New Drive lists a disk once: a disk behind a USB bridge has
+  two names (its own and its enclosure's) and showed twice. The name shown
+  and passed to `zark prepare` is the one zark registers it under, the
+  disk's own (`ata-`, `nvme-`) before its enclosure's (`usb-`). A
+  registered drive is left out under every name it has, not only the
+  registered one.
+
 ## [1.2.0] - 2026-11-18
 
 - The app in Spanish and in the eight languages closest to it and to
