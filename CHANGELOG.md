@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.0] - unreleased
+## [1.2.0] - 2026-11-18
 
 - The app in Spanish and in the eight languages closest to it and to
   English: Brazilian and European Portuguese, French, Italian, Catalan,
