@@ -34,7 +34,7 @@ gi.require_version("Adw", "1")
 gi.require_version("Vte", "3.91")
 
 # pylint: disable=wrong-import-position
-from gi.repository import Adw, GLib, Gtk  # noqa: E402
+from gi.repository import Adw, GLib, Graphene, Gtk  # noqa: E402
 
 from tests.harness import Case, any_case  # noqa: E402
 
@@ -83,6 +83,22 @@ SHOTS: list[tuple[str, str]] = [
     ("zark:drive-contents-partial", "drive:black"),
 ]
 SIZES = ((1000, 760), (360, 760))
+# The Prepare picker on app:connected: a system disk the reads report in use
+# (left out, so the dialog says so) and two free disks. Links to /dev names
+# that do not exist, so no real sysfs size or model reaches the labels.
+PREPARE_DISKS = (
+    ("ata-System_Disk_0001", "/dev/zark-shot-system"),
+    ("usb-New_Disk_0001-0:0", "/dev/zark-shot-new1"),
+    ("usb-New_Disk_0002-0:0", "/dev/zark-shot-new2"),
+)
+PREPARE_READS = {
+    "zpool-vdevs": {"status": 0, "stdout": "rpool\t1G\n\t/dev/zark-shot-system\t1G\n"},
+    "findmnt": {"status": 0, "stdout": ""},
+    "swapon": {"status": 0, "stdout": ""},
+    "lsblk": {"status": 0, "stdout": "/dev/zark-shot-system disk \n"},
+}
+# Room kept around a cropped dialog, for its shadow.
+MARGIN = 24
 
 
 def settle(rounds: int = 40) -> None:
@@ -94,8 +110,9 @@ def settle(rounds: int = 40) -> None:
         GLib.usleep(5000)
 
 
-def render(window: Gtk.Window, path: Path) -> None:
-    """The window, as drawn (its own background included), to ``path``."""
+def render(window: Gtk.Window, path: Path, around: Gtk.Widget | None = None) -> None:
+    """The window, as drawn (its own background included), to ``path``;
+    with ``around``, only that widget and :data:`MARGIN` around it."""
     widget = window
     width, height = widget.get_width(), widget.get_height()
     paintable = Gtk.WidgetPaintable.new(widget)
@@ -106,7 +123,36 @@ def render(window: Gtk.Window, path: Path) -> None:
     renderer = native.get_renderer() if native is not None else None
     if node is None or renderer is None:
         raise RuntimeError(f"nothing drawn for {path.name}")
-    renderer.render_texture(node, None).save_to_png(str(path))
+    viewport = None if around is None else _viewport(window, around, path)
+    renderer.render_texture(node, viewport).save_to_png(str(path))
+
+
+def _viewport(window: Gtk.Window, around: Gtk.Widget, path: Path) -> Graphene.Rect:
+    """``around`` and :data:`MARGIN` about it, in whole pixels inside the
+    window, so the crop does not resample."""
+    ok, bounds = around.compute_bounds(window)
+    if not ok:
+        raise RuntimeError(f"no bounds for {path.name}")
+    x = max(0, int(bounds.get_x()) - MARGIN)
+    y = max(0, int(bounds.get_y()) - MARGIN)
+    right = min(window.get_width(), int(bounds.get_x() + bounds.get_width() + 0.5) + MARGIN)
+    bottom = min(window.get_height(), int(bounds.get_y() + bounds.get_height() + 0.5) + MARGIN)
+    return Graphene.Rect().init(x, y, right - x, bottom - y)
+
+
+def sheet(dialog: Gtk.Widget | None) -> Gtk.Widget | None:
+    """An open dialog's card: libadwaita draws a dialog over the whole window
+    (the dimming included), its card is the descendant named ``sheet``."""
+    todo = [dialog] if dialog is not None else []
+    while todo:
+        widget = todo.pop(0)
+        if widget.get_css_name() == "sheet":
+            return widget
+        child = widget.get_first_child()
+        while child is not None:
+            todo.append(child)
+            child = child.get_next_sibling()
+    return dialog
 
 
 def window_for(app: ZarkApp, case: Case, width: int, height: int) -> ZarkWindow:
@@ -174,6 +220,33 @@ def run_shots(app: ZarkApp, out: Path, style: str) -> int:
     )
 
 
+def _prepare_shot(app: ZarkApp, out: Path, style: str) -> None:
+    case = any_case("app:connected")
+    for name, dev in PREPARE_DISKS:
+        (case.sources.by_id / name).symlink_to(dev)
+    case.runner.answers.update(PREPARE_READS)
+    window = window_for(app, case, 1000, 760)
+    window.ops.dispatch("prepare", "")
+    settle()
+    render(window, out / f"app-connected-prepare-1000-{style}.png", sheet(window.get_visible_dialog()))
+    window.destroy()
+
+
+def _drive_gone_shot(app: ZarkApp, out: Path, style: str) -> None:
+    # The alert comes from an idle (no GNOME Shell on the bus): window_for settles past it.
+    window = window_for(app, any_case("app:running-drive-gone"), 1000, 760)
+    render(window, out / f"app-running-drive-gone-alert-1000-{style}.png", sheet(window.get_visible_dialog()))
+    window.destroy()
+
+
+def dialog_shots(app: ZarkApp, out: Path, style: str) -> int:
+    """The two dialogs, cropped: Prepare a New Drive with two free disks
+    and a system disk left out; a backup's drive gone."""
+    _prepare_shot(app, out, style)
+    _drive_gone_shot(app, out, style)
+    return 2
+
+
 def main(out: Path) -> int:
     """Render every shot."""
     out.mkdir(parents=True, exist_ok=True)
@@ -199,6 +272,7 @@ def main(out: Path) -> int:
                 window.destroy()
                 count += 1
         count += run_shots(app, out, "dark" if dark else "light")
+        count += dialog_shots(app, out, "dark" if dark else "light")
     print(f"{count} screenshots in {out}")
     return 0
 
