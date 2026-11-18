@@ -25,6 +25,11 @@ running in a terminal, with its progress.
 The pictures are rendered from the test fixtures (`make screenshots`), not
 from a real machine.
 
+A user guide walks through every task with this app and the GNOME Shell
+extension, from installing to recovering: zark's
+[docs/GUIDE.md](https://github.com/juanmitaboada/zark/blob/main/docs/GUIDE.md),
+also as a [video](https://youtu.be/dy-WW9qjaIo).
+
 The app reads the two status files the installed
 zark writes (`/run/zark/progress.json` and `/var/lib/zark/status.json`,
 described in zark's
@@ -74,6 +79,11 @@ sudo apt install zark-gnome-app   # brings zark along
 ```
 
 ## Translations
+
+The app speaks English, Spanish, Brazilian and European Portuguese,
+French, Italian, Catalan, Galician, German and Dutch, following the
+desktop's language (on Ubuntu, with that language's `language-pack-*`
+installed).
 
 The app's texts, its desktop entry, its AppStream metadata and its polkit
 messages share one gettext domain, `zark-gnome-app`: `make pot` writes the
